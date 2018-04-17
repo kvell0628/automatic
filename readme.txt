@@ -1,4 +1,4 @@
-auto
+QCAD
 
 This is QCAD version 3.20.
 
