@@ -144,6 +144,36 @@
         getOrientation
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        setGlobalWidth
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setStartWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getStartWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setEndWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getEndWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        hasWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setStartWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getStartWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setEndWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getEndWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getExploded
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -151,6 +181,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         simplify
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        roundAllCorners
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         verifyTangency
@@ -166,6 +199,12 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getPolylineGen
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setElevation
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getElevation
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue toString
     (QScriptContext *context, QScriptEngine *engine)

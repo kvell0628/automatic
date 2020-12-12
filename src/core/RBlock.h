@@ -130,13 +130,11 @@ public:
     QString getLayoutName() const;
 
     virtual QPair<QVariant, RPropertyAttributes> getProperty(RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
     virtual bool setProperty(RPropertyTypeId propertyTypeId,
             const QVariant& value, RTransaction* transaction=NULL);
 
     virtual void setCustomProperty(const QString& title, const QString& key, const QVariant& value);
-
-    virtual bool isSelectedForPropertyEditing();
 
 public:
     static const QString modelSpaceName;

@@ -96,7 +96,7 @@
     <message>
         <location line="+3"/>
         <source>Astro</source>
-        <translation>au</translation>
+        <translation>Astronominen</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -112,7 +112,7 @@
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translation>Tason mukaan</translation>
     </message>
@@ -209,15 +209,15 @@
     <message>
         <location line="+1"/>
         <source>Others...</source>
-        <translation>Muut...</translation>
+        <translation>Muut ...</translation>
     </message>
 </context>
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
-        <translation>Nykyinen tason tunniste</translation>
+        <translation>Nykyisen tason tunniste</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -232,13 +232,13 @@
     <message>
         <location line="+1"/>
         <source>Dimension Font</source>
-        <translation>Mittakaavan fontti</translation>
+        <translation>Kirjasimen mitta</translation>
     </message>
 </context>
 <context>
     <name>REntity</name>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+92"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+94"/>
         <source>Block</source>
         <translation>Lohko</translation>
     </message>
@@ -255,7 +255,7 @@
     <message>
         <location filename="../src/core/RBlock.cpp" line="+65"/>
         <source>Pixel Unit</source>
-        <translation type="unfinished"></translation>
+        <translation>Pikseliyksikkö</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -266,7 +266,7 @@
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="-2"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -278,7 +278,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Origin</source>
-        <translation type="unfinished"></translation>
+        <translation>Nollapiste</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -314,7 +314,7 @@
     <message>
         <location line="+1"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Asettelu</translation>
     </message>
     <message>
         <location filename="../src/core/RBlockReferenceEntity.cpp" line="-2"/>
@@ -332,26 +332,31 @@
     <message>
         <location line="+1"/>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
+        <translation>Sarakkeet</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Rows</source>
-        <translation type="unfinished"></translation>
+        <translation>Rivit</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Column Spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Sarakeväli</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Row Spacing</source>
-        <translation type="unfinished"></translation>
+        <translation>Riviväli</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Määritteet</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translation>Tyyppi</translation>
     </message>
@@ -367,7 +372,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translation>Viivatyyppi</translation>
     </message>
@@ -391,7 +396,7 @@
     <message>
         <location line="+1"/>
         <source>Displayed Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytetty väri</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -404,7 +409,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Boundary</source>
-        <translation>Raja</translation>
+        <translation>Rajaviiva</translation>
     </message>
     <message>
         <location line="-3"/>
@@ -432,7 +437,7 @@
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Mukautettu</translation>
     </message>
@@ -447,6 +452,21 @@
         <translation>Suojattu</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation>Valittu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation>Näkymätön</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/core/REntity.cpp" line="+2"/>
         <location filename="../src/core/RLayout.cpp" line="+1"/>
         <location filename="../src/core/RViewportEntity.cpp" line="-2"/>
@@ -457,7 +477,7 @@
         <location line="+0"/>
         <location line="+1"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Koko</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -540,36 +560,47 @@
         <translation>Pystysuunta</translation>
     </message>
     <message>
-        <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
-        <source>Rotation</source>
+        <location line="+1"/>
+        <source>Backward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>On</source>
+        <source>Upside Down</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
+        <source>Rotation</source>
+        <translation>Kierto</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>On</source>
+        <translation>Päälle</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <source>View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä keskiosa</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>View Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Näytä kohde</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Overall</source>
-        <translation type="unfinished"></translation>
+        <translation>Yleistä</translation>
     </message>
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
         <translation>Nimi</translation>
@@ -582,12 +613,12 @@
     <message>
         <location filename="../src/core/RLayer.cpp" line="+1"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Pois</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frozen</source>
-        <translation type="unfinished">Jäädytetty</translation>
+        <translation>Jäädytetty</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -597,78 +628,78 @@
     <message>
         <location line="+1"/>
         <source>Collapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kutistettu</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Plottable</source>
-        <translation type="unfinished"></translation>
+        <translation>Piirturilla</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Snappable</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarttuva</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Off is Freeze</source>
-        <translation type="unfinished"></translation>
+        <translation>Pois on jäädytetty</translation>
     </message>
     <message>
         <location filename="../src/core/RLayout.cpp" line="+1"/>
         <source>Tab Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Välilehden järjestys</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Min Limits</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimirajat</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Max Limits</source>
-        <translation type="unfinished"></translation>
+        <translation>Maksimirajat</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Insertion Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Lisäysalusta</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Min Extents</source>
-        <translation type="unfinished"></translation>
+        <translation>Pienin määrä</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Max Extents</source>
-        <translation type="unfinished"></translation>
+        <translation>Suurin määrä</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
-        <translation type="unfinished"></translation>
+        <translation>Pyöreä (rekursiivinen) lohkoviittaus havaittu:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Block name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Lohkon nimi:</translation>
     </message>
 </context>
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translation>Vaatii valinnan</translation>
     </message>
@@ -697,11 +728,11 @@
     </message>
     <message>
         <source>Linetype</source>
-        <translation type="vanished">Viivan tyyppi</translation>
+        <translation type="vanished">Viivatyyppi</translation>
     </message>
     <message>
         <source>Lineweight</source>
-        <translation type="vanished">Viivan paksuus</translation>
+        <translation type="vanished">Viivapaksuus</translation>
     </message>
 </context>
 <context>
@@ -791,7 +822,7 @@
         <translation type="vanished">Reuna (suuri)</translation>
     </message>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Nimi</translation>
     </message>
@@ -803,7 +834,7 @@
     <message>
         <location line="+1"/>
         <source>Metric</source>
-        <translation>Metrijärjestelmä</translation>
+        <translation>Metrinen</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -814,14 +845,14 @@
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
-        <translation>Kerroksittain</translation>
+        <translation>Tason mukaan</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>By Block</source>
-        <translation>Lohkoittain</translation>
+        <translation>Lohkon mukaan</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -833,7 +864,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Border</source>
-        <translation>Raja</translation>
+        <translation>Reuna</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -847,7 +878,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Dash dot</source>
-        <translation>Viiva - piste</translation>
+        <translation>Pisteviiva</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -907,7 +938,7 @@
     <message>
         <location line="+1"/>
         <source>ISO long-dash triple-dot</source>
-        <translation>ISO pitkäviiva - kolmoispiste</translation>
+        <translation>ISO pitkä ajatusviiva - kolmoispiste</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -977,7 +1008,7 @@
     <message>
         <location line="+1"/>
         <source>Zig Zag</source>
-        <translation>Siksak kuvio</translation>
+        <translation>Siksak</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1029,122 +1060,122 @@
     <message>
         <location line="+1"/>
         <source>0.00mm</source>
-        <translation>0.00mm</translation>
+        <translation>0.00 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.05mm</source>
-        <translation>0.05mm</translation>
+        <translation>0.05 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.09mm</source>
-        <translation>0.09mm</translation>
+        <translation>0.09 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.13mm (ISO)</source>
-        <translation>0.13mm (ISO)</translation>
+        <translation>0.13 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.15mm</source>
-        <translation>0.15mm</translation>
+        <translation>0.15 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.18mm (ISO)</source>
-        <translation>0.18mm (ISO)</translation>
+        <translation>0.18 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.20mm</source>
-        <translation>0.20mm</translation>
+        <translation>0.20 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.25mm (ISO)</source>
-        <translation>0.25mm (ISO)</translation>
+        <translation>0.25 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.30mm</source>
-        <translation>0.30mm</translation>
+        <translation>0.30 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.35mm (ISO)</source>
-        <translation>0.35mm (ISO)</translation>
+        <translation>0.35 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.40mm</source>
-        <translation>0.40mm</translation>
+        <translation>0.40 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.50mm (ISO)</source>
-        <translation>0.50mm (ISO)</translation>
+        <translation>0.50 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.53mm</source>
-        <translation>0.53mm</translation>
+        <translation>0.53 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.60mm</source>
-        <translation>0.60mm</translation>
+        <translation>0.60 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.70mm (ISO)</source>
-        <translation>0.70mm (ISO)</translation>
+        <translation>0.70 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.80mm</source>
-        <translation>0.80mm</translation>
+        <translation>0.80 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>0.90mm</source>
-        <translation>0.90mm</translation>
+        <translation>0.90 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1.00mm (ISO)</source>
-        <translation>1.00mm (ISO)</translation>
+        <translation>1.00 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1.06mm</source>
-        <translation>1.06mm</translation>
+        <translation>1.06 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1.20mm</source>
-        <translation>1.20mm</translation>
+        <translation>1.20 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1.40mm (ISO)</source>
-        <translation>1.40mm (ISO)</translation>
+        <translation>1.40 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>1.58mm</source>
-        <translation>1.58mm</translation>
+        <translation>1.58 mm</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>2.00mm (ISO)</source>
-        <translation>2.00mm (ISO)</translation>
+        <translation>2.00 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>2.11mm</source>
-        <translation>2.11mm</translation>
+        <translation>2.11 mm</translation>
     </message>
 </context>
 <context>

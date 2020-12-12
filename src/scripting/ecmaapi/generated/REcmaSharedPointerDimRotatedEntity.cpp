@@ -14,7 +14,7 @@
             
         // includes for base ecma wrapper classes
         
-                  #include "REcmaSharedPointerDimensionEntity.h"
+                  #include "REcmaSharedPointerDimLinearEntity.h"
                  void REcmaSharedPointerDimRotatedEntity::initEcma(QScriptEngine& engine, QScriptValue* proto 
     
     ) 
@@ -29,10 +29,10 @@
     }
 
     
-        // primary base class RDimensionEntity:
+        // primary base class RDimLinearEntity:
         
             proto->setPrototype(engine.defaultPrototype(
-            qMetaTypeId<RDimensionEntityPointer>()));
+            qMetaTypeId<RDimLinearEntityPointer>()));
           
         /*
         
@@ -54,6 +54,9 @@
     // destroy:
     REcmaHelper::registerFunction(&engine, proto, destroy, "destroy");
     
+        // conversion for base class RDimLinearEntity
+        REcmaHelper::registerFunction(&engine, proto, getRDimLinearEntity, "getRDimLinearEntity");
+        
         // conversion for base class RDimensionEntity
         REcmaHelper::registerFunction(&engine, proto, getRDimensionEntity, "getRDimensionEntity");
         
@@ -125,6 +128,10 @@
             
             ctor.setProperty("PropertyProtected",
                 qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyProtected),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyWorkingSet",
+                qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyWorkingSet),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyType",
@@ -209,6 +216,22 @@
             
             ctor.setProperty("PropertyFontName",
                 qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyFontName),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyArrow1Flipped",
+                qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyArrow1Flipped),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyArrow2Flipped",
+                qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyArrow2Flipped),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyExtLineFix",
+                qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyExtLineFix),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyExtLineFixLength",
+                qScriptValueFromValue(&engine, RDimRotatedEntity::PropertyExtLineFixLength),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyDimensionLinePosX",
@@ -382,7 +405,16 @@
     
 
     // conversion functions for base classes:
-     QScriptValue REcmaSharedPointerDimRotatedEntity::getRDimensionEntity(QScriptContext *context,
+     QScriptValue REcmaSharedPointerDimRotatedEntity::getRDimLinearEntity(QScriptContext *context,
+            QScriptEngine *engine)
+        
+            {
+                RDimLinearEntity* cppResult =
+                    qscriptvalue_cast<RDimRotatedEntity*> (context->thisObject());
+                QScriptValue result = qScriptValueFromValue(engine, cppResult);
+                return result;
+            }
+             QScriptValue REcmaSharedPointerDimRotatedEntity::getRDimensionEntity(QScriptContext *context,
             QScriptEngine *engine)
         
             {
@@ -425,6 +457,8 @@
     {
         QStringList list;
         
+        list.append("RDimLinearEntity");
+    
         list.append("RDimensionEntity");
     
         list.append("REntity");
@@ -961,6 +995,105 @@
     a1
         ,
     a2);
+        // return type: QPair < QVariant , RPropertyAttributes >
+                // Pair of ...:
+                //result = REcmaHelper::pairToScriptValue(engine, cppResult);
+                QVariantList vl;
+                QVariant v;
+                
+                    // first type of pair is variant:
+                    if (QString(cppResult.first.typeName())=="RLineweight::Lineweight") {
+                        v.setValue((int)cppResult.first.value<RLineweight::Lineweight>());
+                    }
+                    else {
+                        v.setValue(cppResult.first);
+                    }
+                  
+
+                vl.append(v);
+                v.setValue(cppResult.second);
+                vl.append(v);
+                result = qScriptValueFromValue(engine, vl);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RDimRotatedEntity: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QPair < QVariant , RPropertyAttributes >'
+    QPair < QVariant , RPropertyAttributes > cppResult =
+        
+               self->getProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
         // return type: QPair < QVariant , RPropertyAttributes >
                 // Pair of ...:
                 //result = REcmaHelper::pairToScriptValue(engine, cppResult);

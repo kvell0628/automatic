@@ -183,7 +183,7 @@ Parsec</translatorcomment>
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translatorcomment>--exact match--
 --file: qcadguiqt_es.ts--
@@ -336,7 +336,7 @@ Otros...</translatorcomment>
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation>ID de la capa actual</translation>
     </message>
@@ -359,7 +359,7 @@ Otros...</translatorcomment>
 <context>
     <name>REntity</name>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+92"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+94"/>
         <source>Block</source>
         <translatorcomment>--exact match--
 --file: Block_es.ts--
@@ -382,7 +382,7 @@ Lista de bloques</translatorcomment>
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="+73"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -510,8 +510,13 @@ Introduzca ángulo en línea de cota:</translatorcomment>
         <translation>Espacio entre filas</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Atributos</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translatorcomment>--exact match--
 --file: es.po--
@@ -537,7 +542,7 @@ Lista de Capas</translatorcomment>
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translatorcomment>--exact match--
 --file: LinetypeSettings_es.ts--
@@ -555,7 +560,7 @@ Tipo de línea</translatorcomment>
         <location filename="../src/core/RLayer.cpp" line="+1"/>
         <source>Lineweight</source>
         <translatorcomment>--google--</translatorcomment>
-        <translation>Grosor de línea</translation>
+        <translation>Grosor de la línea</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -612,7 +617,7 @@ Colores
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Personalizado</translation>
     </message>
@@ -625,6 +630,21 @@ Colores
         <location line="+1"/>
         <source>Protected</source>
         <translation>Protegida</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation>Seleccionados</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation>Invisible</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation>Conjunto de trabajo</translation>
     </message>
     <message>
         <location filename="../src/core/REntity.cpp" line="+2"/>
@@ -720,6 +740,16 @@ Colores
         <translation>Vertical</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Backward</source>
+        <translation>Atrás</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Upside Down</source>
+        <translation>Al revés</translation>
+    </message>
+    <message>
         <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
         <source>Rotation</source>
         <translation>Rotación</translation>
@@ -750,6 +780,7 @@ Colores
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
         <translation>Nombre</translation>
@@ -839,7 +870,7 @@ Colores
         <translation type="vanished">Márgenes de trazado</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
         <translation>Se detectó una referencia de bloque circular (recursiva):</translation>
     </message>
@@ -852,7 +883,7 @@ Colores
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translatorcomment>--google--</translatorcomment>
         <translation>Requiere una selección</translation>
@@ -886,7 +917,7 @@ Colores
     </message>
     <message>
         <source>Lineweight</source>
-        <translation type="vanished">Grosor de línea</translation>
+        <translation type="vanished">Grosor de la línea</translation>
     </message>
 </context>
 <context>
@@ -1049,7 +1080,7 @@ Borde
         <translation type="vanished">2 rayas 1 punto (grande)</translation>
     </message>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Nombre</translation>
     </message>
@@ -1072,7 +1103,7 @@ Borde
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
         <translation>Por Capa</translation>
     </message>

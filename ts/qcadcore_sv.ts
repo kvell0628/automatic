@@ -112,14 +112,14 @@
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
-        <translation type="unfinished">Från lager</translation>
+        <translation>Från lager</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>By Block</source>
-        <translation type="unfinished">Av block</translation>
+        <translation>Från block</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -215,14 +215,14 @@
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation>Aktuellt lager ID</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Drawing Unit</source>
-        <translation type="unfinished">Ritningsenhet</translation>
+        <translation>Ritenhet</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -238,7 +238,7 @@
 <context>
     <name>REntity</name>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+92"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+94"/>
         <source>Block</source>
         <translation>Block</translation>
     </message>
@@ -255,7 +255,7 @@
     <message>
         <location filename="../src/core/RBlock.cpp" line="+65"/>
         <source>Pixel Unit</source>
-        <translation type="unfinished"></translation>
+        <translation>Pixel-enhet</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -266,7 +266,7 @@
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="-2"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -278,7 +278,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Origin</source>
-        <translation type="unfinished"></translation>
+        <translation>Origo</translation>
     </message>
     <message>
         <location line="-1"/>
@@ -314,7 +314,7 @@
     <message>
         <location line="+1"/>
         <source>Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>Layout</translation>
     </message>
     <message>
         <location filename="../src/core/RBlockReferenceEntity.cpp" line="-2"/>
@@ -350,8 +350,13 @@
         <translation>Radavstånd</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Attribut</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
@@ -367,7 +372,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translation>Linjetyp</translation>
     </message>
@@ -452,19 +457,34 @@
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Anpassad</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Handle</source>
-        <translation type="unfinished">Alias</translation>
+        <translation>Handtag</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Protected</source>
-        <translation type="unfinished">Skyddad</translation>
+        <translation>Skyddad</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/core/RTextBasedEntity.cpp" line="-3"/>
@@ -540,135 +560,146 @@
         <translation>Vertikal</translation>
     </message>
     <message>
-        <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
-        <source>Rotation</source>
+        <location line="+1"/>
+        <source>Backward</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>On</source>
+        <source>Upside Down</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
+        <source>Rotation</source>
+        <translation>Rotation</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>On</source>
+        <translation>På</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <source>View Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Vy-centrum</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>View Target</source>
-        <translation type="unfinished"></translation>
+        <translation>Vy - mål</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Overall</source>
-        <translation type="unfinished"></translation>
+        <translation>Övergripande</translation>
     </message>
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
-        <translation type="unfinished">Namn</translation>
+        <translation>Namn</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hidden</source>
-        <translation type="unfinished">Dold</translation>
+        <translation>Dold</translation>
     </message>
     <message>
         <location filename="../src/core/RLayer.cpp" line="+1"/>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>Av</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Frozen</source>
-        <translation type="unfinished"></translation>
+        <translation>Fryst</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Locked</source>
-        <translation type="unfinished">Låst</translation>
+        <translation>Låst</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Collapsed</source>
-        <translation type="unfinished"></translation>
+        <translation>Kollapsad</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Plottable</source>
-        <translation type="unfinished"></translation>
+        <translation>Plottningsbar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Snappable</source>
-        <translation type="unfinished"></translation>
+        <translation>Snäppbar</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Off is Freeze</source>
-        <translation type="unfinished"></translation>
+        <translation>Av är fryst</translation>
     </message>
     <message>
         <location filename="../src/core/RLayout.cpp" line="+1"/>
         <source>Tab Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Flikordning</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Min Limits</source>
-        <translation type="unfinished"></translation>
+        <translation>Min-gränser</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Max Limits</source>
-        <translation type="unfinished"></translation>
+        <translation>Max-gränser</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Insertion Base</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Införande</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Min Extents</source>
-        <translation type="unfinished"></translation>
+        <translation>Min utsträckning</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
         <source>Max Extents</source>
-        <translation type="unfinished"></translation>
+        <translation>Max utsträckning</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
-        <translation type="unfinished"></translation>
+        <translation>Detekterat cirkulärt beroende mellan block:</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Block name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Blocknamn:</translation>
     </message>
 </context>
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translation>Kräver markering</translation>
     </message>
@@ -703,7 +734,7 @@
 <context>
     <name>RLinetype</name>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
@@ -726,19 +757,19 @@
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
-        <translation type="unfinished">Av Lager</translation>
+        <translation>Från Lager</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>By Block</source>
-        <translation type="unfinished">Av Block</translation>
+        <translation>Från Block</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Continuous</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontinuerlig</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -794,7 +825,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Phantom</source>
-        <translation type="unfinished">Skugga</translation>
+        <translation>Skugga</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -915,7 +946,7 @@
         <location line="+1"/>
         <source>Drainage Reversed</source>
         <translatorcomment>Say what now? word to word translation here. I have no idéa what reversed drainage is..</translatorcomment>
-        <translation type="unfinished">Omvänd Dränering</translation>
+        <translation>Omvänd dränering</translation>
     </message>
 </context>
 <context>
@@ -923,12 +954,12 @@
     <message>
         <location filename="../src/core/RLineweight.cpp" line="+35"/>
         <source>By Layer</source>
-        <translation type="unfinished">Av lager</translation>
+        <translation>Från lager</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>By Block</source>
-        <translation type="unfinished">Av block</translation>
+        <translation>Från block</translation>
     </message>
     <message>
         <location line="+1"/>

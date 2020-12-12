@@ -29,6 +29,7 @@
 RPropertyTypeId RImageEntity::PropertyCustom;
 RPropertyTypeId RImageEntity::PropertyHandle;
 RPropertyTypeId RImageEntity::PropertyProtected;
+RPropertyTypeId RImageEntity::PropertyWorkingSet;
 RPropertyTypeId RImageEntity::PropertyType;
 RPropertyTypeId RImageEntity::PropertyBlock;
 RPropertyTypeId RImageEntity::PropertyLayer;
@@ -43,6 +44,10 @@ RPropertyTypeId RImageEntity::PropertyFileName;
 RPropertyTypeId RImageEntity::PropertyInsertionPointX;
 RPropertyTypeId RImageEntity::PropertyInsertionPointY;
 RPropertyTypeId RImageEntity::PropertyInsertionPointZ;
+RPropertyTypeId RImageEntity::PropertyUX;
+RPropertyTypeId RImageEntity::PropertyUY;
+RPropertyTypeId RImageEntity::PropertyVX;
+RPropertyTypeId RImageEntity::PropertyVY;
 RPropertyTypeId RImageEntity::PropertyScaleFactorX;
 RPropertyTypeId RImageEntity::PropertyScaleFactorY;
 RPropertyTypeId RImageEntity::PropertyWidth;
@@ -73,6 +78,7 @@ void RImageEntity::init() {
     RImageEntity::PropertyCustom.generateId(typeid(RImageEntity), RObject::PropertyCustom);
     RImageEntity::PropertyHandle.generateId(typeid(RImageEntity), RObject::PropertyHandle);
     RImageEntity::PropertyProtected.generateId(typeid(RImageEntity), RObject::PropertyProtected);
+    RImageEntity::PropertyWorkingSet.generateId(typeid(RImageEntity), RObject::PropertyWorkingSet);
     RImageEntity::PropertyType.generateId(typeid(RImageEntity), REntity::PropertyType);
     RImageEntity::PropertyBlock.generateId(typeid(RImageEntity), REntity::PropertyBlock);
     RImageEntity::PropertyLayer.generateId(typeid(RImageEntity), REntity::PropertyLayer);
@@ -85,17 +91,23 @@ void RImageEntity::init() {
 
     RImageEntity::PropertyFileName.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "File"));
 
-    RImageEntity::PropertyInsertionPointX.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "Position"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RImageEntity::PropertyInsertionPointY.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "Position"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RImageEntity::PropertyInsertionPointZ.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "Position"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RImageEntity::PropertyInsertionPointX.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "Position"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RImageEntity::PropertyInsertionPointY.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "Position"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RImageEntity::PropertyInsertionPointZ.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "Position"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 
-    RImageEntity::PropertyScaleFactorX.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Width Factor"));
-    RImageEntity::PropertyScaleFactorY.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Height Factor"));
+    RImageEntity::PropertyUX.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "U"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RImageEntity::PropertyUY.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "U"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
 
-    RImageEntity::PropertyWidth.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Width"));
-    RImageEntity::PropertyHeight.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Height"));
+    RImageEntity::PropertyVX.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "V"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RImageEntity::PropertyVY.generateId(typeid(RImageEntity), QT_TRANSLATE_NOOP("REntity", "V"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
 
-    RImageEntity::PropertyAngle.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Angle"));
+    RImageEntity::PropertyScaleFactorX.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Width Factor"), false, RPropertyAttributes::Geometry);
+    RImageEntity::PropertyScaleFactorY.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Height Factor"), false, RPropertyAttributes::Geometry);
+
+    RImageEntity::PropertyWidth.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Width"), false, RPropertyAttributes::Geometry);
+    RImageEntity::PropertyHeight.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Height"), false, RPropertyAttributes::Geometry);
+
+    RImageEntity::PropertyAngle.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Angle"), false, RPropertyAttributes::Geometry);
 
     RImageEntity::PropertyFade.generateId(typeid(RImageEntity), "", QT_TRANSLATE_NOOP("REntity", "Fade"));
 }
@@ -114,6 +126,12 @@ bool RImageEntity::setProperty(RPropertyTypeId propertyTypeId,
     ret = ret || RObject::setMember(data.insertionPoint.x, value, PropertyInsertionPointX == propertyTypeId);
     ret = ret || RObject::setMember(data.insertionPoint.y, value, PropertyInsertionPointY == propertyTypeId);
     ret = ret || RObject::setMember(data.insertionPoint.z, value, PropertyInsertionPointZ == propertyTypeId);
+
+    ret = ret || RObject::setMember(data.uVector.x, value, PropertyUX == propertyTypeId);
+    ret = ret || RObject::setMember(data.uVector.y, value, PropertyUY == propertyTypeId);
+
+    ret = ret || RObject::setMember(data.vVector.x, value, PropertyVX == propertyTypeId);
+    ret = ret || RObject::setMember(data.vVector.y, value, PropertyVY == propertyTypeId);
 
     if (PropertyScaleFactorX == propertyTypeId) {
         double s = fabs(value.toDouble());
@@ -153,30 +171,51 @@ bool RImageEntity::setProperty(RPropertyTypeId propertyTypeId,
 
 
 QPair<QVariant, RPropertyAttributes> RImageEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
+
     if (propertyTypeId == PropertyFileName) {
         return qMakePair(QVariant(data.fileName), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyInsertionPointX) {
+    }
+
+    else if (propertyTypeId == PropertyInsertionPointX) {
         return qMakePair(QVariant(data.insertionPoint.x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyInsertionPointY) {
         return qMakePair(QVariant(data.insertionPoint.y), RPropertyAttributes());
     } else if (propertyTypeId == PropertyInsertionPointZ) {
         return qMakePair(QVariant(data.insertionPoint.z), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyScaleFactorX) {
-        return qMakePair(QVariant(data.uVector.getMagnitude()), RPropertyAttributes());
+    }
+
+    else if (propertyTypeId == PropertyUX) {
+        return qMakePair(QVariant(data.uVector.x), RPropertyAttributes(RPropertyAttributes::Invisible));
+    } else if (propertyTypeId == PropertyUY) {
+        return qMakePair(QVariant(data.uVector.y), RPropertyAttributes(RPropertyAttributes::Invisible));
+    } else if (propertyTypeId == PropertyVX) {
+        return qMakePair(QVariant(data.vVector.x), RPropertyAttributes(RPropertyAttributes::Invisible));
+    } else if (propertyTypeId == PropertyVY) {
+        return qMakePair(QVariant(data.vVector.y), RPropertyAttributes(RPropertyAttributes::Invisible));
+    }
+
+    else if (propertyTypeId == PropertyScaleFactorX) {
+        return qMakePair(QVariant(data.uVector.getMagnitude()), RPropertyAttributes(RPropertyAttributes::Redundant));
     } else if (propertyTypeId == PropertyScaleFactorY) {
-        return qMakePair(QVariant(data.vVector.getMagnitude()), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyWidth) {
-        return qMakePair(QVariant(data.uVector.getMagnitude() * data.getImage().width()), RPropertyAttributes());
+        return qMakePair(QVariant(data.vVector.getMagnitude()), RPropertyAttributes(RPropertyAttributes::Redundant));
+    }
+
+    else if (propertyTypeId == PropertyWidth) {
+        return qMakePair(QVariant(data.uVector.getMagnitude() * data.getImage().width()), RPropertyAttributes(RPropertyAttributes::Redundant));
     } else if (propertyTypeId == PropertyHeight) {
-        return qMakePair(QVariant(data.vVector.getMagnitude() * data.getImage().height()), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyAngle) {
-        return qMakePair(QVariant(data.uVector.getAngle()), RPropertyAttributes(RPropertyAttributes::Angle));
-    } else if (propertyTypeId == PropertyFade) {
+        return qMakePair(QVariant(data.vVector.getMagnitude() * data.getImage().height()), RPropertyAttributes(RPropertyAttributes::Redundant));
+    }
+
+    else if (propertyTypeId == PropertyAngle) {
+        return qMakePair(QVariant(data.uVector.getAngle()), RPropertyAttributes(RPropertyAttributes::Angle|RPropertyAttributes::Redundant));
+    }
+
+    else if (propertyTypeId == PropertyFade) {
         return qMakePair(QVariant(data.fade), RPropertyAttributes(RPropertyAttributes::Percentage));
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 

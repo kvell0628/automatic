@@ -130,6 +130,10 @@
             
             REcmaHelper::registerFunction(&engine, proto, getExploded, "getExploded");
             
+            REcmaHelper::registerFunction(&engine, proto, getDimLeaderBlockId, "getDimLeaderBlockId");
+            
+            REcmaHelper::registerFunction(&engine, proto, setDimLeaderBlockId, "setDimLeaderBlockId");
+            
             REcmaHelper::registerFunction(&engine, proto, exportEntity, "exportEntity");
             
         engine.setDefaultPrototype(
@@ -159,6 +163,10 @@
             
             ctor.setProperty("PropertyProtected",
                 qScriptValueFromValue(&engine, RLeaderEntity::PropertyProtected),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyWorkingSet",
+                qScriptValueFromValue(&engine, RLeaderEntity::PropertyWorkingSet),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyType",
@@ -976,6 +984,105 @@
     a1
         ,
     a2);
+        // return type: QPair < QVariant , RPropertyAttributes >
+                // Pair of ...:
+                //result = REcmaHelper::pairToScriptValue(engine, cppResult);
+                QVariantList vl;
+                QVariant v;
+                
+                    // first type of pair is variant:
+                    if (QString(cppResult.first.typeName())=="RLineweight::Lineweight") {
+                        v.setValue((int)cppResult.first.value<RLineweight::Lineweight>());
+                    }
+                    else {
+                        v.setValue(cppResult.first);
+                    }
+                  
+
+                vl.append(v);
+                v.setValue(cppResult.second);
+                vl.append(v);
+                result = qScriptValueFromValue(engine, vl);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RLeaderEntity: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QPair < QVariant , RPropertyAttributes >'
+    QPair < QVariant , RPropertyAttributes > cppResult =
+        
+               self->getProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
         // return type: QPair < QVariant , RPropertyAttributes >
                 // Pair of ...:
                 //result = REcmaHelper::pairToScriptValue(engine, cppResult);
@@ -2609,6 +2716,110 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaLeaderEntity::getExploded", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaLeaderEntity::getDimLeaderBlockId
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaLeaderEntity::getDimLeaderBlockId", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaLeaderEntity::getDimLeaderBlockId";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RLeaderEntity* self = 
+                        getSelf("getDimLeaderBlockId", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'REntity::Id'
+    REntity::Id cppResult =
+        
+               self->getDimLeaderBlockId();
+        // return type: REntity::Id
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RLeaderEntity.getDimLeaderBlockId().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaLeaderEntity::getDimLeaderBlockId", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaLeaderEntity::setDimLeaderBlockId
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaLeaderEntity::setDimLeaderBlockId", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaLeaderEntity::setDimLeaderBlockId";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RLeaderEntity* self = 
+                        getSelf("setDimLeaderBlockId", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isNumber()
+        ) /* type: REntity::Id */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    REntity::Id
+                    a0 =
+                    (REntity::Id)
+                    (int)
+                    context->argument( 0 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setDimLeaderBlockId(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RLeaderEntity.setDimLeaderBlockId().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaLeaderEntity::setDimLeaderBlockId", context, engine);
             return result;
         }
          QScriptValue

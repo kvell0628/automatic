@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Modify.js");
+include("scripts/Modify/Modify.js");
 include("scripts/ShapeAlgorithms.js");
 
 function BreakOut(guiAction) {
@@ -54,12 +54,15 @@ BreakOut.prototype.setState = function(state) {
         this.entity = undefined;
         this.shape = undefined;
         this.getDocumentInterface().setClickMode(RAction.PickEntity);
+        var tr;
         if (RSpline.hasProxy() && RPolyline.hasProxy()) {
-            this.setLeftMouseTip(qsTr("Choose line, arc, circle, ellipse, spline or polyline segment"));
+            tr = qsTr("Choose line, arc, circle, ellipse, spline or polyline segment");
         }
         else {
-            this.setLeftMouseTip(qsTr("Choose line, arc, circle or ellipse segment"));
+            tr = qsTr("Choose line, arc, circle or ellipse segment");
         }
+        this.setLeftMouseTip(tr);
+        this.setCommandPrompt(tr);
         this.setRightMouseTip(EAction.trCancel);
         break;
     }
@@ -237,7 +240,7 @@ BreakOut.breakOut = function(op, entity, pos, extend, removeSegment) {
     }
 
     if (!extend) {
-        if (!isNull(newSegments[0])) {
+        if (!BreakOut.drop(newSegments[0])) {
             e = shapeToEntity(entity.getDocument(), newSegments[0]);
             if (!isNull(e)) {
                 e.copyAttributesFrom(entity.data());
@@ -245,7 +248,7 @@ BreakOut.breakOut = function(op, entity, pos, extend, removeSegment) {
             }
         }
 
-        if (!isNull(newSegments[1])/* && !removeSegment*/) {
+        if (!BreakOut.drop(newSegments[1])) {
             e = shapeToEntity(entity.getDocument(), newSegments[1]);
             if (!isNull(e)) {
                 e.copyAttributesFrom(entity.data());
@@ -255,4 +258,19 @@ BreakOut.breakOut = function(op, entity, pos, extend, removeSegment) {
     }
 
     return true;
+};
+
+BreakOut.drop = function(shape) {
+    if (isNull(shape)) {
+        return true;
+    }
+
+    if (isLineShape(shape) || isArcShape(shape)) {
+        if (shape.getLength()<=RS.PointTolerance) {
+            // drop zero length segments:
+            return true;
+        }
+    }
+
+    return false;
 };

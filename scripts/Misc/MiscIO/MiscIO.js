@@ -23,7 +23,7 @@
  *
  * \brief This module contains misc import export tools..
  */
-include("../Misc.js");
+include("scripts/Misc/Misc.js");
 
 /**
  * \class MiscIO
@@ -62,7 +62,7 @@ MiscIO.getCadToolBarPanel = function() {
         action.objectName = actionName;
         action.setRequiresDocument(true);
         //action.setIcon(MiscIO.includeBasePath + "/MiscIO.svg");
-        action.setStatusTip(qsTr("Show misc import / export tools"));
+        //action.setStatusTip(qsTr("Show misc import / export tools"));
         action.setNoState();
         action.setDefaultCommands(["misciomenu"]);
         action.setGroupSortOrder(90);

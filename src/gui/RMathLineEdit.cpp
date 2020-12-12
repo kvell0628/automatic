@@ -17,11 +17,14 @@
  * along with QCAD.
  */
 #include <QColor>
+#include <QComboBox>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QPalette>
 #include <QTimer>
 #include <QToolTip>
 
+#include "RDocument.h"
 #include "RMainWindowQt.h"
 #include "RMath.h"
 #include "RMathLineEdit.h"
@@ -36,15 +39,13 @@ RMathLineEdit::RMathLineEdit(QWidget* parent) :
     noResultInToolTip(false) {
 
     oriPalette = palette();
+
     slotTextChanged(text());
     originalToolTip = QString();
     QLineEdit::setToolTip("");
 
-    connect(this, SIGNAL(textChanged(QString)),
-       this, SLOT(slotTextChanged(QString)));
-
-    connect(this, SIGNAL(textEdited(QString)),
-       this, SLOT(slotTextEdited(QString)));
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(slotTextChanged(QString)));
+    connect(this, SIGNAL(textEdited(QString)), this, SLOT(slotTextEdited(QString)));
 }
 
 //int RMathLineEdit::getDefaultUnit() {
@@ -67,31 +68,43 @@ void RMathLineEdit::slotTextChanged(const QString& text) {
     bool hasError = false;
     bool hasFormula = false;
 
+    // most common case (double value):
     if (QRegExp("^[+-]?\\d*\\.?\\d+$").exactMatch(text)) {
         value = text.toDouble();
         hasError = false;
         hasFormula = false;
     }
+
+    // advanced cases (formulas, variables, functions, etc.):
     else {
-        value = RMath::eval(text);
+        RDocument* doc = NULL;
+        RMainWindow* appWin = RMainWindow::getMainWindow();
+        if (appWin!=NULL) {
+            doc = appWin->getDocument();
+        }
+
+        if (doc!=NULL) {
+            // this calls RMath::eval, so it's OK to call RMath::hasError after:
+            value = doc->eval(text);
+        }
+        else {
+            value = RMath::eval(text);
+        }
         hasError = RMath::hasError();
         hasFormula = true;
     }
 
-    QPalette p = palette();
     if (hasError) {
         error = RMath::getError();
         //res = defaultValue;
         // special case: don't report an error for text between *
         // (e.g. *VARIES* in property editor)
         if (!(text.startsWith('*') && text.endsWith('*'))) {
-            p.setColor(QPalette::Text, QColor(Qt::red));
             setToolTip(error);
         }
     }
     else {
         error = "";
-        p.setColor(QPalette::Text, QColor(Qt::black));
         QString str;
         //str.sprintf("%.6g%s",value,(const char*)RUnit::unitToSymbol(defaultUnit).toUtf8());
         str.sprintf("%.6g",value);
@@ -99,8 +112,11 @@ void RMathLineEdit::slotTextChanged(const QString& text) {
     }
 
     if (isEnabled()) {
-        setPalette(p);
-    } else {
+        setTextColor(hasError);
+    }
+    else {
+        // update text color of line edit / math line combo:
+        setTextColor(false);
         setPalette(oriPalette);
     }
 
@@ -227,7 +243,7 @@ QString RMathLineEdit::getError() {
 void RMathLineEdit::clearError() {
     error = "";
     QPalette p = palette();
-    p.setColor(QPalette::Text, QColor(Qt::black));
+    p.setColor(QPalette::Active, QPalette::Text, getNormalTextColor());
     setPalette(p);
 }
 
@@ -236,6 +252,11 @@ void RMathLineEdit::setToolTip(const QString& toolTip) {
     if (originalToolTip.isEmpty() && error.isEmpty() && toolTip.isEmpty()) {
         QLineEdit::setToolTip("");
         return;
+    }
+
+    QString textCol = palette().toolTipText().color().name();
+    if (RSettings::isDarkMode()) {
+        textCol = "white";
     }
 
     QLineEdit::setToolTip(
@@ -249,9 +270,25 @@ void RMathLineEdit::setToolTip(const QString& toolTip) {
         )
         .arg(originalToolTip)
         .arg(originalToolTip.isEmpty() ? "" : "<br>")
-        .arg(error.isEmpty() ? "black" : "red")
+        .arg(error.isEmpty() ? textCol : "red")
         .arg(toolTip)
     );
+}
+
+QColor RMathLineEdit::getNormalTextColor() const {
+    return oriPalette.color(QPalette::Normal, QPalette::WindowText);
+}
+
+void RMathLineEdit::setTextColor(bool error) {
+    QPalette p = palette();
+    p.setColor(QPalette::Active, QPalette::Text, QColor(error ? Qt::red : getNormalTextColor()));
+    setPalette(p);
+
+    QWidget* parent = parentWidget();
+    QComboBox* cb = dynamic_cast<QComboBox*>(parent);
+    if (cb!=NULL) {
+        cb->setPalette(p);
+    }
 }
 
 void RMathLineEdit::keyPressEvent(QKeyEvent* event) {

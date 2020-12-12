@@ -23,6 +23,7 @@
 RPropertyTypeId RSolidEntity::PropertyCustom;
 RPropertyTypeId RSolidEntity::PropertyHandle;
 RPropertyTypeId RSolidEntity::PropertyProtected;
+RPropertyTypeId RSolidEntity::PropertyWorkingSet;
 RPropertyTypeId RSolidEntity::PropertyType;
 RPropertyTypeId RSolidEntity::PropertyBlock;
 RPropertyTypeId RSolidEntity::PropertyLayer;
@@ -61,6 +62,7 @@ void RSolidEntity::init() {
     RSolidEntity::PropertyCustom.generateId(typeid(RSolidEntity), RObject::PropertyCustom);
     RSolidEntity::PropertyHandle.generateId(typeid(RSolidEntity), RObject::PropertyHandle);
     RSolidEntity::PropertyProtected.generateId(typeid(RSolidEntity), RObject::PropertyProtected);
+    RSolidEntity::PropertyWorkingSet.generateId(typeid(RSolidEntity), RObject::PropertyWorkingSet);
     RSolidEntity::PropertyType.generateId(typeid(RSolidEntity), REntity::PropertyType);
     RSolidEntity::PropertyBlock.generateId(typeid(RSolidEntity), REntity::PropertyBlock);
     RSolidEntity::PropertyLayer.generateId(typeid(RSolidEntity), REntity::PropertyLayer);
@@ -158,7 +160,7 @@ bool RSolidEntity::setProperty(RPropertyTypeId propertyTypeId,
 
 QPair<QVariant, RPropertyAttributes> RSolidEntity::getProperty(
         RPropertyTypeId& propertyTypeId, bool humanReadable,
-        bool noAttributes) {
+        bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyPoint1X) {
         return qMakePair(QVariant(data.getVertexAt(0).x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyPoint1Y) {
@@ -198,7 +200,7 @@ QPair<QVariant, RPropertyAttributes> RSolidEntity::getProperty(
         return qMakePair(QVariant(data.getLength()), RPropertyAttributes(RPropertyAttributes::Sum));
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 

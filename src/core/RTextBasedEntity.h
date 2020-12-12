@@ -67,6 +67,8 @@ public:
     static RPropertyTypeId PropertyLineSpacingFactor;
     static RPropertyTypeId PropertyHAlign;
     static RPropertyTypeId PropertyVAlign;
+    static RPropertyTypeId PropertyBackward;
+    static RPropertyTypeId PropertyUpsideDown;
 
 public:
     RTextBasedEntity(RDocument* document);
@@ -82,13 +84,15 @@ public:
 
     virtual const RTextBasedData& getData() const = 0;
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual void exportEntity(RExporter& e, bool preview=false, bool forceSelected=false) const;
+
+    virtual QSharedPointer<REntity> scaleNonUniform(const RVector& scaleFactors, const RVector& center);
 
     QList<RPainterPath> getPainterPaths(bool draft = false) const {
         return getData().getPainterPaths(draft);
@@ -120,6 +124,22 @@ public:
 
     void setItalic(bool on) {
         getData().setItalic(on);
+    }
+
+    bool isBackward() const {
+        return getData().isBackward();
+    }
+
+    void setBackward(bool on) {
+        getData().setBackward(on);
+    }
+
+    bool isUpsideDown() const {
+        return getData().isUpsideDown();
+    }
+
+    void setUpsideDown(bool on) {
+        getData().setUpsideDown(on);
     }
 
     RVector getPosition() const {
@@ -253,7 +273,7 @@ public:
         getData().sync(other.getData());
     }
 
-    QList<RTextBasedData> getSimpleTextBlocks() const {
+    QList<RTextBasedData> getSimpleTextBlocks() {
         return getData().getSimpleTextBlocks();
     }
 

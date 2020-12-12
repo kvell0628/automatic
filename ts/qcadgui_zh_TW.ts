@@ -14,7 +14,7 @@
     <message>
         <location filename="../src/gui/REventHandler.cpp" line="+195"/>
         <source>Grid</source>
-        <translation type="unfinished"></translation>
+        <translation>網格</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -60,7 +60,7 @@
 <context>
     <name>RMathLineEdit</name>
     <message>
-        <location filename="../src/gui/RMathLineEdit.cpp" line="+156"/>
+        <location filename="../src/gui/RMathLineEdit.cpp" line="+172"/>
         <source>Invalid</source>
         <translation type="unfinished"></translation>
     </message>

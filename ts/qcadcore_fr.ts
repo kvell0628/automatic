@@ -159,7 +159,7 @@ Gigamètre</translatorcomment>
         <translatorcomment>--exact match--
 --file: UnitSettings_fr.ts--
 Astro</translatorcomment>
-        <translation>Astro</translation>
+        <translation>Astronomique</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -181,7 +181,7 @@ Parsec</translatorcomment>
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
@@ -237,7 +237,7 @@ Cyan</translatorcomment>
         <translatorcomment>--exact match--
 --file: designer_fr.ts--
 Bleu
-Bleu : 
+Bleu&#xa0;: 
 Bluetooth</translatorcomment>
         <translation>Bleu</translation>
     </message>
@@ -331,7 +331,7 @@ Autres...</translatorcomment>
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation>ID du calque actuel</translation>
     </message>
@@ -354,7 +354,7 @@ Autres...</translatorcomment>
 <context>
     <name>REntity</name>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+92"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+94"/>
         <source>Block</source>
         <translatorcomment>--exact match--
 --file: Block_fr.ts--
@@ -377,7 +377,7 @@ Liste des blocs</translatorcomment>
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="+73"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -505,8 +505,13 @@ Indiquer l&apos;angle de la ligne de cote :</translatorcomment>
         <translation>Espacement des lignes</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Attributs</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translatorcomment>--exact match--
 --file: qt_fr.ts--
@@ -531,7 +536,7 @@ Liste des calques</translatorcomment>
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translatorcomment>--exact match--
 --file: LinetypeSettings_fr.ts--
@@ -606,7 +611,7 @@ Ouvrir la boîte de dialogue des couleurs</translatorcomment>
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Personnalisé</translation>
     </message>
@@ -619,6 +624,21 @@ Ouvrir la boîte de dialogue des couleurs</translatorcomment>
         <location line="+1"/>
         <source>Protected</source>
         <translation>Protégé</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation>Sélectionné</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation>Invisible</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation>Ensemble de travail</translation>
     </message>
     <message>
         <location filename="../src/core/REntity.cpp" line="+2"/>
@@ -714,6 +734,16 @@ Ouvrir la boîte de dialogue des couleurs</translatorcomment>
         <translation>Vertical</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Backward</source>
+        <translation>En arrière</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Upside Down</source>
+        <translation>À l&apos;envers</translation>
+    </message>
+    <message>
         <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
         <source>Rotation</source>
         <translation>Rotation</translation>
@@ -739,11 +769,12 @@ Ouvrir la boîte de dialogue des couleurs</translatorcomment>
     <message>
         <location line="+2"/>
         <source>Overall</source>
-        <translation>Overall</translation>
+        <translation>Global</translation>
     </message>
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
         <translation>Nom</translation>
@@ -833,7 +864,7 @@ Ouvrir la boîte de dialogue des couleurs</translatorcomment>
         <translation type="vanished">Marges des tracés</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
         <translation>Une référence de bloc circulaire (récursive) a été détectée :</translation>
     </message>
@@ -846,7 +877,7 @@ Ouvrir la boîte de dialogue des couleurs</translatorcomment>
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translatorcomment>--google--</translatorcomment>
         <translation>Demande une sélection</translation>
@@ -1044,7 +1075,7 @@ Bordure (grande)</translatorcomment>
         <translation type="vanished">Bordure (grande)</translation>
     </message>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
@@ -1067,7 +1098,7 @@ Bordure (grande)</translatorcomment>
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
         <translation>Par calque</translation>
     </message>
@@ -1328,7 +1359,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 0.13mm (ISO)</translatorcomment>
-        <translation>0.13mm (ISO)</translation>
+        <translation>0,13 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1344,7 +1375,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 0.18mm (ISO)</translatorcomment>
-        <translation>0.18mm (ISO)</translation>
+        <translation>0,18 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1360,7 +1391,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 0.25mm (ISO)</translatorcomment>
-        <translation>0.25mm (ISO)</translation>
+        <translation>0,25 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1376,7 +1407,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 0.35mm (ISO)</translatorcomment>
-        <translation>0.35mm (ISO)</translation>
+        <translation>0,35 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1392,7 +1423,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 0.50mm (ISO)</translatorcomment>
-        <translation>0.50mm (ISO)</translation>
+        <translation>0,50 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1416,7 +1447,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 0.70mm (ISO)</translatorcomment>
-        <translation>0.70mm (ISO)</translation>
+        <translation>0,70 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1440,7 +1471,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 1.00mm (ISO)</translatorcomment>
-        <translation>1.00mm (ISO)</translation>
+        <translation>1,00 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1464,7 +1495,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 1.40mm (ISO)</translatorcomment>
-        <translation>1.40mm (ISO)</translation>
+        <translation>1,40 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1480,7 +1511,7 @@ Valeurs par &amp;défaut</translatorcomment>
         <translatorcomment>--exact match--
 --file: qcadguiqt_fr.ts--
 2.00mm (ISO)</translatorcomment>
-        <translation>2.00mm (ISO)</translation>
+        <translation>2,00 mm (ISO)</translation>
     </message>
     <message>
         <location line="+1"/>

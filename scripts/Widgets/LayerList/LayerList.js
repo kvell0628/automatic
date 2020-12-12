@@ -69,7 +69,7 @@ RLayerListQt.prototype.contextMenuEvent = function(e) {
     e.ignore();
 };
 
-RLayerListQt.prototype.updateLayers = function(documentInterface) {
+RLayerListQt.prototype.updateLayers = function(documentInterface, previousLayerId) {
     this.di = documentInterface;
     var layer;
 
@@ -89,9 +89,9 @@ RLayerListQt.prototype.updateLayers = function(documentInterface) {
             continue;
         }
         var item = new QListWidgetItem(layer.getName(), this);
-        var iconName = this.basePath
+        var iconName = autoIconPath(this.basePath
                 + "/layerstatus_%1%2.svg".arg(Number(layer.isFrozen()))
-                .arg(Number(layer.isLocked()));
+                .arg(Number(layer.isLocked())));
         item.setIcon(new QIcon(iconName));
         if (layer.isProtected()) {
             item.setData(Qt.UserRole, true);
@@ -188,10 +188,10 @@ RLayerListQt.prototype.layerActivated = function() {
 
 
 function LayerList(guiAction) {
-    Widgets.call(this, guiAction);
+    EAction.call(this, guiAction);
 }
 
-LayerList.prototype = new Widgets();
+LayerList.prototype = new EAction();
 
 LayerList.getPreferencesCategory = function() {
     return [ qsTr("Widgets"), qsTr("Layer List") ];
@@ -199,7 +199,7 @@ LayerList.getPreferencesCategory = function() {
 
 LayerList.applyPreferences = function(doc, mdiChild) {
     var appWin = RMainWindowQt.getMainWindow();
-    appWin.notifyLayerListeners(EAction.getDocumentInterface());
+    appWin.notifyLayerListeners(EAction.getDocumentInterface(), []);
 
     //if (RSettings.getBoolValue("LayerList/AlternatingRowColors", false)===true) {
         var layerList = appWin.findChild("LayerList");
@@ -212,7 +212,7 @@ LayerList.applyPreferences = function(doc, mdiChild) {
  * Shows / hides the layer list.
  */
 LayerList.prototype.beginEvent = function() {
-    Widgets.prototype.beginEvent.call(this);
+    EAction.prototype.beginEvent.call(this);
 
     var appWin = RMainWindowQt.getMainWindow();
     var dock = appWin.findChild("LayerListDock");

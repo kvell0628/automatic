@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Modify.js");
+include("scripts/Modify/Modify.js");
 include("scripts/ShapeAlgorithms.js");
 
 function BreakOutManual(guiAction) {
@@ -92,7 +92,7 @@ BreakOutManual.prototype.setState = function(state) {
         var trSecondPoint = qsTr("First break point");
         this.setCommandPrompt(trSecondPoint);
         this.setLeftMouseTip(trSecondPoint);
-        this.setRightMouseTip(qsTr("Done"));
+        this.setRightMouseTip(EAction.trDone);
         break;
     case BreakOutManual.State.SettingPoint2:
         this.point4 = undefined;
@@ -100,14 +100,14 @@ BreakOutManual.prototype.setState = function(state) {
         var trThirdPoint = qsTr("Second break point");
         this.setCommandPrompt(trThirdPoint);
         this.setLeftMouseTip(trThirdPoint);
-        this.setRightMouseTip(qsTr("Done"));
+        this.setRightMouseTip(EAction.trDone);
         break;
     case BreakOutManual.State.SelectCircleEllipsePart:
         di.setClickMode(RAction.PickEntity);
         var cepos = qsTr("Click the part of the circle or ellipse to remove");
         this.setCommandPrompt(cepos);
         this.setLeftMouseTip(cepos);
-        this.setRightMouseTip(qsTr("Done"));
+        this.setRightMouseTip(EAction.trDone);
         break;
     }
 
@@ -256,7 +256,7 @@ BreakOutManual.prototype.pickCoordinate = function(event, preview) {
 
 BreakOutManual.prototype.getOperation = function(preview) {
     //var newSegments = BreakOutManual.autoTrim(this.shape, this.point2, this.point4);
-    var newSegments = ShapeAlgorithms.autoSplitManual(this.shape, undefined, undefined, this.point2, this.point4);
+    var newSegments = ShapeAlgorithms.autoSplitManual(this.shape, undefined, undefined, this.point2, this.point4, RVector.getAverage(this.point2, this.point4));
 
     if (isNull(newSegments)) {
         return undefined;

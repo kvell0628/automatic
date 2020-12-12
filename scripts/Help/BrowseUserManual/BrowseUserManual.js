@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Help.js");
+include("scripts/Help/Help.js");
 
 function BrowseUserManual(guiAction) {
     Help.call(this, guiAction);
@@ -42,7 +42,7 @@ BrowseUserManual.prototype.beginEvent = function() {
     }
 
     Help.openUrl(
-        "http://www.qcad.org/doc/qcad/%1.%2.%3/reference/%4/index.html"
+        "https://qcad.org/doc/qcad/%1.%2.%3/reference/%4/index.html"
         .arg(RSettings.getMajorVersion())
         .arg(RSettings.getMinorVersion())
         .arg(RSettings.getRevisionVersion())

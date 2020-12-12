@@ -31,9 +31,14 @@ RLinkedStorage::RLinkedStorage(RStorage& backStorage) :
 RLinkedStorage::~RLinkedStorage() {
 }
 
-QSet<RObject::Id> RLinkedStorage::queryAllObjects() {
+QSet<RObject::Id> RLinkedStorage::queryAllObjects() const {
     return RMemoryStorage::queryAllObjects()
             .unite(backStorage->queryAllObjects());
+}
+
+QSet<RObject::Id> RLinkedStorage::querySelectedLayers() const {
+    return RMemoryStorage::querySelectedLayers()
+            .unite(backStorage->querySelectedLayers());
 }
 
 QSet<REntity::Id> RLinkedStorage::queryAllVisibleEntities() {
@@ -61,12 +66,17 @@ QSet<RLayer::Id> RLinkedStorage::queryAllLayers(bool undone) {
             .unite(backStorage->queryAllLayers(undone));
 }
 
+QSet<RLayerState::Id> RLinkedStorage::queryAllLayerStates(bool undone) {
+    return RMemoryStorage::queryAllLayerStates(undone)
+            .unite(backStorage->queryAllLayerStates(undone));
+}
+
 QSet<RBlock::Id> RLinkedStorage::queryAllBlocks(bool undone) {
     return RMemoryStorage::queryAllBlocks(undone)
             .unite(backStorage->queryAllBlocks(undone));
 }
 
-QSet<RBlock::Id> RLinkedStorage::queryAllLayoutBlocks(bool includeModelSpace, bool undone) {
+QSet<RBlock::Id> RLinkedStorage::queryAllLayoutBlocks(bool includeModelSpace, bool undone) const {
     return RMemoryStorage::queryAllLayoutBlocks(includeModelSpace, undone)
             .unite(backStorage->queryAllLayoutBlocks(includeModelSpace, undone));
 }
@@ -86,7 +96,7 @@ QSet<RLinetype::Id> RLinkedStorage::queryAllLinetypes() {
             .unite(backStorage->queryAllLinetypes());
 }
 
-QSet<REntity::Id> RLinkedStorage::queryInfiniteEntities() {
+QSet<REntity::Id> RLinkedStorage::queryInfiniteEntities() const{
     return RMemoryStorage::queryInfiniteEntities()
             .unite(backStorage->queryInfiniteEntities());
 }
@@ -139,7 +149,7 @@ QSet<REntity::Id> RLinkedStorage::queryChildEntities(REntity::Id parentId, RS::E
     }
 }
 
-bool RLinkedStorage::hasChildEntities(REntity::Id parentId) {
+bool RLinkedStorage::hasChildEntities(REntity::Id parentId) const {
     if (entityMap.contains(parentId)) {
         return RMemoryStorage::hasChildEntities(parentId);
     }
@@ -148,12 +158,12 @@ bool RLinkedStorage::hasChildEntities(REntity::Id parentId) {
     }
 }
 
-QSet<REntity::Id> RLinkedStorage::queryBlockReferences(RBlock::Id blockId) {
+QSet<REntity::Id> RLinkedStorage::queryBlockReferences(RBlock::Id blockId) const {
     return RMemoryStorage::queryBlockReferences(blockId)
             .unite(backStorage->queryBlockReferences(blockId));
 }
 
-QSet<REntity::Id> RLinkedStorage::queryAllBlockReferences() {
+QSet<REntity::Id> RLinkedStorage::queryAllBlockReferences() const {
     return RMemoryStorage::queryAllBlockReferences()
             .unite(backStorage->queryAllBlockReferences());
 }
@@ -217,9 +227,35 @@ QSharedPointer<RLayer> RLinkedStorage::queryLayer(RLayer::Id layerId) const {
 }
 
 QSharedPointer<RLayer> RLinkedStorage::queryLayer(const QString& layerName) const {
-    QSharedPointer<RLayer> ret = RMemoryStorage::queryLayer(layerName);
+    if (!layerNameMap.contains(layerName)) {
+        return backStorage->queryLayer(layerName);
+    }
+    return RMemoryStorage::queryLayer(layerName);
+    //QSharedPointer<RLayer> ret = RMemoryStorage::queryLayer(layerName);
+    //if (ret.isNull()) {
+    //    ret = backStorage->queryLayer(layerName);
+    //}
+    //return ret;
+}
+
+QSharedPointer<RLayerState> RLinkedStorage::queryLayerStateDirect(RLayerState::Id layerStateId) const {
+    if (!layerStateMap.contains(layerStateId)) {
+        return backStorage->queryLayerStateDirect(layerStateId);
+    }
+    return RMemoryStorage::queryLayerStateDirect(layerStateId);
+}
+
+QSharedPointer<RLayerState> RLinkedStorage::queryLayerState(RLayerState::Id layerStateId) const {
+    if (!layerStateMap.contains(layerStateId)) {
+        return backStorage->queryLayerState(layerStateId);
+    }
+    return RMemoryStorage::queryLayerState(layerStateId);
+}
+
+QSharedPointer<RLayerState> RLinkedStorage::queryLayerState(const QString& layerStateName) const {
+    QSharedPointer<RLayerState> ret = RMemoryStorage::queryLayerState(layerStateName);
     if (ret.isNull()) {
-        ret = backStorage->queryLayer(layerName);
+        ret = backStorage->queryLayerState(layerStateName);
     }
     return ret;
 }
@@ -272,6 +308,22 @@ QString RLinkedStorage::getBlockName(RBlock::Id blockId) const {
     QString ret = RMemoryStorage::getBlockName(blockId);
     if (ret.isNull()) {
         ret = backStorage->getBlockName(blockId);
+    }
+    return ret;
+}
+
+QString RLinkedStorage::getBlockNameFromLayout(const QString& layoutName) const {
+    QString ret = RMemoryStorage::getBlockNameFromLayout(layoutName);
+    if (ret.isNull()) {
+        ret = backStorage->getBlockNameFromLayout(layoutName);
+    }
+    return ret;
+}
+
+QString RLinkedStorage::getBlockNameFromLayout(RLayout::Id layoutId) const {
+    QString ret = RMemoryStorage::getBlockNameFromLayout(layoutId);
+    if (ret.isNull()) {
+        ret = backStorage->getBlockNameFromLayout(layoutId);
     }
     return ret;
 }
@@ -379,6 +431,14 @@ RBlock::Id RLinkedStorage::getBlockId(const QString& blockName) const {
     RBlock::Id ret = RMemoryStorage::getBlockId(blockName);
     if (ret==RBlock::INVALID_ID) {
         ret = backStorage->getBlockId(blockName);
+    }
+    return ret;
+}
+
+RBlock::Id RLinkedStorage::getBlockIdAuto(const QString& blockLayoutName) const {
+    RBlock::Id ret = RMemoryStorage::getBlockIdAuto(blockLayoutName);
+    if (ret==RBlock::INVALID_ID) {
+        ret = backStorage->getBlockIdAuto(blockLayoutName);
     }
     return ret;
 }

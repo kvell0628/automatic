@@ -46,7 +46,7 @@ xmlns:rs="http://www.ribbonsoft.com">
       </variant>
     </method>
     <method name="setProperty" cppName="setProperty"
-    specifier="public" isStatic="false" isVirtual="false"
+    specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
       <variant returnType="bool" isPureVirtual="false">
         <arg type="RPropertyTypeId" typeName="RPropertyTypeId"
@@ -59,7 +59,7 @@ xmlns:rs="http://www.ribbonsoft.com">
       </variant>
     </method>
     <method name="getProperty" cppName="getProperty"
-    specifier="public" isStatic="false" isVirtual="false"
+    specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
       <variant returnType="QPair &lt; QVariant , RPropertyAttributes &gt;"
       isPureVirtual="false">
@@ -70,11 +70,9 @@ xmlns:rs="http://www.ribbonsoft.com">
         hasDefault="true" default="false" isConst="false" />
         <arg type="bool" typeName="bool" name="noAttributes"
         hasDefault="true" default="false" isConst="false" />
+        <arg type="bool" typeName="bool" name="showOnRequest"
+        hasDefault="true" default="false" isConst="false" />
       </variant>
-    </method>
-    <method name="isVisible" cppName="isVisible" specifier="public"
-    isStatic="false" isVirtual="true" isScriptOverwritable="true">
-      <variant returnType="bool" isPureVirtual="false" />
     </method>
     <method name="exportEntity" cppName="exportEntity"
     specifier="public" isStatic="false" isVirtual="false"
@@ -125,6 +123,8 @@ xmlns:rs="http://www.ribbonsoft.com">
     isConst="false" isStatic="true" />
     <property name="PropertyProtected" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
+    <property name="PropertyWorkingSet" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
     <property name="PropertyType" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyBlock" type="RPropertyTypeId"
@@ -174,6 +174,10 @@ xmlns:rs="http://www.ribbonsoft.com">
     <property name="PropertyVAlign" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyInvisible" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyBackward" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyUpsideDown" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
   </class>
 </unit>

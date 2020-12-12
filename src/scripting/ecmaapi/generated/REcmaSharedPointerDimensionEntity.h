@@ -133,6 +133,30 @@
         hasDimensionBlockReference
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isArrow1Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setArrow1Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isArrow2Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setArrow2Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isExtLineFix
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setExtLineFix
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getExtLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setExtLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getDimensionBlockNames
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue toString

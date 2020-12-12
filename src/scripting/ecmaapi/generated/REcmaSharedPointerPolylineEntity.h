@@ -118,6 +118,9 @@
         isArcSegmentAt
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        hasArcSegments
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getClosestSegment
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -136,10 +139,34 @@
         setMinimumWidth
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        setGlobalWidth
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setStartWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getStartWidthAt
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        setEndWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getEndWidthAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        hasWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setStartWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getStartWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setEndWidths
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getEndWidths
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getDirection1
@@ -214,6 +241,15 @@
         getPolylineGen
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        setElevation
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getElevation
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isFlat
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getTrimEnd
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -221,6 +257,15 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         trimEndPoint
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        morph
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        contains
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        containsShape
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue toString
     (QScriptContext *context, QScriptEngine *engine)

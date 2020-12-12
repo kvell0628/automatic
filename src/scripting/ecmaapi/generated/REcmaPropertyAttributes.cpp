@@ -108,7 +108,13 @@
             
             REcmaHelper::registerFunction(&engine, proto, setSum, "setSum");
             
+            REcmaHelper::registerFunction(&engine, proto, isOnRequest, "isOnRequest");
+            
+            REcmaHelper::registerFunction(&engine, proto, setOnRequest, "setOnRequest");
+            
             REcmaHelper::registerFunction(&engine, proto, isLabel, "isLabel");
+            
+            REcmaHelper::registerFunction(&engine, proto, isCustom, "isCustom");
             
             REcmaHelper::registerFunction(&engine, proto, isDimensionLabel, "isDimensionLabel");
             
@@ -124,9 +130,17 @@
             
             REcmaHelper::registerFunction(&engine, proto, setNumericallySorted, "setNumericallySorted");
             
-            REcmaHelper::registerFunction(&engine, proto, getPropertyTypeId, "getPropertyTypeId");
+            REcmaHelper::registerFunction(&engine, proto, isScaleType, "isScaleType");
             
-            REcmaHelper::registerFunction(&engine, proto, setPropertyTypeId, "setPropertyTypeId");
+            REcmaHelper::registerFunction(&engine, proto, setScaleType, "setScaleType");
+            
+            REcmaHelper::registerFunction(&engine, proto, isAreaType, "isAreaType");
+            
+            REcmaHelper::registerFunction(&engine, proto, setAreaType, "setAreaType");
+            
+            REcmaHelper::registerFunction(&engine, proto, isUnitLess, "isUnitLess");
+            
+            REcmaHelper::registerFunction(&engine, proto, setUnitLess, "setUnitLess");
             
             REcmaHelper::registerFunction(&engine, proto, getLabel, "getLabel");
             
@@ -262,28 +276,48 @@
     QScriptValue::ReadOnly);
 
 
-    ctor.setProperty("Integer",
-    QScriptValue(RPropertyAttributes::Integer),
-    QScriptValue::ReadOnly);
-
-
     ctor.setProperty("Sum",
     QScriptValue(RPropertyAttributes::Sum),
     QScriptValue::ReadOnly);
 
 
-    ctor.setProperty("ReadOnly",
-    QScriptValue(RPropertyAttributes::ReadOnly),
-    QScriptValue::ReadOnly);
-
-
-    ctor.setProperty("Redundant",
-    QScriptValue(RPropertyAttributes::Redundant),
-    QScriptValue::ReadOnly);
-
-
     ctor.setProperty("Undeletable",
     QScriptValue(RPropertyAttributes::Undeletable),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("OnRequest",
+    QScriptValue(RPropertyAttributes::OnRequest),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("Location",
+    QScriptValue(RPropertyAttributes::Location),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("RefPoint",
+    QScriptValue(RPropertyAttributes::RefPoint),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("Geometry",
+    QScriptValue(RPropertyAttributes::Geometry),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("Scale",
+    QScriptValue(RPropertyAttributes::Scale),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("Area",
+    QScriptValue(RPropertyAttributes::Area),
+    QScriptValue::ReadOnly);
+
+
+    ctor.setProperty("UnitLess",
+    QScriptValue(RPropertyAttributes::UnitLess),
     QScriptValue::ReadOnly);
 
 
@@ -1976,6 +2010,110 @@
             return result;
         }
          QScriptValue
+        REcmaPropertyAttributes::isOnRequest
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::isOnRequest", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::isOnRequest";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("isOnRequest", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isOnRequest();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.isOnRequest().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::isOnRequest", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaPropertyAttributes::setOnRequest
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::setOnRequest", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::setOnRequest";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("setOnRequest", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setOnRequest(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.setOnRequest().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::setOnRequest", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaPropertyAttributes::isLabel
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -2022,6 +2160,55 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaPropertyAttributes::isLabel", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaPropertyAttributes::isCustom
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::isCustom", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::isCustom";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("isCustom", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isCustom();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.isCustom().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::isCustom", context, engine);
             return result;
         }
          QScriptValue
@@ -2380,19 +2567,19 @@
             return result;
         }
          QScriptValue
-        REcmaPropertyAttributes::getPropertyTypeId
+        REcmaPropertyAttributes::isScaleType
         (QScriptContext* context, QScriptEngine* engine) 
         
         {
-            //REcmaHelper::functionStart("REcmaPropertyAttributes::getPropertyTypeId", context, engine);
-            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::getPropertyTypeId";
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::isScaleType", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::isScaleType";
             //QCoreApplication::processEvents();
 
             QScriptValue result = engine->undefinedValue();
             
                     // public function: can be called from ECMA wrapper of ECMA shell:
                     RPropertyAttributes* self = 
-                        getSelf("getPropertyTypeId", context);
+                        getSelf("isScaleType", context);
                   
 
                 //Q_ASSERT(self!=NULL);
@@ -2409,39 +2596,39 @@
     // end of arguments
 
     // call C++ function:
-    // return type 'RPropertyTypeId'
-    RPropertyTypeId cppResult =
+    // return type 'bool'
+    bool cppResult =
         
-               self->getPropertyTypeId();
-        // return type: RPropertyTypeId
-                // not standard type nor reference
-                result = qScriptValueFromValue(engine, cppResult);
+               self->isScaleType();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
             
     } else
 
 
         
             {
-               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.getPropertyTypeId().",
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.isScaleType().",
                    context);
             }
-            //REcmaHelper::functionEnd("REcmaPropertyAttributes::getPropertyTypeId", context, engine);
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::isScaleType", context, engine);
             return result;
         }
          QScriptValue
-        REcmaPropertyAttributes::setPropertyTypeId
+        REcmaPropertyAttributes::setScaleType
         (QScriptContext* context, QScriptEngine* engine) 
         
         {
-            //REcmaHelper::functionStart("REcmaPropertyAttributes::setPropertyTypeId", context, engine);
-            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::setPropertyTypeId";
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::setScaleType", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::setScaleType";
             //QCoreApplication::processEvents();
 
             QScriptValue result = engine->undefinedValue();
             
                     // public function: can be called from ECMA wrapper of ECMA shell:
                     RPropertyAttributes* self = 
-                        getSelf("setPropertyTypeId", context);
+                        getSelf("setScaleType", context);
                   
 
                 //Q_ASSERT(self!=NULL);
@@ -2452,47 +2639,243 @@
     
     if( context->argumentCount() ==
     1 && (
-            context->argument(0).isVariant() || 
-            context->argument(0).isQObject() || 
-            context->argument(0).isNull()
-        ) /* type: RPropertyTypeId */
+            context->argument(0).isBool()
+        ) /* type: bool */
     
     ){
     // prepare arguments:
     
-                    // argument isCopyable and has default constructor and isSimpleClass 
-                    RPropertyTypeId*
-                    ap0 =
-                    qscriptvalue_cast<
-                    RPropertyTypeId*
-                        >(
-                        context->argument(
-                        0
-                        )
-                    );
-                    if (ap0 == NULL) {
-                           return REcmaHelper::throwError("RPropertyAttributes: Argument 0 is not of type RPropertyTypeId.",
-                               context);                    
-                    }
-                    RPropertyTypeId 
-                    a0 = 
-                    *ap0;
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
                 
     // end of arguments
 
     // call C++ function:
     // return type 'void'
     
-               self->setPropertyTypeId(a0);
+               self->setScaleType(a0);
     } else
 
 
         
             {
-               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.setPropertyTypeId().",
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.setScaleType().",
                    context);
             }
-            //REcmaHelper::functionEnd("REcmaPropertyAttributes::setPropertyTypeId", context, engine);
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::setScaleType", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaPropertyAttributes::isAreaType
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::isAreaType", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::isAreaType";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("isAreaType", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isAreaType();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.isAreaType().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::isAreaType", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaPropertyAttributes::setAreaType
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::setAreaType", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::setAreaType";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("setAreaType", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setAreaType(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.setAreaType().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::setAreaType", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaPropertyAttributes::isUnitLess
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::isUnitLess", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::isUnitLess";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("isUnitLess", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isUnitLess();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.isUnitLess().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::isUnitLess", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaPropertyAttributes::setUnitLess
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaPropertyAttributes::setUnitLess", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaPropertyAttributes::setUnitLess";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RPropertyAttributes* self = 
+                        getSelf("setUnitLess", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setUnitLess(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyAttributes.setUnitLess().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaPropertyAttributes::setUnitLess", context, engine);
             return result;
         }
          QScriptValue

@@ -44,17 +44,23 @@
 #include "RDebug.h"
 #include "RDimAlignedEntity.h"
 #include "RDimAngularEntity.h"
+#include "RDimAngular2LEntity.h"
+#include "RDimAngular3PEntity.h"
+#include "RDimArcLengthEntity.h"
 #include "RDimDiametricEntity.h"
 #include "RDimOrdinateEntity.h"
 #include "RDimRadialEntity.h"
 #include "RDimRotatedEntity.h"
 #include "RDimensionEntity.h"
+#include "RDimLinearEntity.h"
 #include "RDocumentVariables.h"
 #include "REllipseEntity.h"
 #include "RFaceEntity.h"
 #include "RFontList.h"
 #include "RHatchEntity.h"
 #include "RImageEntity.h"
+#include "RLayer.h"
+#include "RLayerState.h"
 #include "RLeaderEntity.h"
 #include "RLineEntity.h"
 #include "RLinetypeListImperial.h"
@@ -73,6 +79,7 @@
 #include "RSolidEntity.h"
 #include "RSplineEntity.h"
 #include "RTextEntity.h"
+#include "RToleranceEntity.h"
 #include "RTraceEntity.h"
 #include "RViewportEntity.h"
 #include "RVersion.h"
@@ -96,7 +103,7 @@ int main(int argc, char *argv[]) {
     // But use usual conversion for scanf()/sprintf():
     setlocale(LC_NUMERIC, "C");
 
-    // Finetuning Japanese encoding for corrent DXF/DWG import.
+    // Finetuning Japanese encoding for correct DXF/DWG import.
     // see http://qt-project.org/doc/qt-4.8/codecs-jis.html
 #ifdef Q_OS_WIN
     _putenv_s("UNICODEMAP_JP", "cp932");
@@ -112,16 +119,6 @@ int main(int argc, char *argv[]) {
 #endif
 #endif
 
-    // Auto scale up user interface for high res displays under Windows:
-#ifdef Q_OS_WIN
-#if QT_VERSION >= 0x050600
-    //_putenv_s("QT_SCALE_FACTOR", "auto");
-    _putenv_s("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
-#else
-    _putenv_s("QT_DEVICE_PIXEL_RATIO", "auto");
-#endif
-#endif
-
 #ifdef Q_OS_MAC
     // TODO: fix linking with objective c
     removeMacMenus();
@@ -133,6 +130,31 @@ int main(int argc, char *argv[]) {
     qApp->setApplicationName("QCAD");
     qApp->setApplicationVersion(RSettings::getVersionString());
 
+    RSettings::setApplicationNameOverride("QCAD3");
+
+    // Auto scale up user interface for high res displays under Windows:
+#ifdef Q_OS_WIN
+#if QT_VERSION >= 0x050600
+    //_putenv_s("QT_SCALE_FACTOR", "auto");
+    if (RSettings::getBoolValue("Ui/QT_AUTO_SCREEN_SCALE_FACTOR", true)==true) {
+        qDebug() << "auto scale";
+        _putenv_s("QT_AUTO_SCREEN_SCALE_FACTOR", "1");
+    }
+    if (RSettings::getBoolValue("Ui/EnableHighDpiScaling", false)==true) {
+        qDebug() << "enable high dpi scaling";
+        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    }
+    double qsf = RSettings::getDoubleValue("Ui/QT_SCALE_FACTOR", -1.0);
+    if (qsf>0.0) {
+        _putenv_s("QT_SCALE_FACTOR", (const char*)QString("%1").arg(qsf).toLocal8Bit());
+    }
+
+        //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#else
+    _putenv_s("QT_DEVICE_PIXEL_RATIO", "auto");
+#endif
+#endif
+
     RMainWindow::installMessageHandler();
 
 #if QT_VERSION >= 0x050000
@@ -140,9 +162,6 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef Q_OS_MAC
-    // TODO: make available as script function:
-    QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
-
     if (QSysInfo::MacintoshVersion>=0x000B) {
         // system font change bug fix on OS X 10.9 (Mavericks):
         QFont::insertSubstitution(".Lucida Grande UI", "Lucida Grande");
@@ -192,6 +211,11 @@ int main(int argc, char *argv[]) {
         if (GetCurrentProcess(&psn) == noErr) {
             TransformProcessType(&psn, kProcessTransformToForegroundApplication);
         }
+    }
+
+    // TODO: make available as script function:
+    if (!app->arguments().contains("-show-menu-icons")) {
+        QCoreApplication::setAttribute(Qt::AA_DontShowIconsInMenus);
     }
 #endif
 
@@ -245,8 +269,12 @@ int main(int argc, char *argv[]) {
     RBlockReferenceEntity::init();
     RCircleEntity::init();
     RDimensionEntity::init();
+    RDimLinearEntity::init();
     RDimAlignedEntity::init();
     RDimAngularEntity::init();
+    RDimAngular2LEntity::init();
+    RDimAngular3PEntity::init();
+    RDimArcLengthEntity::init();
     RDimDiametricEntity::init();
     RDimOrdinateEntity::init();
     RDimRadialEntity::init();
@@ -255,6 +283,7 @@ int main(int argc, char *argv[]) {
     RImageEntity::init();
     RHatchEntity::init();
     RLeaderEntity::init();
+    RToleranceEntity::init();
     RLineEntity::init();
     RPointEntity::init();
     RPolylineEntity::init();
@@ -273,6 +302,7 @@ int main(int argc, char *argv[]) {
 
     RUcs::init();
     RLayer::init();
+    RLayerState::init();
     RLayout::init();
     RLinetype::init();
     RBlock::init();
@@ -280,7 +310,6 @@ int main(int argc, char *argv[]) {
 
     // make sure plugins can find plugin related settings:
     // these are always stored in "QCAD3.ini/conf":
-    RSettings::setApplicationNameOverride("QCAD3");
     RPluginLoader::loadPlugins(true);
 
     RLinetypeListMetric::init();

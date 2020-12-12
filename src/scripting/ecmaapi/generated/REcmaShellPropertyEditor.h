@@ -39,9 +39,16 @@
         
     
     
+      RPropertyEditor * getInstance(
+                
+            );
+        
+    
+    
       void updateFromDocument(
                 RDocument * document, bool onlyChanges, RS::EntityType filter
         = RS :: EntityUnknown, bool manual
+        = false, bool showOnRequest
         = false
             );
         
@@ -61,13 +68,17 @@
     
     
       void updateLayers(
+                RDocumentInterface * documentInterface, QList < RLayer::Id > & layerIds
+            );
+        
+      void updateLayers(
                 RDocumentInterface * documentInterface
             );
         
     
     
       void setCurrentLayer(
-                RDocumentInterface * documentInterface
+                RDocumentInterface * documentInterface, RLayer::Id previousLayerId
             );
         
     
@@ -161,7 +172,8 @@
     
       void updateEditor(
                 RObject & object, bool doUpdateGui, RDocument * document
-        = NULL
+        = NULL, bool showOnRequest
+        = false
             );
         
     
@@ -174,7 +186,8 @@
     
     
       void updateProperty(
-                const RPropertyTypeId & propertyTypeId, RObject & object, RDocument * document
+                const RPropertyTypeId & propertyTypeId, RObject & object, RDocument * document, bool showOnRequest
+        = false
             );
         
     

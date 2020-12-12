@@ -22,6 +22,7 @@
 RPropertyTypeId RAttributeDefinitionEntity::PropertyCustom;
 RPropertyTypeId RAttributeDefinitionEntity::PropertyHandle;
 RPropertyTypeId RAttributeDefinitionEntity::PropertyProtected;
+RPropertyTypeId RAttributeDefinitionEntity::PropertyWorkingSet;
 RPropertyTypeId RAttributeDefinitionEntity::PropertyType;
 RPropertyTypeId RAttributeDefinitionEntity::PropertyBlock;
 RPropertyTypeId RAttributeDefinitionEntity::PropertyLayer;
@@ -61,6 +62,7 @@ void RAttributeDefinitionEntity::init() {
     RAttributeDefinitionEntity::PropertyCustom.generateId(typeid(RAttributeDefinitionEntity), RObject::PropertyCustom);
     RAttributeDefinitionEntity::PropertyHandle.generateId(typeid(RAttributeDefinitionEntity), RObject::PropertyHandle);
     RAttributeDefinitionEntity::PropertyProtected.generateId(typeid(RAttributeDefinitionEntity), RObject::PropertyProtected);
+    RAttributeDefinitionEntity::PropertyWorkingSet.generateId(typeid(RAttributeDefinitionEntity), RObject::PropertyWorkingSet);
     RAttributeDefinitionEntity::PropertyType.generateId(typeid(RAttributeDefinitionEntity), REntity::PropertyType);
     RAttributeDefinitionEntity::PropertyBlock.generateId(typeid(RAttributeDefinitionEntity), REntity::PropertyBlock);
     RAttributeDefinitionEntity::PropertyLayer.generateId(typeid(RAttributeDefinitionEntity), REntity::PropertyLayer);
@@ -104,14 +106,14 @@ bool RAttributeDefinitionEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RAttributeDefinitionEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyTag) {
         return qMakePair(QVariant(data.tag), RPropertyAttributes());
     } else if (propertyTypeId == PropertyPrompt) {
         return qMakePair(QVariant(data.prompt), RPropertyAttributes());
     }
-    return RTextBasedEntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return RTextBasedEntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 //void RAttributeDefinitionEntity::exportEntity(RExporter& e, bool preview) const {

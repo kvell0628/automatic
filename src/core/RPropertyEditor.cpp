@@ -25,6 +25,8 @@
 #include "RPropertyEditor.h"
 #include "RPropertyEvent.h"
 
+RPropertyEditor* RPropertyEditor::instance = NULL;
+
 /**
  * Default Constructor.
  */
@@ -32,6 +34,8 @@ RPropertyEditor::RPropertyEditor()
     : guiUpToDate(false),
       updatesDisabled(false),
       entityTypeFilter(RS::EntityAll) {
+
+    instance = this;
 }
 
 /**
@@ -40,15 +44,24 @@ RPropertyEditor::RPropertyEditor()
 RPropertyEditor::~RPropertyEditor() {
 }
 
+RPropertyEditor* RPropertyEditor::getInstance() {
+    return instance;
+}
+
 /**
  * Sets the property with the given name to the given value or to 'mixed'
  * if that property exists already with a different value.
  *
- * \param propertyTypeId: Id of the property in the format "Group|Property".
- * \param property: Value and attributes of the property.
+ * \param propertyTypeId: Id of the property.
+ * \param showOnRequest: True to show also slow properties shown on request.
  */
 void RPropertyEditor::updateProperty(const RPropertyTypeId& propertyTypeId,
-        RObject& object, RDocument* document) {
+        RObject& object, RDocument* document, bool showOnRequest) {
+
+    Q_UNUSED(document)
+
+    // show on request properties:
+    showOnRequest = showOnRequest || RSettings::getPropertyEditorShowOnRequest()==true;
 
     RPropertyTypeId pid = propertyTypeId;
 
@@ -69,7 +82,7 @@ void RPropertyEditor::updateProperty(const RPropertyTypeId& propertyTypeId,
             // only query property if combined property is NOT already mixed:
             if (!propertyMap[propertyTitle].second.isMixed()) {
                 QPair<QVariant, RPropertyAttributes> property =
-                    object.getProperty(pid, true, true);
+                    object.getProperty(pid, true, true, showOnRequest);
 
                 // property is sum:
                 if (propertyMap[propertyTitle].second.isSum()) {
@@ -86,23 +99,21 @@ void RPropertyEditor::updateProperty(const RPropertyTypeId& propertyTypeId,
             }
         } else {
             // new property in existing group:
-            QPair<QVariant, RPropertyAttributes> property =
-                object.getProperty(pid, true);
+            QPair<QVariant, RPropertyAttributes> property = object.getProperty(pid, true, false, showOnRequest);
             if (property.second.isInvisible()) {
                 return;
             }
-            property.second.setPropertyTypeId(propertyTypeId);
+            //property.second.setPropertyTypeId(propertyTypeId);
             propertyMap[propertyTitle] = property;
             propertyOrder[propertyGroupTitle].push_back(propertyTitle);
         }
     } else {
         // new property in new group:
-        QPair<QVariant, RPropertyAttributes> property = object.getProperty(pid,
-                document, true);
+        QPair<QVariant, RPropertyAttributes> property = object.getProperty(pid, true, false, showOnRequest);
         if (property.second.isInvisible()) {
             return;
         }
-        property.second.setPropertyTypeId(propertyTypeId);
+        //property.second.setPropertyTypeId(propertyTypeId);
         RPropertyMap propertyMap;
         propertyMap[propertyTitle] = property;
         combinedProperties[propertyGroupTitle] = propertyMap;
@@ -127,7 +138,7 @@ void RPropertyEditor::removeAllButThese(
         QStringList removableProperties;
         RPropertyMap::iterator it2;
         for (it2 = it.value().begin(); it2 != it.value().end(); ++it2) {
-            if (customOnly && !it2.value().second.getPropertyTypeId().isCustom()) {
+            if (customOnly && !it2.value().second.isCustom()) {
                 continue;
             }
 
@@ -172,13 +183,15 @@ void RPropertyEditor::removeAllButThese(
 }
 
 /**
+ * Implements updateFromDocument from RPropertyListener to show properties for selected objects.
+ *
  * Updates the property editor to contain the properties of the
  * objects that are selected for editing in the given document.
  *
  * \param filter RS::EntityUnknown to use same filter as previously used,
  * any other value to change filter.
  */
-void RPropertyEditor::updateFromDocument(RDocument* document, bool onlyChanges, RS::EntityType filter, bool manual) {
+void RPropertyEditor::updateFromDocument(RDocument* document, bool onlyChanges, RS::EntityType filter, bool manual, bool showOnRequest) {
     if (updatesDisabled) {
         return;
     }
@@ -202,9 +215,14 @@ void RPropertyEditor::updateFromDocument(RDocument* document, bool onlyChanges, 
     // add all properties of the selected entities in the given document:
     QSet<RObject::Id> objectIds = document->queryPropertyEditorObjects();
 
+    if (objectIds.size()==1) {
+        showOnRequest = true;
+    }
+
     QSet<RObject::Id>::iterator it;
 
-    // only block ref and attributes selected: default to filter block ref:
+    // only block ref and attributes selected:
+    // default to filter block ref:
     if (entityTypeFilter==RS::EntityAll && !manual) {
         bool foundBlockRef = false;
         bool foundAttribute = false;
@@ -245,6 +263,7 @@ void RPropertyEditor::updateFromDocument(RDocument* document, bool onlyChanges, 
         }
     }
 
+    // collect properties without updating GUI:
     for (it = objectIds.begin(); it != objectIds.end(); ++it) {
         QSharedPointer<RObject> obj = document->queryObjectDirect(*it);
         if (obj.isNull()) {
@@ -254,7 +273,7 @@ void RPropertyEditor::updateFromDocument(RDocument* document, bool onlyChanges, 
             continue;
         }
 
-        updateEditor(*obj.data(), false, document);
+        updateEditor(*obj.data(), false, document, showOnRequest);
     }
 
     RS::EntityType entityTypeFilterProp = entityTypeFilter;
@@ -322,7 +341,7 @@ void RPropertyEditor::updateFromDocument(RDocument* document, bool onlyChanges, 
 }
 
 /**
- * Implements update from RPropertyListener.
+ * Implements updateFromObject from RPropertyListener to show properties for one single object.
  */
 void RPropertyEditor::updateFromObject(RObject* object, RDocument* document) {
     if (object != NULL) {
@@ -333,13 +352,12 @@ void RPropertyEditor::updateFromObject(RObject* object, RDocument* document) {
 /**
  * Updates the property widget to include the properties of the given property owner.
  */
-void RPropertyEditor::updateEditor(RObject& object, bool doUpdateGui,
-        RDocument* document) {
+void RPropertyEditor::updateEditor(RObject& object, bool doUpdateGui, RDocument* document, bool showOnRequest) {
     QList<RPropertyTypeId> propertyTypeIds = object.getPropertyTypeIds().toList();
     qSort(propertyTypeIds);
     QList<RPropertyTypeId>::iterator it;
     for (it = propertyTypeIds.begin(); it != propertyTypeIds.end(); ++it) {
-        updateProperty(*it, object, document);
+        updateProperty(*it, object, document, showOnRequest);
     }
     if (doUpdateGui) {
         updateGui();
@@ -353,16 +371,28 @@ void RPropertyEditor::clearEditor() {
     updateGui();
 }
 
+void RPropertyEditor::updateLayers(RDocumentInterface* documentInterface, QList<RObject::Id>& layerIds) {
+    Q_UNUSED(layerIds)
+
+    updateLayers(documentInterface);
+}
+
 void RPropertyEditor::updateLayers(RDocumentInterface* documentInterface) {
     if (documentInterface==NULL) {
-        updateFromDocument(NULL, false);
+        // 20190130: changed from false to true:
+        // workaround for Qt 5.10.1 bug (crash when changing layer name in property editor)
+        updateFromDocument(NULL, true);
     }
     else {
-        updateFromDocument(&documentInterface->getDocument(), false);
+        // 20190130: changed from false to true:
+        // workaround for Qt 5.10.1 bug (crash when changing layer name in property editor)
+        updateFromDocument(&documentInterface->getDocument(), true);
     }
 }
 
-void RPropertyEditor::setCurrentLayer(RDocumentInterface* documentInterface) {
+void RPropertyEditor::setCurrentLayer(RDocumentInterface* documentInterface, RObject::Id previousLayerId) {
+    Q_UNUSED(previousLayerId)
+
     updateLayers(documentInterface);
 }
 
@@ -374,7 +404,8 @@ void RPropertyEditor::propertyChanged(RPropertyTypeId propertyTypeId,
                                       QVariant propertyValue,
                                       QVariant::Type typeHint) {
 
-    if (RMainWindow::getMainWindow() == NULL) {
+    RMainWindow* appWin = RMainWindow::getMainWindow();
+    if (appWin == NULL) {
         qWarning() << QString("RPropertyEditor::itemChanged: mainWindow is NULL");
         return;
     }
@@ -387,8 +418,7 @@ void RPropertyEditor::propertyChanged(RPropertyTypeId propertyTypeId,
         }
     }
 
-    RPropertyEvent pe(propertyTypeId, propertyValue, entityTypeFilter);
-    RMainWindow::getMainWindow()->propertyChangeEvent(pe);
+    appWin->postPropertyEvent(propertyTypeId, propertyValue, entityTypeFilter);
 }
 
 void RPropertyEditor::listPropertyChanged(RPropertyTypeId propertyTypeId,
@@ -469,7 +499,7 @@ RPropertyAttributes RPropertyEditor::getPropertyAttributes(const QString& group,
 
     QPair<QVariant, RPropertyAttributes> pair = combinedProperties[group][title];
 
-    if (pair.second.getPropertyTypeId().isCustom()) {
+    if (pair.second.isCustom()) {
         return getCustomPropertyAttributes(group, title);
     }
 
@@ -478,7 +508,7 @@ RPropertyAttributes RPropertyEditor::getPropertyAttributes(const QString& group,
 
 RPropertyAttributes RPropertyEditor::getCustomPropertyAttributes(const QString& group, const QString& title) {
     RPropertyAttributes ret = RObject::getCustomPropertyAttributes(group, title);
-    ret.setPropertyTypeId(RPropertyTypeId(group, title));
+    //ret.setPropertyTypeId(RPropertyTypeId(group, title));
     return ret;
 }
 
@@ -491,7 +521,7 @@ int RPropertyEditor::getTypeCount(RS::EntityType type) {
         return combinedTypes.value(type);
     }
     else {
-        return -1;
+        return 0;
     }
 }
 

@@ -37,6 +37,8 @@ function Information(guiAction) {
 
     this.addToDrawing = false;
     this.textHeight = 1.0;
+    this.mathLineEdit = undefined;
+    this.autoTerminate = false;
 }
 
 Information.prototype = new EAction();
@@ -266,6 +268,53 @@ Information.prototype.resumeEvent = function() {
     this.simulateMouseMoveEvent();
 };
 
+/**
+ * Set a math line edit as receiver of the result.
+ */
+Information.prototype.setLineEdit = function(lineEditName) {
+    this.lineEditName = lineEditName;
+    this.autoTerminate = true;
+    this.addToDrawing = false;
+    this.setUiOptions(undefined);
+
+    // make sure action can run even though a script is already running:
+    this.setNoState();
+};
+
+Information.prototype.updateLineEdit = function(value) {
+    if (isNull(this.lineEditName)) {
+        return;
+    }
+
+    var appWin = EAction.getMainWindow();
+    if (isNull(appWin)) {
+        return;
+    }
+
+    var lineEdit = appWin.findChild(this.lineEditName);
+    if (isNull(lineEdit)) {
+        return;
+    }
+
+    if (!isOfType(lineEdit, QLineEdit) &&
+        !isOfType(lineEdit, RMathComboBox) &&
+        !isOfType(lineEdit, RMathLineEdit) &&
+        !isOfType(lineEdit, RCommandLine)) {
+        return;
+    }
+
+    var di = this.getDocumentInterface();
+    var doc = di.getDocument();
+    var varName = doc.addAutoVariable(value);
+
+    if (isOfType(lineEdit, RMathComboBox)) {
+        lineEdit.lineEdit().insert(varName);
+    }
+    else {
+        lineEdit.insert(varName);
+    }
+};
+
 Information.getMenu = function() {
     var menu = EAction.getMenu(Information.getTitle(), "InformationMenu");
     menu.setProperty("scriptFile", Information.includeBasePath + "/Information.js");
@@ -287,7 +336,7 @@ Information.getCadToolBarPanel = function() {
         action.objectName = actionName;
         action.setRequiresDocument(true);
         action.setIcon(Information.includeBasePath + "/Information.svg");
-        action.setStatusTip(qsTr("Show information tools"));
+        //action.setStatusTip(qsTr("Show information tools"));
         action.setDefaultShortcut(new QKeySequence("w,i"));
         action.setNoState();
         action.setDefaultCommands(["infomenu", "informationmenu", "measuringmenu"]);

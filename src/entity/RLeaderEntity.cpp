@@ -24,6 +24,7 @@
 RPropertyTypeId RLeaderEntity::PropertyCustom;
 RPropertyTypeId RLeaderEntity::PropertyHandle;
 RPropertyTypeId RLeaderEntity::PropertyProtected;
+RPropertyTypeId RLeaderEntity::PropertyWorkingSet;
 RPropertyTypeId RLeaderEntity::PropertyType;
 RPropertyTypeId RLeaderEntity::PropertyBlock;
 RPropertyTypeId RLeaderEntity::PropertyLayer;
@@ -61,6 +62,7 @@ void RLeaderEntity::init() {
     RLeaderEntity::PropertyCustom.generateId(typeid(RLeaderEntity), RObject::PropertyCustom);
     RLeaderEntity::PropertyHandle.generateId(typeid(RLeaderEntity), RObject::PropertyHandle);
     RLeaderEntity::PropertyProtected.generateId(typeid(RLeaderEntity), RObject::PropertyProtected);
+    RLeaderEntity::PropertyWorkingSet.generateId(typeid(RLeaderEntity), RObject::PropertyWorkingSet);
     RLeaderEntity::PropertyType.generateId(typeid(RLeaderEntity), REntity::PropertyType);
     RLeaderEntity::PropertyBlock.generateId(typeid(RLeaderEntity), REntity::PropertyBlock);
     RLeaderEntity::PropertyLayer.generateId(typeid(RLeaderEntity), REntity::PropertyLayer);
@@ -73,9 +75,9 @@ void RLeaderEntity::init() {
 
     RLeaderEntity::PropertyArrowHead.generateId(typeid(RLeaderEntity), "", QT_TRANSLATE_NOOP("REntity", "Arrow"));
     RLeaderEntity::PropertyDimLeaderBlock.generateId(typeid(RLeaderEntity), "", QT_TRANSLATE_NOOP("REntity", "Arrow Block"));
-    RLeaderEntity::PropertyVertexNX.generateId(typeid(RLeaderEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RLeaderEntity::PropertyVertexNY.generateId(typeid(RLeaderEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RLeaderEntity::PropertyVertexNZ.generateId(typeid(RLeaderEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RLeaderEntity::PropertyVertexNX.generateId(typeid(RLeaderEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RLeaderEntity::PropertyVertexNY.generateId(typeid(RLeaderEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RLeaderEntity::PropertyVertexNZ.generateId(typeid(RLeaderEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 
     RLeaderEntity::PropertyDimScale.generateId(typeid(RLeaderEntity), "", QT_TRANSLATE_NOOP("REntity", "Scale"));
 }
@@ -110,13 +112,16 @@ bool RLeaderEntity::setProperty(RPropertyTypeId propertyTypeId,
     ret = ret || RObject::setMemberY(data.vertices, value, PropertyVertexNY == propertyTypeId);
     ret = ret || RObject::setMemberZ(data.vertices, value, PropertyVertexNZ == propertyTypeId);
 
-    ret = ret || RObject::setMember(data.dimScaleOverride, value, PropertyDimScale == propertyTypeId);
+    if (PropertyDimScale == propertyTypeId) {
+        ret = ret || RObject::setMember(data.dimScaleOverride, value, PropertyDimScale == propertyTypeId);
+        data.updateArrowHead();
+    }
 
     return ret;
 }
 
 QPair<QVariant, RPropertyAttributes> RLeaderEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyArrowHead) {
         return qMakePair(QVariant(data.arrowHead), RPropertyAttributes());
@@ -168,7 +173,7 @@ QPair<QVariant, RPropertyAttributes> RLeaderEntity::getProperty(
         return qMakePair(QVariant(data.dimScaleOverride), RPropertyAttributes());
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 
@@ -195,6 +200,8 @@ void RLeaderEntity::exportEntity(RExporter& e, bool preview, bool forceSelected)
                     getDirection1() + M_PI
                 )
             );
+            arrowBlock.setLayerId(getLayerId());
+            arrowBlock.setSelected(isSelected());
             arrowBlock.update();
             arrowBlock.exportEntity(e, preview, forceSelected);
         }

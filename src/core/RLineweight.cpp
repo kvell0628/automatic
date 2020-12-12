@@ -23,7 +23,7 @@
 #include <QPainterPath>
 
 QList < QPair < QString, RLineweight::Lineweight > > RLineweight::list;
-QMap < RLineweight::Lineweight, QIcon > RLineweight::iconMap;
+QMap<QPair<RLineweight::Lineweight, QPair<int, int> >, QIcon> RLineweight::iconMap;
 bool RLineweight::isInitialized = false;
 
 RLineweight::RLineweight() {
@@ -64,28 +64,37 @@ void RLineweight::init() {
 
 void RLineweight::init(const QString& cn, RLineweight::Lineweight lineweight) {
     list.append(QPair<QString, RLineweight::Lineweight> (cn, lineweight));
-    iconMap.insert(lineweight, getIcon(lineweight));
+    //iconMap.insert(lineweight, getIcon(lineweight));
+    iconMap.insert(QPair<RLineweight::Lineweight, QPair<int, int> >(lineweight, QPair<int, int>(RDEFAULT_QSIZE_ICON.width(), RDEFAULT_QSIZE_ICON.height())), getIcon(lineweight));
 }
 
-QList<QPair<QString, RLineweight::Lineweight> > RLineweight::getList(
-        bool onlyFixed) {
+QList<QPair<QString, RLineweight::Lineweight> > RLineweight::getList(bool onlyFixed, bool noDefault) {
     init();
-
-    if (!onlyFixed) {
-        return list;
-    }
 
     QList<QPair<QString, RLineweight::Lineweight> > l = list;
 
-    // remove "By Layer"
-    QString name = getName(RLineweight::WeightByLayer);
-    l.removeAll(QPair<QString, RLineweight::Lineweight> (name,
-            RLineweight::Lineweight(RLineweight::WeightByLayer)));
+    if (onlyFixed || noDefault) {
+        QString name;
 
-    // remove "By Block"
-    name = getName(RLineweight::WeightByBlock);
-    l.removeAll(QPair<QString, RLineweight::Lineweight> (name,
-            RLineweight::Lineweight(RLineweight::WeightByBlock)));
+        if (onlyFixed) {
+            // remove "By Layer"
+            name = getName(RLineweight::WeightByLayer);
+            l.removeAll(QPair<QString, RLineweight::Lineweight> (name,
+                    RLineweight::Lineweight(RLineweight::WeightByLayer)));
+
+            // remove "By Block"
+            name = getName(RLineweight::WeightByBlock);
+            l.removeAll(QPair<QString, RLineweight::Lineweight> (name,
+                    RLineweight::Lineweight(RLineweight::WeightByBlock)));
+        }
+
+        if (noDefault) {
+            // remove "Default"
+            name = getName(RLineweight::WeightByLwDefault);
+            l.removeAll(QPair<QString, RLineweight::Lineweight> (name,
+                    RLineweight::Lineweight(RLineweight::WeightByLwDefault)));
+        }
+    }
 
     return l;
 }
@@ -101,14 +110,16 @@ QString RLineweight::getName(RLineweight::Lineweight lineweight) {
     return QString();
 }
 
-QIcon RLineweight::getIcon(RLineweight::Lineweight lineweight) {
+QIcon RLineweight::getIcon(RLineweight::Lineweight lineweight, const QSize& size) {
     init();
 
-    if (iconMap.contains(lineweight)) {
-        return iconMap[lineweight];
+    //if (iconMap.contains(lineweight)) {
+    if (iconMap.contains(QPair<RLineweight::Lineweight, QPair<int, int> >(lineweight, QPair<int, int>(size.width(), size.height())))) {
+        //return iconMap[lineweight];
+        return iconMap[QPair<RLineweight::Lineweight, QPair<int, int> >(lineweight, QPair<int, int>(size.width(), size.height()))];
     }
 
-    QImage img(32, 16, QImage::Format_ARGB32_Premultiplied);
+    QImage img(size.width(), size.height(), QImage::Format_ARGB32_Premultiplied);
     img.fill(0);
     QPainter painter(&img);
     int w = img.width();
@@ -127,5 +138,7 @@ QIcon RLineweight::getIcon(RLineweight::Lineweight lineweight) {
 //  painter.setPen(Qt::black);
 //  painter.drawRect(0, 0, w - 1, h - 1);
     painter.end();
-    return QIcon(QPixmap::fromImage(img));
+    QIcon ret(QPixmap::fromImage(img));
+    iconMap.insert(QPair<RLineweight::Lineweight, QPair<int, int> >(lineweight, QPair<int, int>(size.width(), size.height())), ret);
+    return ret;
 }

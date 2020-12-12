@@ -26,13 +26,15 @@ RPropertyTypeId RDocumentVariables::PropertyCurrentLayerId;
 RPropertyTypeId RDocumentVariables::PropertyUnit;
 RPropertyTypeId RDocumentVariables::PropertyLinetypeScale;
 RPropertyTypeId RDocumentVariables::PropertyDimensionFont;
+RPropertyTypeId RDocumentVariables::PropertyWorkingSetBlockReferenceId;
 
 RDocumentVariables::RDocumentVariables(RDocument* document)
         : RObject(document),
         currentLayerId(RLayer::INVALID_ID),
         unit(RS::None),
         measurement(RS::UnknownMeasurement),
-        linetypeScale(1.0) {
+        linetypeScale(1.0),
+        workingSetBlockReferenceId(RObject::INVALID_ID) {
 }
 
 RDocumentVariables::~RDocumentVariables() {
@@ -46,6 +48,7 @@ void RDocumentVariables::init() {
     RDocumentVariables::PropertyUnit.generateId(typeid(RDocumentVariables), "", QT_TRANSLATE_NOOP("RDocumentVariables", "Drawing Unit"));
     RDocumentVariables::PropertyLinetypeScale.generateId(typeid(RDocumentVariables), "", QT_TRANSLATE_NOOP("RDocumentVariables", "Linetype Scale"));
     RDocumentVariables::PropertyDimensionFont.generateId(typeid(RDocumentVariables), "", QT_TRANSLATE_NOOP("RDocumentVariables", "Dimension Font"));
+    RDocumentVariables::PropertyWorkingSetBlockReferenceId.generateId(typeid(RDocumentVariables), "", "Working Set Block Reference Id");
 }
 
 QSet<RPropertyTypeId> RDocumentVariables::getCustomPropertyTypeIds() const {
@@ -64,7 +67,7 @@ QSet<RPropertyTypeId> RDocumentVariables::getCustomPropertyTypeIds() const {
 }
 
 QPair<QVariant, RPropertyAttributes> RDocumentVariables::getProperty(RPropertyTypeId& propertyTypeId,
-        bool humanReadable, bool noAttributes) {
+        bool humanReadable, bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyCurrentLayerId) {
         return qMakePair(QVariant(currentLayerId), RPropertyAttributes());
@@ -82,16 +85,21 @@ QPair<QVariant, RPropertyAttributes> RDocumentVariables::getProperty(RPropertyTy
         return qMakePair(QVariant(dimensionFont), RPropertyAttributes());
     }
 
+    if (propertyTypeId == PropertyWorkingSetBlockReferenceId) {
+        return qMakePair(QVariant(workingSetBlockReferenceId), RPropertyAttributes());
+    }
+
     if (propertyTypeId.isCustom()) {
         QString appId = propertyTypeId.getCustomPropertyTitle();
         QString name = propertyTypeId.getCustomPropertyName();
         RS::KnownVariable v = RDxfServices::stringToVariable(name);
         if (appId=="QCAD" && v!=RS::INVALID) {
+            // custom property is a known DXF variable:
             return qMakePair(getKnownVariable(v), RPropertyAttributes(RPropertyAttributes::KnownVariable));
         }
     }
 
-    return RObject::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return RObject::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 bool RDocumentVariables::setProperty(RPropertyTypeId propertyTypeId,
@@ -103,6 +111,7 @@ bool RDocumentVariables::setProperty(RPropertyTypeId propertyTypeId,
     ret = ret || RObject::setMember((int&)unit, value, PropertyUnit == propertyTypeId);
     ret = ret || RObject::setMember(linetypeScale, value, PropertyLinetypeScale == propertyTypeId);
     ret = ret || RObject::setMember(dimensionFont, value, PropertyDimensionFont == propertyTypeId);
+    ret = ret || RObject::setMember(workingSetBlockReferenceId, value, PropertyWorkingSetBlockReferenceId == propertyTypeId);
 
     // custom property that is a known variable:
     if (propertyTypeId.isCustom()) {
@@ -130,42 +139,51 @@ void RDocumentVariables::setKnownVariable(RS::KnownVariable key, const RVector& 
     knownVariables.insert(key, v);
 }
 
+void RDocumentVariables::setKnownVariable(RS::KnownVariable key, const RColor& value) {
+    QVariant v;
+    v.setValue(value);
+    knownVariables.insert(key, v);
+}
+
 void RDocumentVariables::setKnownVariable(RS::KnownVariable key, const QVariant& value) {
-    if (key==RS::INSUNITS) {
+    switch (key) {
+    case RS::INSUNITS:
         setUnit((RS::Unit)value.toInt());
-        return;
-    }
-    else if (key==RS::MEASUREMENT) {
+        break;
+    case RS::MEASUREMENT:
         setMeasurement((RS::Measurement)value.toInt());
-        return;
-    }
-    else if (key==RS::LTSCALE) {
+        break;
+    case RS::LTSCALE:
         setLinetypeScale(value.toDouble());
-        return;
+        break;
+    default:
+        break;
     }
 
     knownVariables.insert(key, value);
 }
 
 QVariant RDocumentVariables::getKnownVariable(RS::KnownVariable key) const {
-    if (key==RS::INSUNITS) {
+    switch (key) {
+    case RS::INSUNITS:
         return getUnit();
-    }
 
-    if (key==RS::LTSCALE) {
+    case RS::LTSCALE:
         return getLinetypeScale();
-    }
 
     // if DIMADEC is -1, DIMDEC is used:
-    if (key==RS::DIMADEC &&
-        hasKnownVariable(RS::DIMDEC) &&
-        getKnownVariable(RS::DIMDEC).toInt()==-1) {
+    case RS::DIMADEC:
+        if (hasKnownVariable(RS::DIMDEC) &&
+            knownVariables.value(RS::DIMADEC).toInt()==-1) {
+            return getKnownVariable(RS::DIMDEC);
+        }
+        break;
 
-        return getKnownVariable(RS::DIMDEC);
-    }
-
-    if (key==RS::DWGCODEPAGE) {
+    case RS::DWGCODEPAGE:
         return QVariant("ANSI_1252");
+
+    default:
+        break;
     }
 
     return knownVariables.value(key);
@@ -173,6 +191,31 @@ QVariant RDocumentVariables::getKnownVariable(RS::KnownVariable key) const {
 
 bool RDocumentVariables::hasKnownVariable(RS::KnownVariable key) const {
     return knownVariables.contains(key);
+}
+
+QString RDocumentVariables::addAutoVariable(double value) {
+    int c = getCustomIntProperty("QCAD", "AutoVariableCounter", 0);
+    c++;
+
+    QString key = QString("d%1").arg(c);
+
+    setCustomProperty("QCAD", key, value);
+    setCustomProperty("QCAD", "AutoVariableCounter", c);
+
+    return key;
+}
+
+QStringList RDocumentVariables::getAutoVariables() const {
+    QStringList ret;
+    int c = getCustomIntProperty("QCAD", "AutoVariableCounter", 0);
+    QString key;
+    for (int i=1; i<=c; i++) {
+        key = QString("d%1").arg(i);
+        if (hasCustomProperty("QCAD", key)) {
+            ret.append(key);
+        }
+    }
+    return ret;
 }
 
 void RDocumentVariables::print(QDebug dbg) const {
@@ -183,5 +226,6 @@ void RDocumentVariables::print(QDebug dbg) const {
         << "\ncurrentLayerId: " << getCurrentLayerId()
         << "\npoint mode: " << getKnownVariable(RS::PDMODE)
         << "\ndimension font: " << getDimensionFont()
+        << "\ndimension text color: " << getKnownVariable(RS::DIMCLRT)
         << ")";
 }

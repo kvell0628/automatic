@@ -56,6 +56,8 @@ public:
         return *this;
     }
 
+    virtual RBox getBoundingBox(bool ignoreEmpty) const;
+
     virtual RPolyline getHull(double offset) const;
 
     RVector getStartPoint() const {
@@ -93,8 +95,7 @@ public:
 
     virtual QList<RRefPoint> getReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
 
-    virtual bool moveReferencePoint(const RVector& referencePoint, 
-        const RVector& targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     virtual RShape* castToShape() {
         return this;

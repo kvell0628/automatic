@@ -22,12 +22,14 @@
 
 #include "core_global.h"
 
+#include "RBlock.h"
 #include "RBox.h"
 #include "REntity.h"
+#include "RTransform.h"
 #include "RVector.h"
-#include "RBlock.h"
 
 class RDocument;
+class RExporter;
 
 /**
  * Defines the geometry and appearance of a block reference entity.
@@ -61,6 +63,10 @@ public:
     virtual QList<RBox> getBoundingBoxes(bool ignoreEmpty=false) const;
     virtual RBox getBoundingBox(bool ignoreEmpty=false) const;
 
+    virtual void to2D();
+
+    virtual RVector getPointOnEntity() const;
+
     virtual QList<RRefPoint> getInternalReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
     virtual QList<RRefPoint> getReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
     virtual RVector getVectorTo(const RVector& point,  bool limited = true, double strictRange = RMAXDOUBLE) const;
@@ -72,7 +78,7 @@ public:
 
     //virtual void setSelected(bool on);
 
-    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
     virtual bool move(const RVector& offset);
     virtual bool rotate(double rotation, const RVector& center = RDEFAULT_RVECTOR);
     virtual bool mirror(const RLine& axis);
@@ -138,10 +144,17 @@ public:
     virtual void update() const;
     virtual void update(RObject::Id entityId) const;
 
-    QSharedPointer<REntity> queryEntity(REntity::Id entityId) const;
+    QSharedPointer<REntity> queryEntity(REntity::Id entityId, bool transform = false, bool ignoreAttDef = true) const;
     bool applyTransformationTo(REntity& entity) const;
-    RVector getColumnRowOffset(int col, int row) const;
-    void applyColumnRowOffsetTo(REntity& entity, int col, int row) const;
+    /**
+     * \nonscriptable
+     */
+    bool applyTransformationTo(QSharedPointer<REntity>& entity) const;
+
+    RTransform getTransform() const;
+
+    RVector getColumnRowOffset(int col, int row, bool rotated = false) const;
+    void applyColumnRowOffsetTo(REntity& entity, int col, int row, bool rotated = false) const;
     RVector mapToBlock(const RVector& v) const;
 
     bool isPixelUnit() const;

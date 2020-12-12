@@ -36,8 +36,10 @@ function CadToolBarPanel(parent, hasBackButton) {
     this.backMenuName = "MainToolsPanel";
 
     if (hasBackButton) {
-        var backAction = new QAction(this);
+        var backAction = new RGuiAction(qsTr("Back"), this);
         backAction.objectName = "Back";
+        backAction.checkable = false;
+        backAction.setIcon(autoPath("scripts/Widgets/CadToolBar/Back.svg"));
         this.addAction(backAction);
         backAction.triggered.connect(CadToolBar, "back");
     }
@@ -105,7 +107,6 @@ CadToolBarPanel.prototype.addAction = function(action) {
         button.setProperty("SortOrder", ColumnLayout.getSortOrder(action, this.objectName));
     }
     if (button.objectName==="BackButton") {
-        button.icon = new QIcon(autoPath("scripts/Widgets/CadToolBar/Back.svg"));
         button.toolTip = qsTr("Back");
         button.sizePolicy = new QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum);
     }

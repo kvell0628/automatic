@@ -26,7 +26,8 @@
 REntityData::REntityData(RDocument* document) :
     document(document),
     updatesEnabled(true),
-    selectionStatus(false), 
+    selectionStatus(false),
+    selectionStatusWorkingSet(false),
     autoUpdatesBlocked(false),
     drawOrder(RMININT),
     layerId(RLayer::INVALID_ID),
@@ -77,31 +78,8 @@ double REntityData::getLineweightInUnits(const QStack<REntity*>& blockRefStack) 
     return lw / 100.0;
 }
 
-/**
- * \return Color of this entity.
- *
- * \param resolve Resolve color if ByLayer or ByBlock.
- */
-RColor REntityData::getColor(bool resolve, const QStack<REntity*>& blockRefStack) const {
-    if (!resolve) {
-        return getColor();
-    }
-
-    if (getType()==RS::EntityAttribute && document!=NULL) {
-        if (getLayerId()==document->getLayer0Id() && RSettings::isLayer0CompatibilityOn()) {
-            REntity::Id blockRefId = getParentId();
-            QSharedPointer<REntity> parentEntity = document->queryEntityDirect(blockRefId);
-            QSharedPointer<RBlockReferenceEntity> blockRef = parentEntity.dynamicCast<RBlockReferenceEntity>();
-            if (!blockRef.isNull()) {
-                // delegate color of block attribute to block reference:
-                //qDebug() << "delegate color to block ref:";
-                //qDebug() << "color of block ref: " << blockRef->getColor(true, blockRefStack);
-                return blockRef->getColor(true, blockRefStack);
-            }
-        }
-    }
-
-    if (color.isByLayer()) {
+RColor REntityData::getColor(const RColor& unresolvedColor, const QStack<REntity*>& blockRefStack) const {
+    if (unresolvedColor.isByLayer()) {
         if (document==NULL) {
             qWarning() << "REntityData::getColor: "
                           "color is ByLayer but layer is NULL "
@@ -131,14 +109,45 @@ RColor REntityData::getColor(bool resolve, const QStack<REntity*>& blockRefStack
         return l->getColor();
     }
 
-    if (color.isByBlock()) {
+    if (unresolvedColor.isByBlock()) {
         if (blockRefStack.isEmpty()) {
             return RColor(Qt::white);
         }
         return blockRefStack.top()->getColor(true, blockRefStack);
     }
 
-    return getColor();
+    return unresolvedColor;
+}
+
+/**
+ * \return Color of this entity.
+ *
+ * \param resolve Resolve color if ByLayer or ByBlock.
+ */
+RColor REntityData::getColor(bool resolve, const QStack<REntity*>& blockRefStack) const {
+    if (!resolve) {
+        return getColor();
+    }
+
+    // this only only applies for color by layer (?):
+    RColor entityColor = getColor();
+    if (entityColor.isByLayer()) {
+        if (getType()==RS::EntityAttribute && document!=NULL) {
+            if (getLayerId()==document->getLayer0Id() && RSettings::isLayer0CompatibilityOn()) {
+                REntity::Id blockRefId = getParentId();
+                QSharedPointer<REntity> parentEntity = document->queryEntityDirect(blockRefId);
+                QSharedPointer<RBlockReferenceEntity> blockRef = parentEntity.dynamicCast<RBlockReferenceEntity>();
+                if (!blockRef.isNull()) {
+                    // delegate color of block attribute to block reference:
+                    //qDebug() << "delegate color to block ref:";
+                    //qDebug() << "color of block ref: " << blockRef->getColor(true, blockRefStack);
+                    return blockRef->getColor(true, blockRefStack);
+                }
+            }
+        }
+    }
+
+    return getColor(getColor(), blockRefStack);
 }
 
 /**
@@ -195,14 +204,10 @@ RLineweight::Lineweight REntityData::getLineweight(bool resolve, const QStack<RE
         lw = blockRefStack.top()->getLineweight(true, blockRefStack);
     }
 
-    if (lw==RLineweight::WeightByLwDefault) {
-        // TODO: return default line weight:
-        lw = RLineweight::Weight000;
-    }
-
-    if (lw==RLineweight::WeightInvalid) {
-        // TODO: return default line weight:
-        lw = RLineweight::Weight000;
+    if (lw==RLineweight::WeightByLwDefault || lw==RLineweight::WeightInvalid) {
+        // return configured default line weight:
+        //lw = RLineweight::Weight000;
+        lw = (RLineweight::Lineweight)RSettings::getIntValue("GraphicsView/DefaultLineweight", RLineweight::Weight000);
     }
 
     if (lw<0) {
@@ -282,8 +287,8 @@ RLinetypePattern REntityData::getLinetypePattern() const {
  *                    Zero to only return distances that are strictly orthogonal to the entity.
  */
 double REntityData::getDistanceTo(const RVector& point, bool limited, double range, bool draft, double strictRange) const {
-    Q_UNUSED(range);
-    Q_UNUSED(draft);
+    Q_UNUSED(range)
+    Q_UNUSED(draft)
 
     RVector v = getVectorTo(point, limited, strictRange);
     if (v.isValid()) {
@@ -305,6 +310,23 @@ RBox REntityData::getBoundingBox(bool ignoreEmpty) const {
         ret.growToInclude(bb);
     }
     return ret;
+}
+
+void REntityData::copyAttributesFrom(const REntityData& entityData, bool copyBlockId) {
+    if (getDocument()!=entityData.getDocument()) {
+        qWarning("REntityData::copyAttributesFrom: source entity not from same document");
+        return;
+    }
+
+    setLayerId(entityData.getLayerId());
+    if (copyBlockId) {
+        setBlockId(entityData.getBlockId());
+    }
+    setColor(entityData.getColor());
+    setLineweight(entityData.getLineweight());
+    setLinetypeId(entityData.getLinetypeId());
+    setLinetypeScale(entityData.getLinetypeScale());
+    setDrawOrder(entityData.getDrawOrder());
 }
 
 void REntityData::to2D() {
@@ -338,17 +360,11 @@ RPolyline REntityData::getHull(double offset) const {
  *  inside a polygon.
  */
 RVector REntityData::getPointOnEntity() const {
-    QList<RVector> midPoints = getMiddlePoints();
-    if (midPoints.size()>0) {
-        return midPoints[0];
+    const RShape* s = castToConstShape();
+    if (s==NULL) {
+        return RVector::invalid;
     }
-
-    QList<RVector> endPoints = getEndPoints();
-    if (endPoints.size()>0) {
-        return endPoints[0];
-    }
-
-    return getClosestPointOnEntity(RVector(0.0,0.0));
+    return s->getPointOnShape();
 }
 
 /**
@@ -385,6 +401,19 @@ QList<RVector> REntityData::getCenterPoints(const RBox& queryBox) const {
     QList<QSharedPointer<RShape> > shapes = getShapes(queryBox, true);
     for (int i=0; i<shapes.size(); i++) {
         ret.append(shapes.at(i)->getCenterPoints());
+    }
+    return ret;
+}
+
+/**
+ * \return Vector of reference points of this entity. Used for snap to
+ *        reference points.
+ */
+QList<RVector> REntityData::getArcReferencePoints(const RBox& queryBox) const {
+    QList<RVector> ret;
+    QList<QSharedPointer<RShape> > shapes = getShapes(queryBox, true);
+    for (int i=0; i<shapes.size(); i++) {
+        ret.append(shapes.at(i)->getArcReferencePoints());
     }
     return ret;
 }
@@ -488,6 +517,8 @@ bool REntityData::intersectsWith(const RShape& shape) const {
  */
 QList<RVector> REntityData::getIntersectionPoints(
         const REntityData& other, bool limited, bool same, const RBox& queryBox, bool ignoreComplex) const {
+
+    Q_UNUSED(same)
 
     QList<RVector> ret;
     QList<QSharedPointer<RShape> > shapes1 = getShapes(queryBox, ignoreComplex, true);

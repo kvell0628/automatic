@@ -31,7 +31,9 @@
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QIcon&gt;</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QDebug&gt;</cpp:file></cpp:include>
 
+<cpp:ifndef>#<cpp:directive>ifndef</cpp:directive> <name>RDEFAULT_QSIZE_ICON</name></cpp:ifndef>
 <cpp:define>#<cpp:directive>define</cpp:directive> <name>RDEFAULT_QSIZE_ICON</name> <name>QSize</name>(32,10)</cpp:define>
+<cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
 
 <comment type="block">/**
  * Color. Fixed RGBA or ByLayer or ByBlock.
@@ -58,7 +60,7 @@
     <constructor_decl><name>RColor</name><parameter_list>()</parameter_list>;</constructor_decl>
     <constructor_decl><name>RColor</name><parameter_list>(<param><decl><type><name>int</name></type> <name>r</name></decl></param>, <param><decl><type><name>int</name></type> <name>g</name></decl></param>, <param><decl><type><name>int</name></type> <name>b</name></decl></param>, <param><decl><type><name>int</name></type> <name>a</name> =<init> <expr>255</expr></init></decl></param>, <param><decl><type><name><name>RColor</name>::<name>Mode</name></name></type> <name>mode</name> =<init> <expr><name><name>RColor</name>::<name>Fixed</name></name></expr></init></decl></param>)</parameter_list>;</constructor_decl>
     <constructor_decl><name>RColor</name><parameter_list>(<param><decl><type><name><name>RColor</name>::<name>Mode</name></name></type> <name>mode</name></decl></param>)</parameter_list>;</constructor_decl>
-    <constructor_decl><name>RColor</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>name</name></decl></param>, <param><decl><type><name><name>RColor</name>::<name>Mode</name></name></type> <name>mode</name> =<init> <expr><name><name>RColor</name>::<name>Fixed</name></name></expr></init></decl></param>)</parameter_list>;</constructor_decl>
+    <constructor_decl><specifier>explicit</specifier> <name>RColor</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>name</name></decl></param>, <param><decl><type><name><name>RColor</name>::<name>Mode</name></name></type> <name>mode</name> =<init> <expr><name><name>RColor</name>::<name>Fixed</name></name></expr></init></decl></param>)</parameter_list>;</constructor_decl>
 
     <comment type="block">/**
      * \nonscriptable
@@ -99,6 +101,7 @@
     <function_decl><type><name>void</name></type> <name>setCompat</name><parameter_list>(<param><decl><type><name>const</name> <name>QColor</name>&amp;</type> <name>col</name></decl></param>)</parameter_list>;</function_decl>
 
     <function_decl><type><name>static</name> <name>RColor</name></type> <name>getHighlighted</name><parameter_list>(<param><decl><type><name>const</name> <name>RColor</name>&amp;</type> <name>color</name></decl></param>, <param><decl><type><name>const</name> <name>QColor</name>&amp;</type> <name>bgColor</name></decl></param>, <param><decl><type><name>int</name></type> <name>minDist</name> =<init> <expr>75</expr></init></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>static</name> <name>RColor</name></type> <name>getFaded</name><parameter_list>(<param><decl><type><name>const</name> <name>RColor</name>&amp;</type> <name>color</name></decl></param>, <param><decl><type><name>const</name> <name>QColor</name>&amp;</type> <name>bgColor</name></decl></param>, <param><decl><type><name>double</name></type> <name>factor</name> =<init> <expr>1</expr></init></decl></param>)</parameter_list>;</function_decl>
 
     <comment type="line">//bool equalsCorrected(const RColor &amp; color) const;</comment>
 

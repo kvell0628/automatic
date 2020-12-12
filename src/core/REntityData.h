@@ -58,6 +58,8 @@ class RExporter;
  * entity to provide similar behavior (e.g. a wall might
  * behave similar like a line entity).
  *
+ * \TODO derive from RObjectData with flags for selection status etc.
+ *
  * \scriptable
  * \sharedPointerSupport
  * \ingroup core
@@ -135,6 +137,8 @@ public:
 
     virtual RBox getBoundingBox(bool ignoreEmpty=false) const;
 
+    void copyAttributesFrom(const REntityData& entityData, bool copyBlockId = true);
+
     virtual void to2D();
     virtual void setZ(double z);
 
@@ -185,6 +189,20 @@ public:
      */
     virtual void setSelected(bool on) {
         selectionStatus = on;
+    }
+
+    /**
+     * \return True if the entity is currently selected to be added to the working set.
+     */
+    virtual bool isSelectedWorkingSet() const {
+        return selectionStatusWorkingSet;
+    }
+
+    /**
+     * Selects or deselects this entity for addition to the current working set.
+     */
+    virtual void setSelectedWorkingSet(bool on) {
+        selectionStatusWorkingSet = on;
     }
 
     /**
@@ -287,6 +305,7 @@ public:
         return color;
     }
 
+    virtual RColor getColor(const RColor& unresolvedColor, const QStack<REntity *>& blockRefStack) const;
     virtual RColor getColor(bool resolve, const QStack<REntity *>& blockRefStack) const;
 
     virtual RColor getDisplayColor() {
@@ -315,6 +334,7 @@ public:
     virtual QList<RVector> getEndPoints(const RBox& queryBox = RDEFAULT_RBOX) const;
     virtual QList<RVector> getMiddlePoints(const RBox& queryBox = RDEFAULT_RBOX) const;
     virtual QList<RVector> getCenterPoints(const RBox& queryBox = RDEFAULT_RBOX) const;
+    virtual QList<RVector> getArcReferencePoints(const RBox& queryBox = RDEFAULT_RBOX) const;
     virtual QList<RVector> getPointsWithDistanceToEnd(
         double distance, int from = RS::FromAny, const RBox& queryBox = RDEFAULT_RBOX) const;
 
@@ -352,15 +372,23 @@ public:
     virtual bool intersectsWith(const RShape& shape) const;
 
     /**
+     * Called when user clicks a reference point.
+     *
+     * \return True if clicking the reference point had any immediate effect.
+     */
+    virtual bool clickReferencePoint(const RVector& referencePoint) {
+        Q_UNUSED(referencePoint)
+        return false;
+    }
+
+    /**
      * Moves the given reference point to the given target point or does nothing
      * if this entity has no reference point as the given location.
      *
      * \return True if a reference point has been moved successfully,
      *        false otherwise.
      */
-    virtual bool moveReferencePoint(
-        const RVector& referencePoint, const RVector& targetPoint
-    ) = 0;
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier) = 0;
 
     virtual bool move(const RVector& offset);
     virtual bool rotate(double rotation, const RVector& center = RDEFAULT_RVECTOR);
@@ -388,6 +416,7 @@ protected:
     RDocument* document;
     bool updatesEnabled;
     bool selectionStatus;
+    bool selectionStatusWorkingSet;
     /** Block auto updates is true during imports, undo and redo. */
     bool autoUpdatesBlocked;
     int drawOrder;

@@ -33,6 +33,10 @@ RLinetype::RLinetype(RDocument* document, const RLinetypePattern& pattern)
     : RObject(document), pattern(pattern) {
 }
 
+RLinetype::RLinetype(const RLinetype& other) : RObject(other) {
+    pattern = other.pattern;
+}
+
 RLinetype::~RLinetype() {
 }
 
@@ -54,7 +58,7 @@ void RLinetype::init() {
 bool RLinetype::setProperty(RPropertyTypeId propertyTypeId,
     const QVariant& value, RTransaction* transaction) {
 
-    Q_UNUSED(transaction);
+    Q_UNUSED(transaction)
 
     bool ret = false;
     ret = RObject::setMember(pattern.name, value, PropertyName == propertyTypeId);
@@ -71,8 +75,8 @@ bool RLinetype::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RLinetype::getProperty(
-        RPropertyTypeId& propertyTypeId, bool /*humanReadable*/,
-        bool /*noAttributes*/) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable,
+        bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyName) {
         return qMakePair(QVariant(pattern.name), RPropertyAttributes());
@@ -89,11 +93,8 @@ QPair<QVariant, RPropertyAttributes> RLinetype::getProperty(
         return qMakePair(v, RPropertyAttributes());
     }
 
-    return qMakePair(QVariant(), RPropertyAttributes());
-}
-
-bool RLinetype::isSelectedForPropertyEditing() {
-    return false;
+    //return qMakePair(QVariant(), RPropertyAttributes());
+    return RObject::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 bool RLinetype::isValid() const {

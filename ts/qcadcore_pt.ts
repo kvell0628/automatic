@@ -186,7 +186,7 @@ Parsec</translatorcomment>
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translatorcomment>--exact match--
 --file: qcadguiqt_pt.ts--
@@ -341,7 +341,7 @@ Cinza Claro</translatorcomment>
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation>ID da Camada Atual</translation>
     </message>
@@ -369,7 +369,7 @@ Cinza Claro</translatorcomment>
         <translation type="obsolete">Bloco referenciado</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+93"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+95"/>
         <location line="+1"/>
         <location line="+1"/>
         <location filename="../src/core/RViewportEntity.cpp" line="+73"/>
@@ -396,7 +396,7 @@ Indique a posição [ângulo/comprimento]</translatorcomment>
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="-2"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -500,8 +500,13 @@ Insira o ângulo da linha de dimensão:</translatorcomment>
         <translation>Espaçamento de Linha</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Atributos</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translatorcomment>--exact match--
 --file: pt_PT.po--
@@ -510,7 +515,7 @@ Tipo Ordinal</translatorcomment>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="-11"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="-14"/>
         <source>Block</source>
         <translatorcomment>--exact match--
 --file: Block_pt.ts--
@@ -535,7 +540,7 @@ Lista de Camadas</translatorcomment>
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translatorcomment>--google--</translatorcomment>
         <translation>Tipo de Linha</translation>
@@ -607,7 +612,7 @@ Abre diálogo de cores</translatorcomment>
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Personalizado</translation>
     </message>
@@ -620,6 +625,21 @@ Abre diálogo de cores</translatorcomment>
         <location line="+1"/>
         <source>Protected</source>
         <translation>Protegido</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation>Selecionada</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation>Invisível</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation>Conjunto de trabalho</translation>
     </message>
     <message>
         <location filename="../src/core/REntity.cpp" line="+2"/>
@@ -666,7 +686,7 @@ Abre diálogo de cores</translatorcomment>
     <message>
         <location line="+1"/>
         <source>Font Name</source>
-        <translation>Nome da Fonte</translation>
+        <translation>Nome da fonte</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -715,6 +735,16 @@ Abre diálogo de cores</translatorcomment>
         <translation>Vertical</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Backward</source>
+        <translation>Para trás</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Upside Down</source>
+        <translation>De cabeça para baixo</translation>
+    </message>
+    <message>
         <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
         <source>Rotation</source>
         <translation>Rotação</translation>
@@ -745,6 +775,7 @@ Abre diálogo de cores</translatorcomment>
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
         <translation>Nome</translation>
@@ -834,7 +865,7 @@ Abre diálogo de cores</translatorcomment>
         <translation type="vanished">Margens de trama</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
         <translation>Foi detectada uma referência de bloco circular (recursiva):</translation>
     </message>
@@ -847,7 +878,7 @@ Abre diálogo de cores</translatorcomment>
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translatorcomment>--google--</translatorcomment>
         <translation>Requer uma seleção</translation>
@@ -1043,7 +1074,7 @@ Borda (grande)</translatorcomment>
         <translation type="vanished">Margem (grande)</translation>
     </message>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
@@ -1066,7 +1097,7 @@ Borda (grande)</translatorcomment>
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
         <translation>Pela Camada</translation>
     </message>

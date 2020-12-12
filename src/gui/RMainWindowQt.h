@@ -45,6 +45,7 @@ class RLayerListener;
 class RMdiArea;
 class RMdiChildQt;
 class RNewDocumentListener;
+class RPaletteListener;
 class RPenListener;
 class RPreferencesListener;
 class RPropertyListener;
@@ -88,6 +89,10 @@ public:
     virtual void postTransactionEvent(
         RTransaction& t,
         bool onlyChanges=false,
+        RS::EntityType entityTypeFilter = RS::EntityAll
+    );
+    virtual void postPropertyEvent(RPropertyTypeId propertyTypeId,
+        const QVariant& value,
         RS::EntityType entityTypeFilter = RS::EntityAll
     );
     virtual void postCloseEvent();

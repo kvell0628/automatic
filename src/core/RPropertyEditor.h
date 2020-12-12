@@ -51,13 +51,16 @@ public:
     RPropertyEditor();
     virtual ~RPropertyEditor();
 
+    static RPropertyEditor* getInstance();
+
     // from RPropertyListener interface:
-    virtual void updateFromDocument(RDocument* document, bool onlyChanges, RS::EntityType filter = RS::EntityUnknown, bool manual = false);
+    virtual void updateFromDocument(RDocument* document, bool onlyChanges, RS::EntityType filter = RS::EntityUnknown, bool manual = false, bool showOnRequest = false);
     virtual void updateFromObject(RObject* object, RDocument* document = NULL);
     virtual void clearEditor();
 
+    virtual void updateLayers(RDocumentInterface* documentInterface, QList<RLayer::Id>& layerIds);
     virtual void updateLayers(RDocumentInterface* documentInterface);
-    virtual void setCurrentLayer(RDocumentInterface* documentInterface);
+    virtual void setCurrentLayer(RDocumentInterface* documentInterface, RLayer::Id previousLayerId);
     virtual void clearLayers();
 
     void propertyChanged(RPropertyTypeId propertyTypeId, QVariant propertyValue,
@@ -86,7 +89,7 @@ public:
     static bool checkType(RS::EntityType type, RS::EntityType filter);
 
 protected:
-    virtual void updateEditor(RObject& object, bool doUpdateGui, RDocument* document = NULL);
+    virtual void updateEditor(RObject& object, bool doUpdateGui, RDocument* document = NULL, bool showOnRequest = false);
 
     /**
      * Updates the user interface of this property editor. This is the
@@ -97,7 +100,7 @@ protected:
         Q_UNUSED(onlyChanges)
     }
 
-    void updateProperty(const RPropertyTypeId& propertyTypeId, RObject& object, RDocument* document);
+    void updateProperty(const RPropertyTypeId& propertyTypeId, RObject& object, RDocument* document, bool showOnRequest = false);
     void removeAllButThese(const QMultiMap<QString, QString>& propertyTitles, bool customOnly=false);
 
 protected:
@@ -114,6 +117,8 @@ protected:
     bool updatesDisabled;
 
     RS::EntityType entityTypeFilter;
+
+    static RPropertyEditor* instance;
 };
 
 Q_DECLARE_METATYPE(RPropertyEditor*)

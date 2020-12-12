@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with QCAD.
  */
+#include "RArcEntity.h"
 #include "RCircleEntity.h"
 #include "RExporter.h"
 #include "RPoint.h"
@@ -23,6 +24,7 @@
 RPropertyTypeId RCircleEntity::PropertyCustom;
 RPropertyTypeId RCircleEntity::PropertyHandle;
 RPropertyTypeId RCircleEntity::PropertyProtected;
+RPropertyTypeId RCircleEntity::PropertyWorkingSet;
 RPropertyTypeId RCircleEntity::PropertyType;
 RPropertyTypeId RCircleEntity::PropertyBlock;
 RPropertyTypeId RCircleEntity::PropertyLayer;
@@ -41,7 +43,7 @@ RPropertyTypeId RCircleEntity::PropertyRadius;
 RPropertyTypeId RCircleEntity::PropertyDiameter;
 RPropertyTypeId RCircleEntity::PropertyCircumference;
 RPropertyTypeId RCircleEntity::PropertyArea;
-
+RPropertyTypeId RCircleEntity::PropertyTotalArea;
 
 
 RCircleEntity::RCircleEntity(RDocument* document, const RCircleData& data) :
@@ -63,6 +65,7 @@ void RCircleEntity::init() {
     RCircleEntity::PropertyCustom.generateId(typeid(RCircleEntity), RObject::PropertyCustom);
     RCircleEntity::PropertyHandle.generateId(typeid(RCircleEntity), RObject::PropertyHandle);
     RCircleEntity::PropertyProtected.generateId(typeid(RCircleEntity), RObject::PropertyProtected);
+    RCircleEntity::PropertyWorkingSet.generateId(typeid(RCircleEntity), RObject::PropertyWorkingSet);
     RCircleEntity::PropertyType.generateId(typeid(RCircleEntity), REntity::PropertyType);
     RCircleEntity::PropertyBlock.generateId(typeid(RCircleEntity), REntity::PropertyBlock);
     RCircleEntity::PropertyLayer.generateId(typeid(RCircleEntity), REntity::PropertyLayer);
@@ -72,14 +75,16 @@ void RCircleEntity::init() {
     RCircleEntity::PropertyColor.generateId(typeid(RCircleEntity), REntity::PropertyColor);
     RCircleEntity::PropertyDisplayedColor.generateId(typeid(RCircleEntity), REntity::PropertyDisplayedColor);
     RCircleEntity::PropertyDrawOrder.generateId(typeid(RCircleEntity), REntity::PropertyDrawOrder);
-    RCircleEntity::PropertyCenterX.generateId(typeid(RCircleEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RCircleEntity::PropertyCenterY.generateId(typeid(RCircleEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RCircleEntity::PropertyCenterZ.generateId(typeid(RCircleEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Z"));
-    RCircleEntity::PropertyRadius.generateId(typeid(RCircleEntity), "", QT_TRANSLATE_NOOP("REntity", "Radius"));
+
+    RCircleEntity::PropertyCenterX.generateId(typeid(RCircleEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RCircleEntity::PropertyCenterY.generateId(typeid(RCircleEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RCircleEntity::PropertyCenterZ.generateId(typeid(RCircleEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+    RCircleEntity::PropertyRadius.generateId(typeid(RCircleEntity), "", QT_TRANSLATE_NOOP("REntity", "Radius"), false, RPropertyAttributes::Geometry);
 
     RCircleEntity::PropertyDiameter.generateId(typeid(RCircleEntity), "", QT_TRANSLATE_NOOP("REntity", "Diameter"));
     RCircleEntity::PropertyCircumference.generateId(typeid(RCircleEntity), "", QT_TRANSLATE_NOOP("REntity", "Circumference"));
     RCircleEntity::PropertyArea.generateId(typeid(RCircleEntity), "", QT_TRANSLATE_NOOP("REntity", "Area"));
+    RCircleEntity::PropertyTotalArea.generateId(typeid(RCircleEntity), "", QT_TRANSLATE_NOOP("REntity", "Total Area"));
 }
 
 bool RCircleEntity::setProperty(RPropertyTypeId propertyTypeId,
@@ -108,7 +113,7 @@ bool RCircleEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RCircleEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyCenterX) {
         return qMakePair(QVariant(data.center.x), RPropertyAttributes());
@@ -123,19 +128,34 @@ QPair<QVariant, RPropertyAttributes> RCircleEntity::getProperty(
     } else if (propertyTypeId == PropertyCircumference) {
         return qMakePair(QVariant(data.getCircumference()), RPropertyAttributes(RPropertyAttributes::Redundant));
     } else if (propertyTypeId == PropertyArea) {
-        return qMakePair(QVariant(data.getArea()), RPropertyAttributes(RPropertyAttributes::Redundant));
+        return qMakePair(QVariant(data.getArea()), RPropertyAttributes(RPropertyAttributes::Redundant|RPropertyAttributes::Area));
+    } else if (propertyTypeId == PropertyTotalArea) {
+        if (showOnRequest) {
+            QVariant v;
+            v.setValue(data.getArea());
+            return qMakePair(v, RPropertyAttributes(RPropertyAttributes::Sum|RPropertyAttributes::Area));
+        }
+        else {
+            QVariant v;
+            v.setValue(0.0);
+            return qMakePair(v, RPropertyAttributes(RPropertyAttributes::OnRequest|RPropertyAttributes::Area));
+        }
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 
 void RCircleEntity::exportEntity(RExporter& e, bool preview, bool forceSelected) const {
-    Q_UNUSED(preview);
-    Q_UNUSED(forceSelected);
+    Q_UNUSED(preview)
+    Q_UNUSED(forceSelected)
 
     e.setBrush(Qt::NoBrush);
     e.exportCircle(data);
+}
+
+QSharedPointer<REntity> RCircleEntity::scaleNonUniform(const RVector& scaleFactors, const RVector& center) {
+    return RArcEntity::scaleNonUniform(*this, scaleFactors, center);
 }
 
 void RCircleEntity::print(QDebug dbg) const {

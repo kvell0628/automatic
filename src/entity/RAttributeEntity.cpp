@@ -22,6 +22,7 @@
 RPropertyTypeId RAttributeEntity::PropertyCustom;
 RPropertyTypeId RAttributeEntity::PropertyHandle;
 RPropertyTypeId RAttributeEntity::PropertyProtected;
+RPropertyTypeId RAttributeEntity::PropertyWorkingSet;
 RPropertyTypeId RAttributeEntity::PropertyType;
 RPropertyTypeId RAttributeEntity::PropertyBlock;
 RPropertyTypeId RAttributeEntity::PropertyLayer;
@@ -48,6 +49,8 @@ RPropertyTypeId RAttributeEntity::PropertyLineSpacingFactor;
 RPropertyTypeId RAttributeEntity::PropertyHAlign;
 RPropertyTypeId RAttributeEntity::PropertyVAlign;
 RPropertyTypeId RAttributeEntity::PropertyInvisible;
+RPropertyTypeId RAttributeEntity::PropertyBackward;
+RPropertyTypeId RAttributeEntity::PropertyUpsideDown;
 
 
 RAttributeEntity::RAttributeEntity(RDocument* document, const RAttributeData& data) :
@@ -61,6 +64,7 @@ void RAttributeEntity::init() {
     RAttributeEntity::PropertyCustom.generateId(typeid(RAttributeEntity), RObject::PropertyCustom);
     RAttributeEntity::PropertyHandle.generateId(typeid(RAttributeEntity), RObject::PropertyHandle);
     RAttributeEntity::PropertyProtected.generateId(typeid(RAttributeEntity), RObject::PropertyProtected);
+    RAttributeEntity::PropertyWorkingSet.generateId(typeid(RAttributeEntity), RObject::PropertyWorkingSet);
     RAttributeEntity::PropertyType.generateId(typeid(RAttributeEntity), REntity::PropertyType);
     RAttributeEntity::PropertyBlock.generateId(typeid(RAttributeEntity), REntity::PropertyBlock);
     RAttributeEntity::PropertyLayer.generateId(typeid(RAttributeEntity), REntity::PropertyLayer);
@@ -85,6 +89,8 @@ void RAttributeEntity::init() {
     RAttributeEntity::PropertyLineSpacingFactor.generateId(typeid(RAttributeEntity), RTextBasedEntity::PropertyLineSpacingFactor);
     RAttributeEntity::PropertyHAlign.generateId(typeid(RAttributeEntity), RTextBasedEntity::PropertyHAlign);
     RAttributeEntity::PropertyVAlign.generateId(typeid(RAttributeEntity), RTextBasedEntity::PropertyVAlign);
+    RAttributeEntity::PropertyBackward.generateId(typeid(RAttributeEntity), RTextBasedEntity::PropertyBackward);
+    RAttributeEntity::PropertyUpsideDown.generateId(typeid(RAttributeEntity), RTextBasedEntity::PropertyUpsideDown);
 
     RAttributeEntity::PropertyTag.generateId(typeid(RAttributeEntity), "", QT_TRANSLATE_NOOP("REntity", "Tag"));
     RAttributeEntity::PropertyInvisible.generateId(typeid(RAttributeEntity), "", QT_TRANSLATE_NOOP("REntity", "Invisible"));
@@ -104,7 +110,7 @@ bool RAttributeEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RAttributeEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyTag) {
         return qMakePair(QVariant(data.tag), RPropertyAttributes());
@@ -124,46 +130,7 @@ QPair<QVariant, RPropertyAttributes> RAttributeEntity::getProperty(
         );
     }
 
-    return RTextBasedEntity::getProperty(propertyTypeId, humanReadable, noAttributes);
-}
-
-bool RAttributeEntity::isVisible() const {
-    // delegate attribute visibility to block reference:
-    // only show block attributes of visible blocks:
-    if (RSettings::getHideAttributeWithBlock()) {
-        REntity::Id blockRefId = getParentId();
-        const RDocument* document = getDocument();
-        if (document!=NULL) {
-            RLayer::Id layer0Id = document->getLayer0Id();
-            bool onLayer0 = getLayerId()==layer0Id;
-            QSharedPointer<REntity> parentEntity = document->queryEntityDirect(blockRefId);
-            QSharedPointer<RBlockReferenceEntity> blockRef = parentEntity.dynamicCast<RBlockReferenceEntity>();
-            if (!blockRef.isNull()) {
-                bool blockRefOnLayer0 = blockRef->getLayerId()==layer0Id;
-                // delegate visibility of block attribute to block reference:
-                if (onLayer0) {
-                    if (blockRefOnLayer0) {
-                        QSharedPointer<RLayer> layer0 = document->queryLayerDirect(getLayerId());
-                        if (!layer0.isNull() && layer0->isOff()) {
-                            return false;
-                        }
-                    }
-                    else {
-                        QSharedPointer<RLayer> layer = document->queryLayerDirect(blockRef->getLayerId());
-                        if (!layer.isNull() && layer->isOff()) {
-                            return false;
-                        }
-                    }
-                    return blockRef->isVisible();
-                }
-                else if (!blockRef->isVisible()) {
-                    return false;
-                }
-            }
-        }
-    }
-
-    return REntity::isVisible();
+    return RTextBasedEntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RAttributeEntity::exportEntity(RExporter& e, bool preview, bool forceSelected) const {
@@ -177,10 +144,10 @@ void RAttributeEntity::exportEntity(RExporter& e, bool preview, bool forceSelect
     if (!isInvisible()) {
         if (e.isTextRenderedAsText()) {
             QList<RPainterPath> paths = e.exportText(getData(), forceSelected);
-            e.exportPainterPaths(paths);
+            e.exportPainterPaths(paths, getPosition().z);
         }
         else {
-            e.exportPainterPathSource(getData());
+            e.exportPainterPathSource(getData(), getPosition().z);
         }
     }
 }

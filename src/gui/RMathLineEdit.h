@@ -23,7 +23,6 @@
 #include "gui_global.h"
 
 #include <QMetaType>
-#include <QLabel>
 #include <QLineEdit>
 
 #include "RMath.h"
@@ -75,6 +74,9 @@ public:
 
     void setToolTip(const QString& toolTip);
 
+    QColor getNormalTextColor() const;
+    void setTextColor(bool error);
+
     /*
     double getDefaultValue() {
         return defaultValue;
@@ -113,7 +115,6 @@ private:
     bool noEmit;
     bool noResultInToolTip;
     //double defaultValue;
-//    QLabel* resultTip;
 };
 
 Q_DECLARE_METATYPE(RMathLineEdit*)

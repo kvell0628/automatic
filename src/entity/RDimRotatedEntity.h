@@ -22,20 +22,20 @@
 
 #include "entity_global.h"
 
-#include "RDimensionEntity.h"
+#include "RDimLinearEntity.h"
 #include "RDimRotatedData.h"
 
 class RDocument;
 class RExporter;
 
 /**
- * Linear dimension entity class.
+ * Rotated, linear dimension entity class.
  *
  * \scriptable
  * \sharedPointerSupport
  * \ingroup entity
  */
-class QCADENTITY_EXPORT RDimRotatedEntity: public RDimensionEntity {
+class QCADENTITY_EXPORT RDimRotatedEntity: public RDimLinearEntity {
 
     Q_DECLARE_TR_FUNCTIONS(RDimRotatedEntity)
 
@@ -43,6 +43,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -66,6 +67,11 @@ public:
     static RPropertyTypeId PropertyDimBlockName;
     static RPropertyTypeId PropertyAutoTextPos;
     static RPropertyTypeId PropertyFontName;
+    static RPropertyTypeId PropertyArrow1Flipped;
+    static RPropertyTypeId PropertyArrow2Flipped;
+
+    static RPropertyTypeId PropertyExtLineFix;
+    static RPropertyTypeId PropertyExtLineFixLength;
 
     static RPropertyTypeId PropertyDimensionLinePosX;
     static RPropertyTypeId PropertyDimensionLinePosY;
@@ -95,11 +101,11 @@ public:
         return new RDimRotatedEntity(*this);
     }
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual RDimRotatedData& getData() {
         return data;

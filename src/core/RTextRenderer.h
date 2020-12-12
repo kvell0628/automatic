@@ -23,6 +23,7 @@
 #include "core_global.h"
 
 #include <QTextLayout>
+#include <QMutex>
 
 #include "RDocument.h"
 #include "REntityData.h"
@@ -80,6 +81,14 @@ public:
 
     QString getRichText() const {
         return richText;
+    }
+
+    static void lockForDrawing() {
+        m.lock();
+    }
+
+    static void unlockForDrawing() {
+        m.unlock();
     }
 
 private:
@@ -189,6 +198,19 @@ private:
         return false;
     }
 
+    void setBlockUnderline(bool on) {
+        if (!blockUnderline.isEmpty()) {
+            blockUnderline.top() = on;
+        }
+    }
+
+    bool getBlockUnderline() const {
+        if (!blockUnderline.isEmpty()) {
+            return blockUnderline.top();
+        }
+        return false;
+    }
+
     void setBlockHeight(double h) {
         if (!blockHeight.isEmpty()) {
             blockHeight.top() = h;
@@ -216,54 +238,112 @@ private:
     }
 
 public:
-    static QString rxLineFeed;
-    static QString rxAlignmentLeft;
-    static QString rxAlignmentCenter;
-    static QString rxAlignmentRight;
-    static QString rxXAlignmentLeft;
-    static QString rxXAlignmentCenter;
-    static QString rxXAlignmentRight;
-    static QString rxParagraphFeed;
-    static QString rxXFeed;
-    static QString rxHeightChange;
+    static QString rxLineFeedStr;
+    static QRegExp rxLineFeed;
+    static QString rxAlignmentLeftStr;
+    static QRegExp rxAlignmentLeft;
+    static QString rxAlignmentCenterStr;
+    static QRegExp rxAlignmentCenter;
+    static QString rxAlignmentRightStr;
+    static QRegExp rxAlignmentRight;
+    static QString rxXAlignmentLeftStr;
+    static QRegExp rxXAlignmentLeft;
+    static QString rxXAlignmentCenterStr;
+    static QRegExp rxXAlignmentCenter;
+    static QString rxXAlignmentRightStr;
+    static QRegExp rxXAlignmentRight;
+    static QString rxXSpaceMTextStr;
+    static QRegExp rxXSpaceMText;
+    static QString rxTabMMStr;
+    static QRegExp rxTabMM;
+    static QString rxTabINStr;
+    static QRegExp rxTabIN;
+    static QString rxParagraphFeedStr;
+    static QRegExp rxParagraphFeed;
+    static QString rxXFeedStr;
+    static QRegExp rxXFeed;
+    static QString rxHeightChangeStr;
+    static QRegExp rxHeightChange;
+    static QString rxUnderlineChangeStr;
+    static QRegExp rxUnderlineChange;
     //static QString rxRelativeHeightChange;
-    static QString rxStackedText;
-    static QString rxColorChangeIndex;
-    static QString rxColorChangeCustom;
-    static QString rxNonBreakingSpace;
-    static QString rxOverlineOn;
-    static QString rxOverlineOff;
-    static QString rxUnderlineOn;
-    static QString rxUnderlineOff;
-    static QString rxStrikethroughOn;
-    static QString rxStrikethroughOff;
-    static QString rxWidthChange;
-    static QString rxObliqueAngleChange;
-    static QString rxTrackChange;
-    static QString rxAlignmentChange;
-    static QString rxFontChangeCad;
-    static QString rxFontChangeTtf;
-    static QString rxBeginBlock;
-    static QString rxEndBlock;
-    static QString rxBackslash;
-    static QString rxCurlyOpen;
-    static QString rxCurlyClose;
-    static QString rxDegree;
-    static QString escDegree;
-    static QString rxPlusMinus;
-    static QString escPlusMinus;
-    static QString rxDiameter;
-    static QString escDiameter;
-    static QString rxUnderlined;
-    static QString rxUnicode;
+    static QString rxStackedTextStr;
+    static QRegExp rxStackedText;
+    static QString rxColorChangeIndexStr;
+    static QRegExp rxColorChangeIndex;
+    static QString rxColorChangeCustomStr;
+    static QRegExp rxColorChangeCustom;
+    static QString rxNonBreakingSpaceStr;
+    static QRegExp rxNonBreakingSpace;
+    static QString rxOverlineOnStr;
+    static QRegExp rxOverlineOn;
+    static QString rxOverlineOffStr;
+    static QRegExp rxOverlineOff;
+    static QString rxUnderlineOnStr;
+    static QRegExp rxUnderlineOn;
+    static QString rxUnderlineOffStr;
+    static QRegExp rxUnderlineOff;
+    static QString rxStrikethroughOnStr;
+    static QRegExp rxStrikethroughOn;
+    static QString rxStrikethroughOffStr;
+    static QRegExp rxStrikethroughOff;
+    static QString rxWidthChangeStr;
+    static QRegExp rxWidthChange;
+    static QString rxObliqueAngleChangeStr;
+    static QRegExp rxObliqueAngleChange;
+    static QString rxTrackChangeStr;
+    static QRegExp rxTrackChange;
+    static QString rxAlignmentChangeStr;
+    static QRegExp rxAlignmentChange;
+    static QString rxFontChangeCadStr;
+    static QRegExp rxFontChangeCad;
+    static QString rxFontChangeTtfStr;
+    static QRegExp rxFontChangeTtf;
+    static QString rxBeginBlockStr;
+    static QRegExp rxBeginBlock;
+    static QString rxEndBlockStr;
+    static QRegExp rxEndBlock;
+    static QString rxBackslashStr;
+    static QRegExp rxBackslash;
+    static QString rxCurlyOpenStr;
+    static QRegExp rxCurlyOpen;
+    static QString rxCurlyCloseStr;
+    static QRegExp rxCurlyClose;
+    static QString rxDegreeStr;
+    static QRegExp rxDegree;
+    static QString escDegreeStr;
+    static QRegExp escDegree;
+    static QString rxPlusMinusStr;
+    static QRegExp rxPlusMinus;
+    static QString escPlusMinusStr;
+    static QRegExp escPlusMinus;
+    static QString rxDiameterStr;
+    static QRegExp rxDiameter;
+    static QString escDiameterStr;
+    static QRegExp escDiameter;
+    static QString rxUnderlineStr;
+    static QRegExp rxUnderline;
+    static QString escUnderlineStr;
+    static QRegExp escUnderline;
+    static QString rxNoOpStr;
+    static QRegExp rxNoOp;
+    static QString rxNoOpEndStr;
+    static QRegExp rxNoOpEnd;
+    static QString escNoOpStr;
+    static QRegExp escNoOp;
+    static QString rxUnicodeStr;
+    static QRegExp rxUnicode;
 
-    static QString rxAll;
+    static QString rxAllStr;
+    static QRegExp rxAll;
 
     static QChar chDegree;
     static QChar chPlusMinus;
     static QChar chDiameter;
 
 private:
+    static QMutex m;
+
     const RTextBasedData& textData;
 
     Target target;
@@ -290,6 +370,7 @@ private:
     QStack<QString> blockFontFile;
     QStack<bool> blockBold;
     QStack<bool> blockItalic;
+    QStack<bool> blockUnderline;
     QStack<QStringList> openTags;
 };
 

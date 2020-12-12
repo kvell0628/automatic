@@ -37,7 +37,8 @@ function LayerDialog(documentInterface, layer) {
     }
     this.layer = layer;
     this.prefix = undefined;
-    this.defaultName = "layer %1";
+    this.defaultName = qsTr("layer", "default layer name prefix") + " %1";
+    this.defaultColor = RSettings.getColor("Layer/DefaultColor", new RColor("black"));
 }
 
 /**
@@ -65,7 +66,6 @@ LayerDialog.prototype.getLayerName = function(dialog) {
 
 LayerDialog.prototype.show = function() {
     this.dialog = WidgetFactory.createDialog("scripts/Layer", "LayerDialog.ui");
-    //this.dialog.windowIcon = new QIcon(autoPath("scripts/Layer/EditLayer/EditLayer.svg"));
 
     var widgets = getWidgets(this.dialog);
     var leLayerName = widgets["LayerName"];
@@ -73,7 +73,7 @@ LayerDialog.prototype.show = function() {
     this.validator = new QRegExpValidator(rx, leLayerName);
     leLayerName.setValidator(this.validator);
     var cbColor = widgets["Color"];
-    cbColor.setColor(RSettings.getColor("Layer/DefaultColor", new RColor("black")));
+    cbColor.setColor(this.defaultColor);
     var cbLineweight = widgets["Lineweight"];
     cbLineweight.setLineweight(RSettings.getIntValue("Layer/DefaultLineweight", RLineweight.Weight025));
     var cbLinetype = widgets["Linetype"];

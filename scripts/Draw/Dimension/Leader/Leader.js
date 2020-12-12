@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Dimension.js");
+include("scripts/Draw/Dimension/Dimension.js");
 
 /**
  * \class Leader
@@ -30,6 +30,7 @@ function Leader(guiAction) {
     this.arrowHead = true;
     this.leaderEntity = undefined;
     this.segment = undefined;
+    this.arrowBlockId = RBlock.INVALID_ID;
 
     this.setUiOptions("Leader.ui");
 }
@@ -70,7 +71,7 @@ Leader.prototype.setState = function(state) {
         var trNextVertex = qsTr("Next vertex");
         this.setCommandPrompt(trNextVertex);
         this.setLeftMouseTip(trNextVertex);
-        this.setRightMouseTip(qsTr("Done"));
+        this.setRightMouseTip(EAction.trDone);
         EAction.showSnapTools();
         break;
     }
@@ -181,6 +182,9 @@ Leader.prototype.getOperation = function(preview) {
         else {
             // for the first segment, we preview a real leader for the sake
             // of displaying the arrow correctly:
+            if (this.arrowBlockId!==RBlock.INVALID_ID) {
+                this.leaderEntity.setDimLeaderBlockId(this.arrowBlockId);
+            }
             var ld = this.leaderEntity.clone();
             ld.appendVertex(this.segment.getEndPoint());
             ld.setArrowHead(this.arrowHead);

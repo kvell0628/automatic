@@ -207,6 +207,12 @@
         getNoColorMode
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        setSimplePointDisplay
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getSimplePointDisplay
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         setPixelWidth
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -274,6 +280,12 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         hasOriginalShapes
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        countOriginalShapes
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getOriginalShape
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         rotateList

@@ -30,6 +30,7 @@ SOURCES += \
     RImporter.cpp \
     RInputEvent.cpp \
     RLayer.cpp \
+    RLayerState.cpp \
     RLayout.cpp \
     RLinetype.cpp \
     RLinetypeList.cpp \
@@ -74,6 +75,7 @@ SOURCES += \
     RSpatialIndexSimple.cpp \
     RStorage.cpp \
     RStorageBlockSort.cpp \
+    RStorageLayerSort.cpp \
     RTabletEvent.cpp \
     RTextBasedData.cpp \
     RTextBasedEntity.cpp \
@@ -104,6 +106,7 @@ SOURCES += \
     math/RShape.cpp \
     math/RSpline.cpp \
     math/RTextLabel.cpp \
+    math/RTransform.cpp \
     math/RTriangle.cpp \
     math/RVector.cpp \
     math/RXLine.cpp
@@ -160,6 +163,7 @@ HEADERS = \
     RInterTransactionListener.h \
     RInputEvent.h \
     RLayer.h \
+    RLayerState.h \
     RLayout.h \
     RLayerListener.h \
     RLinetype.h \
@@ -188,6 +192,7 @@ HEADERS = \
     RPainterPathDevice.h \
     RPainterPathEngine.h \
     RPainterPathExporter.h \
+    RPaletteListener.h \
     RPattern.h \
     RPatternLine.h \
     RPatternList.h \
@@ -226,6 +231,7 @@ HEADERS = \
     RSpatialIndexVisitor.h \
     RStorage.h \
     RStorageBlockSort.h \
+    RStorageLayerSort.h \
     RTabletEvent.h \
     RTerminateEvent.h \
     RTextBasedData.h \
@@ -264,12 +270,20 @@ HEADERS = \
     math/RRay.h \
     math/RRefPoint.h \
     math/RShape.h \
+    math/RShapeProxy.h \
     math/RSpline.h \
     math/RSplineProxy.h \
     math/RTextLabel.h \
+    math/RTransform.h \
+    math/RTransformOp.h \
     math/RTriangle.h \
     math/RVector.h \
     math/RXLine.h
+
+macx {
+    OBJECTIVE_SOURCES += $$PWD/detectmacdarkmode.mm
+    OBJECTIVE_HEADERS += $$PWD/detectmacdarkmode.h
+}
 
 TEMPLATE = lib
 
@@ -295,7 +309,7 @@ win32 {
 }
 
 macx {
-    QMAKE_LFLAGS += -framework ApplicationServices
+    QMAKE_LFLAGS += -framework ApplicationServices -framework Foundation
 }
 
 linux-g++* {

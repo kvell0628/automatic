@@ -5,6 +5,7 @@ xmlns:rs="http://www.ribbonsoft.com">
   <class_decl name="REntity" />
   <class_decl name="RBlockReferenceEntity" />
   <class_decl name="RExporter" />
+  <class_decl name="RViewportData" />
   <class name="REntity"
   xsi:noNamespaceSchemaLocation="../class.xsd" isCopyable="false"
   hasShell="false" sharedPointerSupport="true" isQObject="false"
@@ -66,6 +67,14 @@ xmlns:rs="http://www.ribbonsoft.com">
         name="type" isConst="true" />
       </variant>
     </method>
+    <method name="isTextBased" cppName="isTextBased"
+    specifier="public" isStatic="true" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false">
+        <arg type="RS::EntityType" typeName="RS::EntityType"
+        name="type" isConst="true" />
+      </variant>
+    </method>
     <method name="getData" cppName="getData" specifier="public"
     isStatic="false" isVirtual="true" isScriptOverwritable="true">
       <variant returnType="REntityData &amp;"
@@ -82,13 +91,26 @@ xmlns:rs="http://www.ribbonsoft.com">
       <variant returnType="bool" isPureVirtual="false" />
     </method>
     <method name="isSelected" cppName="isSelected"
-    specifier="public" isStatic="false" isVirtual="false"
+    specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
       <variant returnType="bool" isPureVirtual="false" />
     </method>
     <method name="setSelected" cppName="setSelected"
     specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="isSelectedWorkingSet"
+    cppName="isSelectedWorkingSet" specifier="public"
+    isStatic="false" isVirtual="true" isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setSelectedWorkingSet"
+    cppName="setSelectedWorkingSet" specifier="public"
+    isStatic="false" isVirtual="true" isScriptOverwritable="true">
       <variant returnType="void" isPureVirtual="false">
         <arg type="bool" typeName="bool" name="on"
         isConst="false" />
@@ -264,6 +286,13 @@ xmlns:rs="http://www.ribbonsoft.com">
     <method name="getColor" cppName="getColor" specifier="public"
     isStatic="false" isVirtual="false" isScriptOverwritable="true">
       <variant returnType="RColor" isPureVirtual="false" />
+      <variant returnType="RColor" isPureVirtual="false">
+        <arg type="RColor &amp;" typeName="RColor"
+        name="unresolvedColor" isConst="true" />
+        <arg type="QStack &lt; REntity * &gt; &amp;"
+        typeName="QStack &lt; REntity * &gt;" name="blockRefStack"
+        isConst="true" />
+      </variant>
       <variant returnType="RColor" isPureVirtual="false">
         <arg type="bool" typeName="bool" name="resolve"
         isConst="false" />
@@ -539,6 +568,14 @@ xmlns:rs="http://www.ribbonsoft.com">
         hasDefault="true" default="RDEFAULT_RBOX" isConst="true" />
       </variant>
     </method>
+    <method name="clickReferencePoint"
+    cppName="clickReferencePoint" specifier="public"
+    isStatic="false" isVirtual="true" isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false">
+        <arg type="RVector &amp;" typeName="RVector"
+        name="referencePoint" isConst="true" />
+      </variant>
+    </method>
     <method name="moveReferencePoint" cppName="moveReferencePoint"
     specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
@@ -547,6 +584,10 @@ xmlns:rs="http://www.ribbonsoft.com">
         name="referencePoint" isConst="true" />
         <arg type="RVector &amp;" typeName="RVector"
         name="targetPoint" isConst="true" />
+        <arg type="Qt::KeyboardModifiers"
+        typeName="Qt::KeyboardModifiers" name="modifiers"
+        hasDefault="true" default="Qt :: NoModifier"
+        isConst="false" />
       </variant>
     </method>
     <method name="move" cppName="move" specifier="public"
@@ -583,12 +624,32 @@ xmlns:rs="http://www.ribbonsoft.com">
         isConst="true" />
       </variant>
     </method>
+    <method name="scaleNonUniform" cppName="scaleNonUniform"
+    specifier="public" isStatic="false" isVirtual="true"
+    isScriptOverwritable="true">
+      <variant returnType="QSharedPointer &lt; REntity &gt;"
+      isPureVirtual="false">
+        <arg type="RVector &amp;" typeName="RVector"
+        name="scaleFactors" isConst="true" />
+        <arg type="RVector &amp;" typeName="RVector" name="center"
+        hasDefault="true" default="RDEFAULT_RVECTOR"
+        isConst="true" />
+      </variant>
+    </method>
     <method name="scaleVisualProperties"
     cppName="scaleVisualProperties" specifier="public"
     isStatic="false" isVirtual="true" isScriptOverwritable="true">
       <variant returnType="void" isPureVirtual="false">
         <arg type="double" typeName="double" name="scaleFactor"
         isConst="false" />
+      </variant>
+    </method>
+    <method name="setViewportContext" cppName="setViewportContext"
+    specifier="public" isStatic="false" isVirtual="true"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="RViewportData &amp;" typeName="RViewportData"
+        name="" isConst="true" />
       </variant>
     </method>
     <method name="mirror" cppName="mirror" specifier="public"
@@ -644,11 +705,6 @@ xmlns:rs="http://www.ribbonsoft.com">
         hasDefault="true" default="false" isConst="false" />
       </variant>
     </method>
-    <method name="isSelectedForPropertyEditing"
-    cppName="isSelectedForPropertyEditing" specifier="public"
-    isStatic="false" isVirtual="true" isScriptOverwritable="true">
-      <variant returnType="bool" isPureVirtual="false" />
-    </method>
     <method name="setAutoUpdatesBlocked"
     cppName="setAutoUpdatesBlocked" specifier="public"
     isStatic="false" isVirtual="true" isScriptOverwritable="true">
@@ -669,6 +725,8 @@ xmlns:rs="http://www.ribbonsoft.com">
         hasDefault="true" default="false" isConst="false" />
         <arg type="bool" typeName="bool" name="noAttributes"
         hasDefault="true" default="false" isConst="false" />
+        <arg type="bool" typeName="bool" name="showOnRequest"
+        hasDefault="true" default="false" isConst="false" />
       </variant>
     </method>
     <method name="setProperty" cppName="setProperty"
@@ -686,7 +744,11 @@ xmlns:rs="http://www.ribbonsoft.com">
     </method>
     <method name="isVisible" cppName="isVisible" specifier="public"
     isStatic="false" isVirtual="true" isScriptOverwritable="true">
-      <variant returnType="bool" isPureVirtual="false" />
+      <variant returnType="bool" isPureVirtual="false">
+        <arg type="RBlock::Id" typeName="RBlock::Id" name="blockId"
+        hasDefault="true" default="RBlock :: INVALID_ID"
+        isConst="false" />
+      </variant>
     </method>
     <method name="isEditable" cppName="isEditable"
     specifier="public" isStatic="false" isVirtual="true"
@@ -695,6 +757,11 @@ xmlns:rs="http://www.ribbonsoft.com">
         <arg type="bool" typeName="bool" name="allowInvisible"
         hasDefault="true" default="false" isConst="false" />
       </variant>
+    </method>
+    <method name="isInWorkingSet" cppName="isInWorkingSet"
+    specifier="public" isStatic="false" isVirtual="true"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
     </method>
     <method name="getComplexity" cppName="getComplexity"
     specifier="public" isStatic="false" isVirtual="true"
@@ -721,6 +788,8 @@ xmlns:rs="http://www.ribbonsoft.com">
     <property name="PropertyHandle" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyProtected" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyWorkingSet" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyType" type="RPropertyTypeId"
     isConst="false" isStatic="true" />

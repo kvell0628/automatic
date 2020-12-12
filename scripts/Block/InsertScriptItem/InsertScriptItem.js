@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Block.js");
+include("scripts/Block/Block.js");
 include("../InsertBlockItem/InsertBlockItem.js");
 
 /**
@@ -42,7 +42,7 @@ InsertScriptItem.prototype = new InsertBlockItem();
 
 InsertScriptItem.prototype.beginEvent = function() {
     var ms = new RMemoryStorage();
-    var si = new RSpatialIndexNavel();
+    var si = createSpatialIndex();
     this.docItem = new RDocument(ms, si);
     this.diItem = new RDocumentInterface(this.docItem);
     // this document does never update the layer list, block list, etc:

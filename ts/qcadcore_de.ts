@@ -116,7 +116,7 @@
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translation>Von Layer</translation>
     </message>
@@ -219,7 +219,7 @@
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation>ID des aktuellen Layers</translation>
     </message>
@@ -242,7 +242,7 @@
 <context>
     <name>REntity</name>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+92"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+94"/>
         <source>Block</source>
         <translation>Block</translation>
     </message>
@@ -259,7 +259,7 @@
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="+73"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -358,8 +358,13 @@
         <translation>Reihenabstand</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Attribute</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
@@ -375,7 +380,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translation>Linientyp</translation>
     </message>
@@ -388,7 +393,7 @@
         <location line="+1"/>
         <location filename="../src/core/RLayer.cpp" line="+1"/>
         <source>Lineweight</source>
-        <translation>Linienstärke</translation>
+        <translation>Linienbreite</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -440,7 +445,7 @@
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Benutzerdefiniert</translation>
     </message>
@@ -453,6 +458,21 @@
         <location line="+1"/>
         <source>Protected</source>
         <translation>Geschützt</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation>Ausgewählt</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation>Unsichtbar</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation>Arbeitsset</translation>
     </message>
     <message>
         <location filename="../src/core/REntity.cpp" line="+2"/>
@@ -548,6 +568,16 @@
         <translation>Vertikal</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Backward</source>
+        <translation>Rückwärts</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Upside Down</source>
+        <translation>Auf dem Kopf</translation>
+    </message>
+    <message>
         <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
         <source>Rotation</source>
         <translation>Rotation</translation>
@@ -578,6 +608,7 @@
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
         <translation>Name</translation>
@@ -671,7 +702,7 @@
         <translation type="obsolete">Plot Papiergrösse</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
         <translation>Circuläre (rekursive) Blockreferenzierung detektiert:</translation>
     </message>
@@ -684,7 +715,7 @@
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translation>Benötigt Selektion</translation>
     </message>
@@ -727,7 +758,7 @@
     </message>
     <message>
         <source>Lineweight</source>
-        <translation type="vanished">Linienstärke</translation>
+        <translation type="vanished">Linienbreite</translation>
     </message>
 </context>
 <context>
@@ -817,7 +848,7 @@
         <translation type="vanished">Rahmen (gross)</translation>
     </message>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -840,7 +871,7 @@
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
         <translation>Von Layer</translation>
     </message>

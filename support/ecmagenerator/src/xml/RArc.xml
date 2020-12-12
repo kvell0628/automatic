@@ -167,6 +167,12 @@ xmlns:rs="http://www.ribbonsoft.com">
       <variant returnType="QList &lt; RVector &gt;"
       isPureVirtual="false" />
     </method>
+    <method name="getArcReferencePoints"
+    cppName="getArcReferencePoints" specifier="public"
+    isStatic="false" isVirtual="true" isScriptOverwritable="true">
+      <variant returnType="QList &lt; RVector &gt;"
+      isPureVirtual="false" />
+    </method>
     <method name="getPointsWithDistanceToEnd"
     cppName="getPointsWithDistanceToEnd" specifier="public"
     isStatic="false" isVirtual="true" isScriptOverwritable="true">
@@ -176,6 +182,15 @@ xmlns:rs="http://www.ribbonsoft.com">
         isConst="false" />
         <arg type="int" typeName="int" name="from"
         hasDefault="true" default="RS :: FromAny"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="getPointCloud" cppName="getPointCloud"
+    specifier="public" isStatic="false" isVirtual="true"
+    isScriptOverwritable="true">
+      <variant returnType="QList &lt; RVector &gt;"
+      isPureVirtual="false">
+        <arg type="double" typeName="double" name="segmentLength"
         isConst="false" />
       </variant>
     </method>
@@ -513,6 +528,8 @@ xmlns:rs="http://www.ribbonsoft.com">
       <variant returnType="RPolyline" isPureVirtual="false">
         <arg type="double" typeName="double" name="segmentLength"
         isConst="false" />
+        <arg type="double" typeName="double" name="angle"
+        hasDefault="true" default="0.0" isConst="false" />
       </variant>
     </method>
     <method name="approximateWithLinesTan"
@@ -521,6 +538,8 @@ xmlns:rs="http://www.ribbonsoft.com">
       <variant returnType="RPolyline" isPureVirtual="false">
         <arg type="double" typeName="double" name="segmentLength"
         isConst="false" />
+        <arg type="double" typeName="double" name="angle"
+        hasDefault="true" default="0.0" isConst="false" />
       </variant>
     </method>
     <method name="getTangents" cppName="getTangents"

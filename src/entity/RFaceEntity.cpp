@@ -23,6 +23,7 @@
 RPropertyTypeId RFaceEntity::PropertyCustom;
 RPropertyTypeId RFaceEntity::PropertyHandle;
 RPropertyTypeId RFaceEntity::PropertyProtected;
+RPropertyTypeId RFaceEntity::PropertyWorkingSet;
 RPropertyTypeId RFaceEntity::PropertyType;
 RPropertyTypeId RFaceEntity::PropertyBlock;
 RPropertyTypeId RFaceEntity::PropertyLayer;
@@ -61,6 +62,7 @@ void RFaceEntity::init() {
     RFaceEntity::PropertyCustom.generateId(typeid(RFaceEntity), RObject::PropertyCustom);
     RFaceEntity::PropertyHandle.generateId(typeid(RFaceEntity), RObject::PropertyHandle);
     RFaceEntity::PropertyProtected.generateId(typeid(RFaceEntity), RObject::PropertyProtected);
+    RFaceEntity::PropertyWorkingSet.generateId(typeid(RFaceEntity), RObject::PropertyWorkingSet);
     RFaceEntity::PropertyType.generateId(typeid(RFaceEntity), REntity::PropertyType);
     RFaceEntity::PropertyBlock.generateId(typeid(RFaceEntity), REntity::PropertyBlock);
     RFaceEntity::PropertyLayer.generateId(typeid(RFaceEntity), REntity::PropertyLayer);
@@ -158,7 +160,7 @@ bool RFaceEntity::setProperty(RPropertyTypeId propertyTypeId,
 
 QPair<QVariant, RPropertyAttributes> RFaceEntity::getProperty(
         RPropertyTypeId& propertyTypeId, bool humanReadable,
-        bool noAttributes) {
+        bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyPoint1X) {
         return qMakePair(QVariant(data.getVertexAt(0).x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyPoint1Y) {
@@ -198,7 +200,7 @@ QPair<QVariant, RPropertyAttributes> RFaceEntity::getProperty(
         return qMakePair(QVariant(data.getLength()), RPropertyAttributes(RPropertyAttributes::Sum));
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 

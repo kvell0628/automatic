@@ -27,7 +27,8 @@
 #include "RTransaction.h"
 
 RTransaction::RTransaction()
-    : storage(NULL),
+    : types(Generic),
+      storage(NULL),
       transactionId(-1),
       transactionGroup(-1),
       undoable(true),
@@ -50,7 +51,8 @@ RTransaction::RTransaction()
  * Constructs an empty, invalid transaction.
  */
 RTransaction::RTransaction(RStorage& storage)
-    : storage(&storage),
+    : types(Generic),
+      storage(&storage),
       transactionId(-1),
       transactionGroup(-1),
       undoable(true),
@@ -81,7 +83,8 @@ RTransaction::RTransaction(
     const QList<RObject::Id>& affectedObjectIds,
     const QMap<RObject::Id, QList<RPropertyChange> >& propertyChanges)
     //RTransaction* parent)
-    : storage(&storage),
+    : types(Generic),
+      storage(&storage),
       transactionId(transactionId),
       transactionGroup(-1),
       text(text),
@@ -105,6 +108,7 @@ RTransaction::RTransaction(
 //        parent->appendChild(*this);
 //    }
 
+    affectedObjectIdsSet = affectedObjectIds.toSet();
 }
 
 
@@ -117,7 +121,8 @@ RTransaction::RTransaction(
     const QString& text,
     bool undoable)
     //RTransaction* parent)
-    : storage(&storage),
+    : types(Generic),
+      storage(&storage),
       transactionId(-1),
       transactionGroup(-1),
       text(text),
@@ -146,6 +151,20 @@ RTransaction::RTransaction(
 
 RTransaction::~RTransaction() {
 }
+
+
+void RTransaction::setType(RTransaction::Type type, bool on) {
+    if (on) {
+        types |= type;
+    } else {
+        types &= ~type;
+    }
+}
+
+bool RTransaction::getType(RTransaction::Type type) const {
+    return (types & type) == type;
+}
+
 
 
 /**
@@ -358,19 +377,22 @@ void RTransaction::commit() {
         //return;
     }
 
-    RMainWindow* mainWindow = RMainWindow::getMainWindow();
-    if (mainWindow!=NULL && storage->getDocument()!=NULL) {
-        mainWindow->notifyInterTransactionListeners(storage->getDocument(), this);
-    }
+    //if (!isPreview()) {
+        // no inter translation listener notification in preview:
+        RMainWindow* mainWindow = RMainWindow::getMainWindow();
+        if (mainWindow!=NULL && storage->getDocument()!=NULL) {
+            mainWindow->notifyInterTransactionListeners(storage->getDocument(), this);
+        }
+    //}
 
     if (affectedObjectIds.size()>0) {
         storage->saveTransaction(*this);
     }
     storage->commitTransaction();
 
-    if (!cloneIds.isEmpty()) {
-        qWarning() << "RTransaction::commit: last cycle not closed";
-    }
+//    if (!cloneIds.isEmpty()) {
+//        qWarning() << "RTransaction::commit: last cycle not closed";
+//    }
 
     updateAffectedBlockReferences();
 }
@@ -471,8 +493,8 @@ bool RTransaction::overwriteBlock(QSharedPointer<RBlock> block) {
  * Entities that are added with an invalid layer or block ID are placed
  * on the current layer / block.
  *
- * @param modifiedPropertyTypeId: Property ID that has changed if known 
- *      by caller, NULL otherwise.
+ * @param modifiedPropertyTypeId: Property IDs that have changed if known
+ *      by caller, empty set otherwise.
  */
 bool RTransaction::addObject(QSharedPointer<RObject> object,
     bool useCurrentAttributes,
@@ -548,6 +570,8 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
     QSharedPointer<REntity> entity = object.dynamicCast<REntity>();
     bool mustClone = false;
     if (!entity.isNull() && entity->getId()!=REntity::INVALID_ID) {
+        // always clone:
+        //mustClone = true;
         QSharedPointer<REntity> oldEntity = storage->queryEntityDirect(entity->getId());
         if (!oldEntity.isNull()) {
             // object is entity and not new:
@@ -576,21 +600,32 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
         }
     }
 
+    if (!mustClone && object->getId()!=RObject::INVALID_ID) {
+        if (object->mustAlwaysClone()) {
+            mustClone = true;
+        }
+    }
+
     // if object is an existing hatch and we are not just changing a property:
     // delete original and add new since hatch geometry cannot be completely
     // defined through properties which is a requirement for changing objects
     // through transactions:
+    // TODO: check if entity is editable:
     if (mustClone) {
-        QSharedPointer<REntity> clone = QSharedPointer<REntity>(entity->clone());
-        objectStorage->setObjectId(*clone, REntity::INVALID_ID);
+        QSharedPointer<RObject> clone = QSharedPointer<RObject>(object->clone());
+
+        objectStorage->setObjectId(*clone, RObject::INVALID_ID);
         // note that we delete the OLD entity here
         // (old entity is queried from storage since we pass the ID here):
-        deleteObject(entity->getId(), true);
+        deleteObject(object->getId(), true);
         addObject(clone, useCurrentAttributes, false, modifiedPropertyTypeIds);
 
         // draw order was set to top value automatically by
         // saveObject of RMemoryStorage:
-        clone->setDrawOrder(entity->getDrawOrder());
+        QSharedPointer<REntity> entityClone = object.dynamicCast<REntity>();
+        if (!entityClone.isNull()) {
+            entityClone->setDrawOrder(entity->getDrawOrder());
+        }
         return true;
     }
 
@@ -619,6 +654,16 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
             entity->setLinetypeId(doc->getCurrentLinetypeId());
         }
 
+        // move entity to current working set:
+        // if we are editing a working set, add object to working set:
+        if (doc->isEditingWorkingSet()) {
+            entity->setWorkingSet(true);
+            if (entity->isSelectedWorkingSet()) {
+                entity->setSelectedWorkingSet(false);
+                entity->setSelected(true);
+            }
+        }
+
         // allowAll to make sure entities on hidden / locked layers can be imported:
         if (!allowAll && !entity->isEditable(allowInvisible)) {
             qWarning() << "RTransaction::addObject: entity not editable (locked or hidden layer)";
@@ -635,38 +680,44 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
     // if object is a block definition,
     // look up existing block based on case insensitive name comparison:
     bool objectIsBlock = false;
-    QSharedPointer<RBlock> block = object.dynamicCast<RBlock>();
-    if (!block.isNull()) {
-        objectIsBlock = true;
+    if (object->getType()==RS::ObjectBlock) {
+        QSharedPointer<RBlock> block = object.dynamicCast<RBlock>();
+        if (!block.isNull()) {
+            objectIsBlock = true;
 
-        if (!existingBlockDetectionDisabled) {
-            QSharedPointer<RBlock> existingBlock = block->getDocument()->queryBlock(block->getName());
-            if (!existingBlock.isNull()) {
-                storage->setObjectId(*block, existingBlock->getId());
+            if (!existingBlockDetectionDisabled) {
+                QSharedPointer<RBlock> existingBlock = block->getDocument()->queryBlock(block->getName());
+                if (!existingBlock.isNull()) {
+                    storage->setObjectId(*block, existingBlock->getId());
+                }
             }
         }
     }
 
     // if object is a layer,
     // look up existing layer based on case insensitive name comparison:
-    if (!existingLayerDetectionDisabled && object->getId()==RObject::INVALID_ID) {
-        QSharedPointer<RLayer> layer = object.dynamicCast<RLayer>();
-        if (!layer.isNull()) {
-            QSharedPointer<RLayer> existingLayer = layer->getDocument()->queryLayer(layer->getName());
-            if (!existingLayer.isNull()) {
-                storage->setObjectId(*layer, existingLayer->getId());
+    if (object->getType()==RS::ObjectLayer) {
+        if (!existingLayerDetectionDisabled && object->getId()==RObject::INVALID_ID) {
+            QSharedPointer<RLayer> layer = object.dynamicCast<RLayer>();
+            if (!layer.isNull()) {
+                QSharedPointer<RLayer> existingLayer = layer->getDocument()->queryLayer(layer->getName());
+                if (!existingLayer.isNull()) {
+                    storage->setObjectId(*layer, existingLayer->getId());
+                }
             }
         }
     }
 
     // if object is a linetype,
     // look up existing linetype based on case insensitive name comparison:
-    if (!existingLinetypeDetectionDisabled && object->getId()==RObject::INVALID_ID) {
-        QSharedPointer<RLinetype> linetype = object.dynamicCast<RLinetype>();
-        if (!linetype.isNull()) {
-            QSharedPointer<RLinetype> existingLinetype = linetype->getDocument()->queryLinetype(linetype->getName());
-            if (!existingLinetype.isNull()) {
-                storage->setObjectId(*linetype, existingLinetype->getId());
+    if (object->getType()==RS::ObjectLinetype) {
+        if (!existingLinetypeDetectionDisabled && object->getId()==RObject::INVALID_ID) {
+            QSharedPointer<RLinetype> linetype = object.dynamicCast<RLinetype>();
+            if (!linetype.isNull()) {
+                QSharedPointer<RLinetype> existingLinetype = linetype->getDocument()->queryLinetype(linetype->getName());
+                if (!existingLinetype.isNull()) {
+                    storage->setObjectId(*linetype, existingLinetype->getId());
+                }
             }
         }
     }
@@ -708,10 +759,15 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
         // and store the property changes (if any) in this transaction:
         QSet<RPropertyTypeId> propertyTypeIds;
         if (modifiedPropertyTypeIds.isEmpty()) {
+//            qWarning() << "doing full diff of all properties";
+//            qWarning() << "old obj: " << *oldObject;
+//            qWarning() << "new obj: " << *object;
             propertyTypeIds = object->getPropertyTypeIds();
         }
         else {
             propertyTypeIds = modifiedPropertyTypeIds;
+
+            //qDebug() << "only diff props: " << propertyTypeIds;
 
             // if at least one property is a redundant property, we need to
             // check all properties for changes:
@@ -730,11 +786,16 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
 
             if (all) {
                 propertyTypeIds = object->getPropertyTypeIds();
+//                qWarning() << "doing full diff of all properties";
+//                qWarning() << "old obj: " << *oldObject;
+//                qWarning() << "new obj: " << *object;
             }
         }
 
         propertyTypeIds.unite(object->getCustomPropertyTypeIds());
         propertyTypeIds.unite(oldObject->getCustomPropertyTypeIds());
+
+        //qDebug() << "num props:" << propertyTypeIds.size();
 
         QSet<RPropertyTypeId>::iterator it;
         for (it=propertyTypeIds.begin(); it!=propertyTypeIds.end(); ++it) {
@@ -851,7 +912,7 @@ bool RTransaction::addObject(QSharedPointer<RObject> object,
  * Adds the given property change for the given object to this transaction.
  */
 bool RTransaction::addPropertyChange(RObject::Id objectId, const RPropertyChange& propertyChange) {
-    if (!RS::compare(propertyChange.oldValue, propertyChange.newValue)) {
+    if (!RS::compare(propertyChange.oldValue, propertyChange.newValue, true)) {
         //propertyChanges.insert(objectId, propertyChange);
         QList<RPropertyChange> pc = propertyChanges.value(objectId);
         pc.append(propertyChange);
@@ -871,7 +932,8 @@ void RTransaction::addAffectedObject(RObject::Id objectId) {
         return;
     }
 
-    if (!affectedObjectIds.contains(objectId)) {
+    //if (!affectedObjectIds.contains(objectId)) {
+    if (!affectedObjectIdsSet.contains(objectId)) {
         addAffectedObject(storage->queryObjectDirect(objectId));
     }
 }
@@ -901,14 +963,16 @@ void RTransaction::addAffectedObject(QSharedPointer<RObject> object) {
         return;
     }
 
-    if (affectedObjectIds.contains(object->getId())) {
+    //if (affectedObjectIds.contains(object->getId())) {
+    if (affectedObjectIdsSet.contains(object->getId())) {
         return;
     }
 
     // first add block as affected object (needs to be handled before entities in it):
     QSharedPointer<REntity> entity = object.dynamicCast<REntity>();
     if (!entity.isNull()) {
-        if (!affectedObjectIds.contains(entity->getBlockId())) {
+        //if (!affectedObjectIds.contains(entity->getBlockId())) {
+        if (!affectedObjectIdsSet.contains(entity->getBlockId())) {
             // if an entity has changed, the block definition it was in is affected:
             addAffectedObject(entity->getBlockId());
 
@@ -923,6 +987,7 @@ void RTransaction::addAffectedObject(QSharedPointer<RObject> object) {
 
     // add object after block:
     affectedObjectIds.append(object->getId());
+    affectedObjectIdsSet.insert(object->getId());
 }
 
 void RTransaction::deleteObject(RObject::Id objectId, bool force) {
@@ -937,8 +1002,7 @@ void RTransaction::deleteObject(QSharedPointer<RObject> object, bool force) {
 
     //QSharedPointer<RObject> obj = storage->queryObject(objectId);
     if (object.isNull()) {
-        qWarning("RTransaction::deleteObject: "
-            "original object not found in storage");
+        qWarning("RTransaction::deleteObject: object is null");
         failed = true;
         return;
     }
@@ -1099,6 +1163,7 @@ QDebug operator<<(QDebug dbg, RTransaction& t) {
     dbg.nospace() << "RTransaction(" << QString("%1").arg((long)&t, 0, 16);
 
     dbg.nospace() << ", id: " << t.getId();
+    dbg.nospace() << ", types: " << t.getTypes();
     dbg.nospace() << ", group: " << t.getGroup();
     dbg.nospace() << ", text: " << t.getText();
 

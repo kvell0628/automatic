@@ -140,6 +140,11 @@ void RMainWindowQt::postTransactionEvent(RTransaction& t, bool onlyChanges, RS::
     QCoreApplication::postEvent(this, event);
 }
 
+void RMainWindowQt::postPropertyEvent(RPropertyTypeId propertyTypeId, const QVariant& value, RS::EntityType entityTypeFilter) {
+    RPropertyEvent* event = new RPropertyEvent(propertyTypeId, value, entityTypeFilter);
+    QCoreApplication::postEvent(this, event);
+}
+
 void RMainWindowQt::postCloseEvent() {
     QCloseEvent* event = new QCloseEvent();
     QCoreApplication::postEvent(this, event);
@@ -299,28 +304,59 @@ void RMainWindowQt::closeEvent(QCloseEvent* e) {
     }
 
     if (mdiArea->subWindowList().isEmpty()) {
+        RSettings::setValue("OpenFile/OpenFiles", QStringList());
+        RSettings::setValue("OpenFile/ActiveFile", QString());
+        writeSettings();
+
         e->accept();
         return;
     }
 
+    QStringList openFiles;
+    QString activeFile;
+
+    QMdiSubWindow* activeWindow = mdiArea->activeSubWindow();
+
     QList<QMdiSubWindow*> mdiChildren = mdiArea->subWindowList();
     for (int i=0; i<mdiChildren.size(); ++i) {
         QMdiSubWindow* mdiChild = mdiChildren.at(i);
+        bool active = mdiChild==activeWindow;
         mdiArea->setActiveSubWindow(mdiChild);
         mdiChild->showMaximized();
+
+        QString fileName;
+        RMdiChildQt* rMdiChild = dynamic_cast<RMdiChildQt*>(mdiChild);
+        if (rMdiChild!=NULL) {
+            RDocument* doc = rMdiChild->getDocument();
+            if (doc!=NULL) {
+                fileName = doc->getFileName();
+            }
+        }
 
         QCloseEvent closeEvent;
         QApplication::sendEvent(mdiChild, &closeEvent);
 
         if (!closeEvent.isAccepted()) {
             e->ignore();
+            // closing of app canceled:
             return;
+        }
+
+        if (!fileName.isEmpty()) {
+            openFiles.append(fileName);
+            if (active) {
+                activeFile = fileName;
+            }
         }
 
         delete mdiChild;
     }
 
     e->accept();
+
+    RSettings::setValue("OpenFile/OpenFiles", openFiles);
+    RSettings::setValue("OpenFile/ActiveFile", activeFile);
+
     writeSettings();
 
     QApplication::quit();
@@ -369,6 +405,16 @@ void RMainWindowQt::enable() {
     disableCounter--;
     if (disableCounter==0) {
         setEnabled(true);
+
+#ifdef Q_OS_MAC
+#if QT_VERSION == 0x050B00 || QT_VERSION == 0x050B01
+        // workaround for Qt 5.10.0-5.11.1 bug
+        // only small portion of app win is redrawn when enabled
+        // redraw can only be forced with a resize
+        resize(width(), height()+1);
+        resize(width(), height()-1);
+#endif
+#endif
     }
 }
 
@@ -486,16 +532,17 @@ void RMainWindowQt::setGraphicsViewCursor(const QCursor& cursor) {
         if (list.at(i)==NULL) {
             continue;
         }
-        RMdiChildQt* mdiOther = dynamic_cast<RMdiChildQt*>(list.at(i));
-        if (mdiOther==NULL) {
+        RMdiChildQt* mdi = dynamic_cast<RMdiChildQt*>(list.at(i));
+        if (mdi==NULL) {
             continue;
         }
-        RDocumentInterface* diOther = mdiOther->getDocumentInterface();
-        if (diOther==NULL) {
+        RDocumentInterface* di = mdi->getDocumentInterface();
+        if (di==NULL) {
             continue;
         }
 
-        diOther->setCursor(cursor, false);
+        // false here prevents recursion:
+        di->setCursor(cursor, false);
     }
 }
 
@@ -587,6 +634,14 @@ bool RMainWindowQt::event(QEvent* e) {
         return false;
     }
 
+    if (e->type()==QEvent::PaletteChange) {
+        qDebug() << "QEvent::PaletteChange";
+        RSettings::resetCache();
+        RGuiAction::updateIcons();
+        notifyPaletteListeners();
+        update();
+    }
+
     if (e->type()==QEvent::KeyPress) {
         QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e);
         if (ke!=NULL) {
@@ -657,6 +712,14 @@ bool RMainWindowQt::event(QEvent* e) {
         RTransaction t = te->getTransaction();
         notifyTransactionListeners(getDocument(), &t);
         return true;
+    }
+
+    RPropertyEvent* pe = dynamic_cast<RPropertyEvent*>(e);
+    if (pe!=NULL) {
+        RDocumentInterface* documentInterface = getDocumentInterface();
+        if (documentInterface!=NULL) {
+            documentInterface->propertyChangeEvent(*pe);
+        }
     }
 
     RCloseCurrentEvent* cce = dynamic_cast<RCloseCurrentEvent*>(e);

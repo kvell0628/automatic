@@ -24,7 +24,9 @@
 #include "RBlockReferenceEntity.h"
 #include "RCircleEntity.h"
 #include "RDimAlignedEntity.h"
-#include "RDimAngularEntity.h"
+#include "RDimAngular2LEntity.h"
+#include "RDimAngular3PEntity.h"
+#include "RDimArcLengthEntity.h"
 #include "RDimDiametricEntity.h"
 #include "RDimOrdinateEntity.h"
 #include "RDimRadialEntity.h"
@@ -55,6 +57,7 @@
 #include "RSolidEntity.h"
 #include "RSplineEntity.h"
 #include "RTextEntity.h"
+#include "RToleranceEntity.h"
 #include "RTraceEntity.h"
 #include "RViewportEntity.h"
 #include "RXLineEntity.h"
@@ -229,8 +232,16 @@ QScriptValue REcmaHelper::toScriptValue(QScriptEngine* engine, QSharedPointer<RE
         v = tryCast<RDimAlignedEntity>(engine, cppValue);
         if (v.isValid()) return v;
         break;
-    case RS::EntityDimAngular:
-        v = tryCast<RDimAngularEntity>(engine, cppValue);
+    case RS::EntityDimAngular2L:
+        v = tryCast<RDimAngular2LEntity>(engine, cppValue);
+        if (v.isValid()) return v;
+        break;
+    case RS::EntityDimAngular3P:
+        v = tryCast<RDimAngular3PEntity>(engine, cppValue);
+        if (v.isValid()) return v;
+        break;
+    case RS::EntityDimArcLength:
+        v = tryCast<RDimArcLengthEntity>(engine, cppValue);
         if (v.isValid()) return v;
         break;
     case RS::EntityDimDiametric:
@@ -293,6 +304,10 @@ QScriptValue REcmaHelper::toScriptValue(QScriptEngine* engine, QSharedPointer<RE
         v = tryCast<RSplineEntity>(engine, cppValue);
         if (v.isValid()) return v;
         break;
+    case RS::EntityTolerance:
+        v = tryCast<RToleranceEntity>(engine, cppValue);
+        if (v.isValid()) return v;
+        break;
     }
 
     return qScriptValueFromValue(engine, cppValue);
@@ -330,8 +345,12 @@ QScriptValue REcmaHelper::toScriptValue(QScriptEngine* engine, REntity* cppValue
         v = tryCast<RDimAlignedEntity>(engine, cppValue);
         if (v.isValid()) return v;
         break;
-    case RS::EntityDimAngular:
-        v = tryCast<RDimAngularEntity>(engine, cppValue);
+    case RS::EntityDimAngular2L:
+        v = tryCast<RDimAngular2LEntity>(engine, cppValue);
+        if (v.isValid()) return v;
+        break;
+    case RS::EntityDimAngular3P:
+        v = tryCast<RDimAngular3PEntity>(engine, cppValue);
         if (v.isValid()) return v;
         break;
     case RS::EntityDimDiametric:
@@ -410,6 +429,10 @@ QScriptValue REcmaHelper::toScriptValue(QScriptEngine* engine, REntity* cppValue
         v = tryCast<RTextEntity>(engine, cppValue);
         if (v.isValid()) return v;
         break;
+    case RS::EntityTolerance:
+        v = tryCast<RToleranceEntity>(engine, cppValue);
+        if (v.isValid()) return v;
+        break;
     }
 
     return qScriptValueFromValue(engine, cppValue);
@@ -430,7 +453,11 @@ QScriptValue REcmaHelper::toScriptValue(QScriptEngine* engine, QSharedPointer<RE
     if (v.isValid()) return v;
     v = tryCast<RDimAlignedData>(engine, cppValue);
     if (v.isValid()) return v;
-    v = tryCast<RDimAngularData>(engine, cppValue);
+    v = tryCast<RDimAngular2LData>(engine, cppValue);
+    if (v.isValid()) return v;
+    v = tryCast<RDimAngular3PData>(engine, cppValue);
+    if (v.isValid()) return v;
+    v = tryCast<RDimArcLengthData>(engine, cppValue);
     if (v.isValid()) return v;
     v = tryCast<RDimDiametricData>(engine, cppValue);
     if (v.isValid()) return v;
@@ -637,6 +664,15 @@ QScriptValue REcmaHelper::listToScriptValue(QScriptEngine* engine, const QList<Q
     QVariantList vl;
     for (int i = 0; i < cppValue.size(); ++i) {
         QVariant v = toVariant(cppValue.at(i));
+        vl.append(v);
+    }
+    return qScriptValueFromValue(engine, vl);
+}
+
+QScriptValue REcmaHelper::listToScriptValue(QScriptEngine* engine, const QList<QChar>& cppValue) {
+    QVariantList vl;
+    for (int i = 0; i < cppValue.size(); ++i) {
+        QVariant v(QString(cppValue.at(i)));
         vl.append(v);
     }
     return qScriptValueFromValue(engine, vl);

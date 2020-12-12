@@ -22,6 +22,7 @@
 
 #include "core_global.h"
 
+#include <QEasingCurve>
 #include <QPair>
 #include <QString>
 #include <QStringList>
@@ -43,6 +44,54 @@ class RPropertyAttributes;
 #else
 #  define ROS_POSIX
 #endif
+
+#define REASING_LINEAR QEasingCurve::Linear
+#define REASING_INQUAD QEasingCurve::InQuad
+#define REASING_OUTQUAD QEasingCurve::OutQuad
+#define REASING_INOUTQUAD QEasingCurve::InOutQuad
+#define REASING_OUTINQUAD QEasingCurve::OutInQuad
+#define REASING_INCUBIC QEasingCurve::InCubic
+#define REASING_OUTCUBIC QEasingCurve::OutCubic
+#define REASING_INOUTCUBIC QEasingCurve::InOutCubic
+#define REASING_OUTINCUBIC QEasingCurve::OutInCubic
+#define REASING_INQUART QEasingCurve::InQuart
+#define REASING_OUTQUART QEasingCurve::OutQuart
+#define REASING_INOUTQUART QEasingCurve::InOutQuart
+#define REASING_OUTINQUART QEasingCurve::OutInQuart
+#define REASING_INQUINT QEasingCurve::InQuint
+#define REASING_OUTQUINT QEasingCurve::OutQuint
+#define REASING_INOUTQUINT QEasingCurve::InOutQuint
+#define REASING_OUTINQUINT QEasingCurve::OutInQuint
+#define REASING_INSINE QEasingCurve::InSine
+#define REASING_OUTSINE QEasingCurve::OutSine
+#define REASING_INOUTSINE QEasingCurve::InOutSine
+#define REASING_OUTINSINE QEasingCurve::OutInSine
+#define REASING_INEXPO QEasingCurve::InExpo
+#define REASING_OUTEXPO QEasingCurve::OutExpo
+#define REASING_INOUTEXPO QEasingCurve::InOutExpo
+#define REASING_OUTINEXPO QEasingCurve::OutInExpo
+#define REASING_INCIRC QEasingCurve::InCirc
+#define REASING_OUTCIRC QEasingCurve::OutCirc
+#define REASING_INOUTCIRC QEasingCurve::InOutCirc
+#define REASING_OUTINCIRC QEasingCurve::OutInCirc
+#define REASING_INELASTIC QEasingCurve::InElastic
+#define REASING_OUTELASTIC QEasingCurve::OutElastic
+#define REASING_INOUTELASTIC QEasingCurve::InOutElastic
+#define REASING_OUTINELASTIC QEasingCurve::OutInElastic
+#define REASING_INBACK QEasingCurve::InBack
+#define REASING_OUTBACK QEasingCurve::OutBack
+#define REASING_INOUTBACK QEasingCurve::InOutBack
+#define REASING_OUTINBACK QEasingCurve::OutInBack
+#define REASING_INBOUNCE QEasingCurve::InBounce
+#define REASING_OUTBOUNCE QEasingCurve::OutBounce
+#define REASING_INOUTBOUNCE QEasingCurve::InOutBounce
+#define REASING_OUTINBOUNCE QEasingCurve::OutInBounce
+//#define REASING_INCURVE QEasingCurve::InCurve
+//#define REASING_OUTCURVE QEasingCurve::OutCurve
+//#define REASING_SINECURVE QEasingCurve::SineCurve
+//#define REASING_COSINECURVE QEasingCurve::CosineCurve
+//#define REASING_BEZIERSPLINE QEasingCurve::BezierSpline
+//#define REASING_TCBSPLINE QEasingCurve::TCBSpline
 
 /**
  * Class namespace for various global enums.
@@ -79,6 +128,7 @@ public:
 
         ObjectBlock,
         ObjectLayer,
+        ObjectLayerState,
         ObjectLinetype,
         ObjectView,
         ObjectLayout,
@@ -112,12 +162,16 @@ public:
         EntityDimRadial,    /**< Radial Dimension */
         EntityDimDiametric, /**< Diametric Dimension */
         EntityDimAngular,   /**< Angular Dimension */
+        EntityDimAngular2L, /**< Angular Dimension from 2 lines */
+        EntityDimAngular3P, /**< Angular Dimension from 3 points */
+        EntityDimArcLength, /**< Arc Length Dimension */
         EntityDimOrdinate,  /**< Ordinate Dimension */
         EntityHatch,        /**< Hatch */
         EntityImage,        /**< Image */
         EntityLeader,       /**< Leader */
         EntitySpline,       /**< Spline */
         EntityViewport,     /**< Viewport */
+        EntityTolerance,    /**< Tolerance */
         EntityUser          /**< User defined entity. Use this to identify
                                  entities that are added in a separate library
                                  and resort to C++ RTTI for RTTI. */
@@ -133,6 +187,15 @@ public:
         RenderSide,
         RenderFront,
         RenderThreeD
+    };
+
+    /**
+     * Orthogonal mode, used for snap restrictions.
+     */
+    enum OrthoMode {
+        OrthoVertical,
+        OrthoHorizonal,
+        Orthogonal
     };
 
     /**
@@ -208,6 +271,7 @@ public:
      * Projection type for isometric projections.
      */
     enum IsoProjectionType {
+        NoProjection =  0x00000000,      //!< No projection (2d x/y)
         Top =           0x00000001,      //!< Top projection (x/y)
         Bottom =        0x00000002,      //!< Bottom projection (x/y)
         Left =          0x00000004,      //!< Front left projection (x/z)
@@ -537,11 +601,63 @@ public:
         EndOpenSingle
     };
 
+    enum Easing {
+        Linear = REASING_LINEAR,
+        InQuad = REASING_INQUAD,
+        OutQuad = REASING_OUTQUAD,
+        InOutQuad = REASING_INOUTQUAD,
+        OutInQuad = REASING_OUTINQUAD,
+        InCubic = REASING_INCUBIC,
+        OutCubic = REASING_OUTCUBIC,
+        InOutCubic = REASING_INOUTCUBIC,
+        OutInCubic = REASING_OUTINCUBIC,
+        InQuart = REASING_INQUART,
+        OutQuart = REASING_OUTQUART,
+        InOutQuart = REASING_INOUTQUART,
+        OutInQuart = REASING_OUTINQUART,
+        InQuint = REASING_INQUINT,
+        OutQuint = REASING_OUTQUINT,
+        InOutQuint = REASING_INOUTQUINT,
+        OutInQuint = REASING_OUTINQUINT,
+        InSine = REASING_INSINE,
+        OutSine = REASING_OUTSINE,
+        InOutSine = REASING_INOUTSINE,
+        OutInSine = REASING_OUTINSINE,
+        InExpo = REASING_INEXPO,
+        OutExpo = REASING_OUTEXPO,
+        InOutExpo = REASING_INOUTEXPO,
+        OutInExpo = REASING_OUTINEXPO,
+        InCirc = REASING_INCIRC,
+        OutCirc = REASING_OUTCIRC,
+        InOutCirc = REASING_INOUTCIRC,
+        OutInCirc = REASING_OUTINCIRC,
+        InElastic = REASING_INELASTIC,
+        OutElastic = REASING_OUTELASTIC,
+        InOutElastic = REASING_INOUTELASTIC,
+        OutInElastic = REASING_OUTINELASTIC,
+        InBack = REASING_INBACK,
+        OutBack = REASING_OUTBACK,
+        InOutBack = REASING_INOUTBACK,
+        OutInBack = REASING_OUTINBACK,
+        InBounce = REASING_INBOUNCE,
+        OutBounce = REASING_OUTBOUNCE,
+        InOutBounce = REASING_INOUTBOUNCE,
+        OutInBounce = REASING_OUTINBOUNCE,
+        //InCurve = REASING_INCURVE,
+        //OutCurve = REASING_OUTCURVE,
+        //SineCurve = REASING_SINECURVE,
+        //CosineCurve = REASING_COSINECURVE,
+        //BezierSpline = REASING_BEZIERSPLINE,
+        //TCBSpline = REASING_TCBSPLINE
+    };
+
 public:
-    static bool compare(const QVariant& v1, const QVariant& v2);
+    static bool compare(const QVariant& v1, const QVariant& v2, bool noTolerance = false);
     static bool compare(const QPair<QVariant, RPropertyAttributes>& p1,
-                        const QPair<QVariant, RPropertyAttributes>& p2);
+                        const QPair<QVariant, RPropertyAttributes>& p2,
+                        bool noTolerance = false);
     static int getCpuCores();
+    static int getIdealThreadCount();
     static QString getBuildCpuArchitecture();
 
     static QString getHostId();
@@ -573,6 +689,11 @@ public:
         return T();
     }
 
+    static QStringList sortAlphanumerical(const QStringList& list);
+    static QStringList compareChunkify(const QString& s);
+    static int compareAlphanumerical(const QString& s1, const QString& s2);
+    static bool lessThanAlphanumerical(const QString& s1, const QString& s2);
+
     static const double PointTolerance;
     static const double AngleTolerance;
 };
@@ -589,6 +710,8 @@ Q_DECLARE_METATYPE(RS::HAlign)
 Q_DECLARE_METATYPE(RS::HAlign*)
 Q_DECLARE_METATYPE(RS::IsoProjectionType)
 Q_DECLARE_METATYPE(RS::IsoProjectionType*)
+Q_DECLARE_METATYPE(RS::OrthoMode)
+Q_DECLARE_METATYPE(RS::OrthoMode*)
 Q_DECLARE_METATYPE(RS::KnownVariable)
 Q_DECLARE_METATYPE(RS::KnownVariable*)
 Q_DECLARE_METATYPE(RS::LinearFormat)
@@ -612,6 +735,8 @@ Q_DECLARE_METATYPE(RS::FillType)
 Q_DECLARE_METATYPE(RS::Orientation)
 Q_DECLARE_METATYPE(RS::JoinType)
 Q_DECLARE_METATYPE(RS::EndType)
+Q_DECLARE_METATYPE(RS::Easing)
+Q_DECLARE_METATYPE(RS::Easing*)
 Q_DECLARE_METATYPE(QList<RS::EntityType>)
 
 #endif

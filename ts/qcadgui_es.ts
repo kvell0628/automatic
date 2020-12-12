@@ -32,11 +32,6 @@
     <message>
         <location filename="../src/gui/RColorCombo.cpp" line="+126"/>
         <source>Custom</source>
-        <translatorcomment>--exact match--
---file: es.po--
-No objetos de dimensión seleccionados con una posición de texto personalizado.
-No objetos de dimensión seleccionados con una posición de texto personalizado
-Personalizado</translatorcomment>
         <translation>Personalizado</translation>
     </message>
 </context>
@@ -91,7 +86,7 @@ Personalizado</translatorcomment>
 <context>
     <name>RMathLineEdit</name>
     <message>
-        <location filename="../src/gui/RMathLineEdit.cpp" line="+156"/>
+        <location filename="../src/gui/RMathLineEdit.cpp" line="+172"/>
         <source>Invalid</source>
         <translation>Inválido</translation>
     </message>

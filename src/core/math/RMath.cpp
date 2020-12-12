@@ -347,13 +347,13 @@ double RMath::eval(const QString& expression, bool* ok) {
                 break;
             }
             QString feetString = re.cap(1);
-            qDebug() << "feetString:" << feetString;
+            //qDebug() << "feetString:" << feetString;
             if (feetString.isEmpty()) {
                 feetString="0";
-                qDebug() << "> feetString:" << feetString;
+                //qDebug() << "> feetString:" << feetString;
             }
             QString inchString = re.cap(2);
-            qDebug() << "inchString:" << inchString;
+            //qDebug() << "inchString:" << inchString;
             expr.replace(
                         re,
                         //       ((FT)*12+(IN))
@@ -485,6 +485,10 @@ QString RMath::angleToString(double a) {
 }
 
 QString RMath::trimTrailingZeroes(const QString& s) {
+    if (!s.contains('.')) {
+        return s;
+    }
+
     QString ret = s;
 
     bool done = false;
@@ -526,6 +530,19 @@ double RMath::rad2deg(double a) {
  */
 double RMath::gra2deg(double a) {
     return a / 400.0 * 360.0;
+}
+
+/**
+ * \return True if the given value is between the given limits.
+ * \param inclusive True to accept values close to the limits within the given tolerance.
+ */
+bool RMath::isBetween(double value, double limit1, double limit2, bool inclusive, double tolerance) {
+    if (fuzzyCompare(value, limit1, tolerance) || fuzzyCompare(value, limit2, tolerance)) {
+        return inclusive;
+    }
+    double min = qMin(limit1, limit2);
+    double max = qMax(limit1, limit2);
+    return (value>=min && value<=max);
 }
 
 /**
@@ -727,7 +744,7 @@ double RMath::makeAngleReadable(double angle, bool readable, bool* corrected) {
 }
 
 /**
- * \param angle the angle in rad
+ * \param angle The text angle in rad
  *
  * \param tolerance The tolerance by which the angle still maybe
  * in the unreadable range.
@@ -737,8 +754,7 @@ double RMath::makeAngleReadable(double angle, bool readable, bool* corrected) {
  */
 bool RMath::isAngleReadable(double angle, double tolerance) {
     double angleCorrected = getNormalizedAngle(angle);
-    if (angleCorrected > M_PI / 2.0 * 3.0 + tolerance || angleCorrected < M_PI
-            / 2.0 + tolerance) {
+    if (angleCorrected > M_PI / 2.0 * 3.0 + tolerance || angleCorrected < M_PI / 2.0 + tolerance) {
         return true;
     } else {
         return false;

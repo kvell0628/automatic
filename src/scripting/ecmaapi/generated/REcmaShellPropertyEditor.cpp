@@ -84,8 +84,74 @@
         
     
     
+      RPropertyEditor * REcmaShellPropertyEditor::getInstance(
+                
+            ) {
+                QScriptEngine* engine = __qtscript_self.engine();
+                //REcmaHelper::shellFunctionStart("REcmaShellPropertyEditor::getInstance", engine);
+                QScriptValue _q_function = __qtscript_self.property("getInstance");
+
+
+
+                if (!_q_function.isFunction() || 
+                    QTSCRIPT_IS_GENERATED_FUNCTION(_q_function) ||
+                    QTSCRIPT_IS_FUNCTION_IN_CALL(_q_function)
+                    
+                    /* function might have more arguments than expected:
+                    || _q_function.property("length").toInt32()!=0*/
+                    /*|| (__qtscript_self.propertyFlags("atEnd") & QScriptValue::QObjectMember)*/
+                    ) {
+                    //QString cppSig = "RPropertyEditor::getInstance";
+                    
+                        // re-enable recursion for calls from C++ into ECMAScript functions
+                        // leave it marked as generated though if appropriate:
+                        
+                        quint32 prev = _q_function.data().toUInt32();
+                        //if (cppSig!="RGraphicsViewQt::event") {
+                            _q_function.setData(QScriptValue(engine, prev & 0xFFFF0000));
+                        //}
+                        RPropertyEditor * ret =
+                        RPropertyEditor::getInstance(
+                            
+                        );
+
+                        // block recursion again:
+                        _q_function.setData(QScriptValue(engine, prev));
+
+                        //REcmaHelper::shellFunctionEnd("REcmaShellPropertyEditor::getInstance", engine);
+
+                        
+                            return ret;
+                          
+                }
+                    // prevent recursion if script implementation calls base implementation
+                    // mark function as 'in call':
+                    quint32 prev = _q_function.data().toUInt32();
+                    _q_function.setData(QScriptValue(engine, uint(prev | 0x0000B000)));
+                    RPropertyEditor * res;
+                      
+                          res = qscriptvalue_cast< 
+                            RPropertyEditor *
+                          >(
+                        
+                            _q_function.call(__qtscript_self)
+                        
+                      )
+                    
+                    ;
+                    _q_function.setData(QScriptValue(engine, prev));
+
+                    //REcmaHelper::shellFunctionEnd("REcmaShellPropertyEditor::getInstance", engine);
+
+                    
+                            return res;
+                          
+            }
+        
+    
+    
       void REcmaShellPropertyEditor::updateFromDocument(
-                RDocument * document, bool onlyChanges, RS::EntityType filter, bool manual
+                RDocument * document, bool onlyChanges, RS::EntityType filter, bool manual, bool showOnRequest
             ) {
                 QScriptEngine* engine = __qtscript_self.engine();
                 //REcmaHelper::shellFunctionStart("REcmaShellPropertyEditor::updateFromDocument", engine);
@@ -98,7 +164,7 @@
                     QTSCRIPT_IS_FUNCTION_IN_CALL(_q_function)
                     
                     /* function might have more arguments than expected:
-                    || _q_function.property("length").toInt32()!=4*/
+                    || _q_function.property("length").toInt32()!=5*/
                     /*|| (__qtscript_self.propertyFlags("atEnd") & QScriptValue::QObjectMember)*/
                     ) {
                     //QString cppSig = "RPropertyEditor::updateFromDocument";
@@ -111,7 +177,7 @@
                             _q_function.setData(QScriptValue(engine, prev & 0xFFFF0000));
                         //}
                         RPropertyEditor::updateFromDocument(
-                            document, onlyChanges, filter, manual
+                            document, onlyChanges, filter, manual, showOnRequest
                         );
 
                         // block recursion again:
@@ -165,6 +231,15 @@
         << qScriptValueFromValue(engine, 
 
         manual
+        )
+      
+
+
+
+    // type: bool, copyable: true
+        << qScriptValueFromValue(engine, 
+
+        showOnRequest
         )
       
                             )
@@ -313,6 +388,81 @@
     
     
       void REcmaShellPropertyEditor::updateLayers(
+                RDocumentInterface * documentInterface, QList < RLayer::Id > & layerIds
+            ) {
+                QScriptEngine* engine = __qtscript_self.engine();
+                //REcmaHelper::shellFunctionStart("REcmaShellPropertyEditor::updateLayers", engine);
+                QScriptValue _q_function = __qtscript_self.property("updateLayers");
+
+
+
+                if (!_q_function.isFunction() || 
+                    QTSCRIPT_IS_GENERATED_FUNCTION(_q_function) ||
+                    QTSCRIPT_IS_FUNCTION_IN_CALL(_q_function)
+                    
+                    /* function might have more arguments than expected:
+                    || _q_function.property("length").toInt32()!=2*/
+                    /*|| (__qtscript_self.propertyFlags("atEnd") & QScriptValue::QObjectMember)*/
+                    ) {
+                    //QString cppSig = "RPropertyEditor::updateLayers";
+                    
+                        // re-enable recursion for calls from C++ into ECMAScript functions
+                        // leave it marked as generated though if appropriate:
+                        
+                        quint32 prev = _q_function.data().toUInt32();
+                        //if (cppSig!="RGraphicsViewQt::event") {
+                            _q_function.setData(QScriptValue(engine, prev & 0xFFFF0000));
+                        //}
+                        RPropertyEditor::updateLayers(
+                            documentInterface, layerIds
+                        );
+
+                        // block recursion again:
+                        _q_function.setData(QScriptValue(engine, prev));
+
+                        //REcmaHelper::shellFunctionEnd("REcmaShellPropertyEditor::updateLayers", engine);
+
+                        
+                            return;
+                          
+                }
+                    // prevent recursion if script implementation calls base implementation
+                    // mark function as 'in call':
+                    quint32 prev = _q_function.data().toUInt32();
+                    _q_function.setData(QScriptValue(engine, uint(prev | 0x0000B000)));
+                    
+                            _q_function.call(__qtscript_self,
+                                QScriptValueList()
+                                
+
+
+
+    // type: RDocumentInterface *, copyable: false
+        << qScriptValueFromValue(engine, 
+
+        documentInterface
+        )
+      
+
+
+
+    // type: QList < RLayer::Id > &, copyable: false
+        // List of ...:
+        << REcmaHelper::listToScriptValue(engine, 
+          layerIds
+        )
+      
+                            )
+                        
+                    ;
+                    _q_function.setData(QScriptValue(engine, prev));
+
+                    //REcmaHelper::shellFunctionEnd("REcmaShellPropertyEditor::updateLayers", engine);
+
+                    
+            }
+        
+      void REcmaShellPropertyEditor::updateLayers(
                 RDocumentInterface * documentInterface
             ) {
                 QScriptEngine* engine = __qtscript_self.engine();
@@ -381,7 +531,7 @@
     
     
       void REcmaShellPropertyEditor::setCurrentLayer(
-                RDocumentInterface * documentInterface
+                RDocumentInterface * documentInterface, RLayer::Id previousLayerId
             ) {
                 QScriptEngine* engine = __qtscript_self.engine();
                 //REcmaHelper::shellFunctionStart("REcmaShellPropertyEditor::setCurrentLayer", engine);
@@ -394,7 +544,7 @@
                     QTSCRIPT_IS_FUNCTION_IN_CALL(_q_function)
                     
                     /* function might have more arguments than expected:
-                    || _q_function.property("length").toInt32()!=1*/
+                    || _q_function.property("length").toInt32()!=2*/
                     /*|| (__qtscript_self.propertyFlags("atEnd") & QScriptValue::QObjectMember)*/
                     ) {
                     //QString cppSig = "RPropertyEditor::setCurrentLayer";
@@ -407,7 +557,7 @@
                             _q_function.setData(QScriptValue(engine, prev & 0xFFFF0000));
                         //}
                         RPropertyEditor::setCurrentLayer(
-                            documentInterface
+                            documentInterface, previousLayerId
                         );
 
                         // block recursion again:
@@ -434,6 +584,15 @@
         << qScriptValueFromValue(engine, 
 
         documentInterface
+        )
+      
+
+
+
+    // type: RLayer::Id, copyable: true
+        << qScriptValueFromValue(engine, 
+
+        previousLayerId
         )
       
                             )
@@ -1603,7 +1762,7 @@
     
     
       void REcmaShellPropertyEditor::updateEditor(
-                RObject & object, bool doUpdateGui, RDocument * document
+                RObject & object, bool doUpdateGui, RDocument * document, bool showOnRequest
             ) {
                 QScriptEngine* engine = __qtscript_self.engine();
                 //REcmaHelper::shellFunctionStart("REcmaShellPropertyEditor::updateEditor", engine);
@@ -1616,7 +1775,7 @@
                     QTSCRIPT_IS_FUNCTION_IN_CALL(_q_function)
                     
                     /* function might have more arguments than expected:
-                    || _q_function.property("length").toInt32()!=3*/
+                    || _q_function.property("length").toInt32()!=4*/
                     /*|| (__qtscript_self.propertyFlags("atEnd") & QScriptValue::QObjectMember)*/
                     ) {
                     //QString cppSig = "RPropertyEditor::updateEditor";
@@ -1629,7 +1788,7 @@
                             _q_function.setData(QScriptValue(engine, prev & 0xFFFF0000));
                         //}
                         RPropertyEditor::updateEditor(
-                            object, doUpdateGui, document
+                            object, doUpdateGui, document, showOnRequest
                         );
 
                         // block recursion again:
@@ -1678,6 +1837,15 @@
         << qScriptValueFromValue(engine, 
 
         document
+        )
+      
+
+
+
+    // type: bool, copyable: true
+        << qScriptValueFromValue(engine, 
+
+        showOnRequest
         )
       
                             )
@@ -1765,7 +1933,7 @@
     
     
       void REcmaShellPropertyEditor::updateProperty(
-                const RPropertyTypeId & propertyTypeId, RObject & object, RDocument * document
+                const RPropertyTypeId & propertyTypeId, RObject & object, RDocument * document, bool showOnRequest
             ) {
                 QScriptEngine* engine = __qtscript_self.engine();
                 //REcmaHelper::shellFunctionStart("REcmaShellPropertyEditor::updateProperty", engine);
@@ -1778,7 +1946,7 @@
                     QTSCRIPT_IS_FUNCTION_IN_CALL(_q_function)
                     
                     /* function might have more arguments than expected:
-                    || _q_function.property("length").toInt32()!=3*/
+                    || _q_function.property("length").toInt32()!=4*/
                     /*|| (__qtscript_self.propertyFlags("atEnd") & QScriptValue::QObjectMember)*/
                     ) {
                     //QString cppSig = "RPropertyEditor::updateProperty";
@@ -1791,7 +1959,7 @@
                             _q_function.setData(QScriptValue(engine, prev & 0xFFFF0000));
                         //}
                         RPropertyEditor::updateProperty(
-                            propertyTypeId, object, document
+                            propertyTypeId, object, document, showOnRequest
                         );
 
                         // block recursion again:
@@ -1842,6 +2010,15 @@
         << qScriptValueFromValue(engine, 
 
         document
+        )
+      
+
+
+
+    // type: bool, copyable: true
+        << qScriptValueFromValue(engine, 
+
+        showOnRequest
         )
       
                             )
@@ -2084,6 +2261,89 @@
 
 
         
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RObject */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isVariant() || 
+            context->argument(2).isQObject() || 
+            context->argument(2).isNull()
+        ) /* type: RDocument * */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument is reference
+                    RObject*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RObject*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if( ap0 == NULL ){
+                           return REcmaHelper::throwError("RPropertyEditor: Argument 0 is not of type RObject*.",
+                               context);                    
+                    }
+                    RObject& a0 = *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument is pointer
+                    RDocument * a2 = NULL;
+
+                    a2 = 
+                        REcmaHelper::scriptValueTo<RDocument >(
+                            context->argument(2)
+                        );
+                    
+                    if (a2==NULL && 
+                        !context->argument(2).isNull()) {
+                        return REcmaHelper::throwError("RPropertyEditor: Argument 2 is not of type RDocument *RDocument *.", context);                    
+                    }
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->RPropertyEditor::updateEditor(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
+    } else
+
+
+        
             {
                return REcmaHelper::throwError("Wrong number/types of arguments for RPropertyEditor.updateEditor().",
                    context);
@@ -2261,6 +2521,101 @@
     a1
         ,
     a2);
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RObject */
+     && (
+            context->argument(2).isVariant() || 
+            context->argument(2).isQObject() || 
+            context->argument(2).isNull()
+        ) /* type: RDocument * */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RPropertyEditor: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument is reference
+                    RObject*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RObject*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if( ap1 == NULL ){
+                           return REcmaHelper::throwError("RPropertyEditor: Argument 1 is not of type RObject*.",
+                               context);                    
+                    }
+                    RObject& a1 = *ap1;
+                
+                    // argument is pointer
+                    RDocument * a2 = NULL;
+
+                    a2 = 
+                        REcmaHelper::scriptValueTo<RDocument >(
+                            context->argument(2)
+                        );
+                    
+                    if (a2==NULL && 
+                        !context->argument(2).isNull()) {
+                        return REcmaHelper::throwError("RPropertyEditor: Argument 2 is not of type RDocument *RDocument *.", context);                    
+                    }
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->RPropertyEditor::updateProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
     } else
 
 

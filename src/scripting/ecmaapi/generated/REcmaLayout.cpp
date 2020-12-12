@@ -173,8 +173,6 @@
             
             REcmaHelper::registerFunction(&engine, proto, setProperty, "setProperty");
             
-            REcmaHelper::registerFunction(&engine, proto, isSelectedForPropertyEditing, "isSelectedForPropertyEditing");
-            
         engine.setDefaultPrototype(
             qMetaTypeId<RLayout*>(), *proto);
 
@@ -3798,6 +3796,105 @@
 
 
         
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RLayout: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QPair < QVariant , RPropertyAttributes >'
+    QPair < QVariant , RPropertyAttributes > cppResult =
+        
+               self->getProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
+        // return type: QPair < QVariant , RPropertyAttributes >
+                // Pair of ...:
+                //result = REcmaHelper::pairToScriptValue(engine, cppResult);
+                QVariantList vl;
+                QVariant v;
+                
+                    // first type of pair is variant:
+                    if (QString(cppResult.first.typeName())=="RLineweight::Lineweight") {
+                        v.setValue((int)cppResult.first.value<RLineweight::Lineweight>());
+                    }
+                    else {
+                        v.setValue(cppResult.first);
+                    }
+                  
+
+                vl.append(v);
+                v.setValue(cppResult.second);
+                vl.append(v);
+                result = qScriptValueFromValue(engine, vl);
+            
+    } else
+
+
+        
             {
                return REcmaHelper::throwError("Wrong number/types of arguments for RLayout.getProperty().",
                    context);
@@ -3985,55 +4082,6 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaLayout::setProperty", context, engine);
-            return result;
-        }
-         QScriptValue
-        REcmaLayout::isSelectedForPropertyEditing
-        (QScriptContext* context, QScriptEngine* engine) 
-        
-        {
-            //REcmaHelper::functionStart("REcmaLayout::isSelectedForPropertyEditing", context, engine);
-            //qDebug() << "ECMAScript WRAPPER: REcmaLayout::isSelectedForPropertyEditing";
-            //QCoreApplication::processEvents();
-
-            QScriptValue result = engine->undefinedValue();
-            
-                    // public function: can be called from ECMA wrapper of ECMA shell:
-                    RLayout* self = 
-                        getSelf("isSelectedForPropertyEditing", context);
-                  
-
-                //Q_ASSERT(self!=NULL);
-                if (self==NULL) {
-                    return REcmaHelper::throwError("self is NULL", context);
-                }
-                
-    
-    if( context->argumentCount() ==
-    0
-    ){
-    // prepare arguments:
-    
-    // end of arguments
-
-    // call C++ function:
-    // return type 'bool'
-    bool cppResult =
-        
-               self->isSelectedForPropertyEditing();
-        // return type: bool
-                // standard Type
-                result = QScriptValue(cppResult);
-            
-    } else
-
-
-        
-            {
-               return REcmaHelper::throwError("Wrong number/types of arguments for RLayout.isSelectedForPropertyEditing().",
-                   context);
-            }
-            //REcmaHelper::functionEnd("REcmaLayout::isSelectedForPropertyEditing", context, engine);
             return result;
         }
          QScriptValue REcmaLayout::toString

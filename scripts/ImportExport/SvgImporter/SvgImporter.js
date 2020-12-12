@@ -77,6 +77,16 @@ SvgHandler.rxTransform = new RegExp(
         "[,\\s]+" +
         "([+-]?\\d*\\.?\\d*)" +      // match 15
         "[\\s]*" +
+    "\\)" +
+    "|" +
+    "(rotate)\\s*\\(" +              // match 16
+        "\\s*" +
+        "([+-]?\\d*\\.?\\d*)" +      // match 17
+        "[,\\s]+" +
+        "([+-]?\\d*\\.?\\d*)" +      // match 18
+        "[,\\s]+" +
+        "([+-]?\\d*\\.?\\d*)" +      // match 19
+        "[\\s]*" +
     "\\)",
     "gim"
 );
@@ -97,22 +107,28 @@ SvgHandler.prototype.getTransform = function(str) {
 
         if (!isNull(match[1]) && match[1].toLowerCase()==="translate") {
             t = new QTransform();
-            t.translate(match[2], match[3]);
+            t.translate(parseFloat(match[2]), parseFloat(match[3]));
         }
         else if (!isNull(match[4]) && match[4].toLowerCase()==="rotate") {
             t = new QTransform();
-            t.rotate(match[5]);
+            t.rotate(parseFloat(match[5]));
         }
         else if (!isNull(match[6]) && match[6].toLowerCase()==="matrix") {
             t = new QTransform(
-                        match[7], match[8], 0.0,
-                        match[9], match[10], 0.0,
-                        match[11], match[12], 1.0
+                        parseFloat(match[7]), parseFloat(match[8]), 0.0,
+                        parseFloat(match[9]), parseFloat(match[10]), 0.0,
+                        parseFloat(match[11]), parseFloat(match[12]), 1.0
             );
         }
         else if (!isNull(match[13]) && match[13].toLowerCase()==="scale") {
             t = new QTransform();
-            t.scale(match[14], match[15]);
+            t.scale(parseFloat(match[14]), parseFloat(match[15]));
+        }
+        else if (!isNull(match[16]) && match[16].toLowerCase()==="rotate") {
+            t = new QTransform();
+            t.translate(parseFloat(match[18]), parseFloat(match[19]));
+            t.rotate(parseFloat(match[17]));
+            t.translate(-parseFloat(match[18]), -parseFloat(match[19]));
         }
 
         if (!isNull(t)) {
@@ -390,6 +406,13 @@ SvgImporter.prototype.importShape = function(shape) {
         }
     }
 
+    // auto convert splines into lines / arcs if appropriate:
+    if (isSplineShape(shape)) {
+        if (RSettings.getBoolValue("SvgImport/AutoConvertSplines", true)===true) {
+            shape = ShapeAlgorithms.splineToLineOrArc(shape, RSettings.getDoubleValue("SvgImport/AutoConvertSplinesTolerance", 0.01));
+        }
+    }
+
     var entity = shapeToEntity(this.getDocument(), shape);
 
     if (isNull(entity)) {
@@ -417,28 +440,33 @@ SvgImporter.prototype.importRectangle = function(x, y, w, h) {
     this.importShape(new RLine(new RVector(x, y+h), new RVector(x, y)));
 };
 
-SvgImporter.prototype.importLine = function(x1, y1, x2, y2) {
-    this.importShape(new RLine(new RVector(x1, y1), new RVector(x2, y2)));
+SvgImporter.prototype.createLine = function(x1, y1, x2, y2) {
+    return new RLine(new RVector(x1, y1), new RVector(x2, y2));
 };
 
-SvgImporter.prototype.importArc = function(ox, oy, x, y, rx, ry, angle, isLarge, sweep) {
+SvgImporter.prototype.importLine = function(x1, y1, x2, y2) {
+    this.importShape(this.createLine(x1, y1, x2, y2));
+};
+
+SvgImporter.prototype.createArc = function(ox, oy, x, y, rx, ry, angle, isLarge, sweep) {
     var entity;
     var center = SvgImporter.getArcCenter(ox, oy, x, y, rx, ry, sweep, !isLarge, angle);
     if (Math.abs(rx-ry) < RS.PointTolerance) {
-        this.importShape(new RArc(center, rx, center.getAngleTo(new RVector(ox, oy)), center.getAngleTo(new RVector(x, y)), !sweep));
+        return new RArc(center, rx, center.getAngleTo(new RVector(ox, oy)), center.getAngleTo(new RVector(x, y)), !sweep);
     }
     else {
         // TODO
         //var ellipse = new REllipseArc();
         //entity = new REllipseEntity(this.getDocument(), new REllipseData(ellipse));
     }
+    return undefined;
 };
 
 /**
  * Imports a cubic spline with the given start point, control points and ent point.
  * If the spline is almost exactly resembling an arc, an arc is imported instead.
  */
-SvgImporter.prototype.importBezier = function(x1, y1, px1, py1, px2, py2, x2, y2) {
+SvgImporter.prototype.createBezier = function(x1, y1, px1, py1, px2, py2, x2, y2) {
     var spline = new RSpline();
     spline.setDegree(3);
     spline.appendControlPoint(new RVector(x1, y1));
@@ -446,24 +474,27 @@ SvgImporter.prototype.importBezier = function(x1, y1, px1, py1, px2, py2, x2, y2
     spline.appendControlPoint(new RVector(px2, py2));
     spline.appendControlPoint(new RVector(x2, y2));
 
-    var shape;
-    if (RSettings.getBoolValue("SvgImport/AutoConvertSplines", true)===true) {
-        shape = ShapeAlgorithms.splineToLineOrArc(spline, 0.1);
-    }
-    else {
-        shape = spline;
-    }
+//    var shape;
+//    if (RSettings.getBoolValue("SvgImport/AutoConvertSplines", true)===true) {
+//        shape = ShapeAlgorithms.splineToLineOrArc(spline, 0.1);
+//    }
+//    else {
+//        shape = spline;
+//    }
+//    this.importShape(shape);
 
-    this.importShape(shape);
+    return spline;
+    //this.importShape(spline);
 };
 
-SvgImporter.prototype.importBezier2 = function(x1, y1, px, py, x2, y2) {
+SvgImporter.prototype.createBezier2 = function(x1, y1, px, py, x2, y2) {
     var spline = new RSpline();
     spline.setDegree(2);
     spline.appendControlPoint(new RVector(x1, y1));
     spline.appendControlPoint(new RVector(px, py));
     spline.appendControlPoint(new RVector(x2, y2));
-    this.importShape(spline);
+    return spline;
+    //this.importShape(spline);
 };
 
 /**
@@ -484,6 +515,8 @@ SvgImporter.prototype.importPath = function(dData) {
     var angle;
     var isLarge;
     var sweep;
+
+    var shapes = [];
 
     for (var i=0; i<segs.length; i++) {
         var seg = segs[i];
@@ -514,9 +547,11 @@ SvgImporter.prototype.importPath = function(dData) {
                 px = py = null;
                 // coordinates after the first: implicit line to:
                 if (k!==0) {
-                    this.importLine(ox, oy, x, y);
+                    shapes.push(new RLine(ox, oy, x, y));
+                    //this.importLine(ox, oy, x, y);
                 }
                 else {
+                    shapes.push(undefined);
                     x0 = x;
                     y0 = y;
                 }
@@ -533,9 +568,11 @@ SvgImporter.prototype.importPath = function(dData) {
                 px = py = null;
                 // coordinates after the first: implicit line to:
                 if (k!==0) {
-                    this.importLine(ox, oy, x, y);
+                    shapes.push(new RLine(ox, oy, x, y));
+                    //this.importLine(ox, oy, x, y);
                 }
                 else {
+                    shapes.push(undefined);
                     x0 = x;
                     y0 = y;
                 }
@@ -550,7 +587,8 @@ SvgImporter.prototype.importPath = function(dData) {
                 x = coords[k+0];
                 y = coords[k+1];
                 px = py = null;
-                this.importLine(ox, oy, x, y);
+                shapes.push(new RLine(ox, oy, x, y));
+                //this.importLine(ox, oy, x, y);
                 ox = x;
                 oy = y;
             }
@@ -561,7 +599,8 @@ SvgImporter.prototype.importPath = function(dData) {
                 x += coords[k+0];
                 y += coords[k+1];
                 px = py = null;
-                this.importLine(ox, oy, x, y);
+                shapes.push(new RLine(ox, oy, x, y));
+                //this.importLine(ox, oy, x, y);
                 ox = x;
                 oy = y;
             }
@@ -571,7 +610,8 @@ SvgImporter.prototype.importPath = function(dData) {
             for (k=0; k<coords.length; k+=1) {
                 x = coords[k+0];
                 px = py = null;
-                this.importLine(ox, oy, x, y);
+                shapes.push(new RLine(ox, oy, x, y));
+                //this.importLine(ox, oy, x, y);
                 ox = x;
             }
             break;
@@ -580,7 +620,8 @@ SvgImporter.prototype.importPath = function(dData) {
             for (k=0; k<coords.length; k+=1) {
                 x += coords[k+0];
                 px = py = null;
-                this.importLine(ox, oy, x, y);
+                shapes.push(new RLine(ox, oy, x, y));
+                //this.importLine(ox, oy, x, y);
                 ox = x;
             }
             break;
@@ -589,7 +630,8 @@ SvgImporter.prototype.importPath = function(dData) {
             for (k=0; k<coords.length; k+=1) {
                 y = coords[k+0];
                 px = py = null;
-                this.importLine(ox, oy, x, y);
+                shapes.push(new RLine(ox, oy, x, y));
+                //this.importLine(ox, oy, x, y);
                 oy = y;
             }
             break;
@@ -598,7 +640,8 @@ SvgImporter.prototype.importPath = function(dData) {
             for (k=0; k<coords.length; k+=1) {
                 y += coords[k+0];
                 px = py = null;
-                this.importLine(ox, oy, x, y);
+                shapes.push(new RLine(ox, oy, x, y));
+                //this.importLine(ox, oy, x, y);
                 oy = y;
             }
             break;
@@ -609,10 +652,12 @@ SvgImporter.prototype.importPath = function(dData) {
                 y = coords[k+5];
                 px = coords[k+2];
                 py = coords[k+3];
-                this.importBezier(ox, oy,
-                                  coords[k+0], coords[k+1],
-                                  coords[k+2], coords[k+3],
-                                  coords[k+4], coords[k+5]);
+                shapes.push(
+                            this.createBezier(ox, oy,
+                                              coords[k+0], coords[k+1],
+                                              coords[k+2], coords[k+3],
+                                              coords[k+4], coords[k+5])
+                            );
                 ox = x;
                 oy = y;
             }
@@ -625,10 +670,14 @@ SvgImporter.prototype.importPath = function(dData) {
 //                       coords[k+0] + x, coords[k+1] + y,
 //                       coords[k+2] + x, coords[k+3] + y,
 //                       coords[k+4] + x, coords[k+5] + y].join(" | "));
-                this.importBezier(ox, oy,
-                                  coords[k+0] + x, coords[k+1] + y,
-                                  coords[k+2] + x, coords[k+3] + y,
-                                  coords[k+4] + x, coords[k+5] + y);
+
+                shapes.push(
+                            this.createBezier(ox, oy,
+                                              coords[k+0] + x, coords[k+1] + y,
+                                              coords[k+2] + x, coords[k+3] + y,
+                                              coords[k+4] + x, coords[k+5] + y)
+                            );
+
                 px = x + coords[k+2];
                 py = y + coords[k+3];
                 x += coords[k+4];
@@ -643,10 +692,14 @@ SvgImporter.prototype.importPath = function(dData) {
                 px = x;
                 py = y;
             }
-            this.importBezier(ox, oy,
-                              x-(px-x), y-(py-y),
-                              coords[0], coords[1],
-                              coords[2], coords[3]);
+
+            shapes.push(
+                        this.createBezier(ox, oy,
+                                          x-(px-x), y-(py-y),
+                                          coords[0], coords[1],
+                                          coords[2], coords[3])
+                        );
+
             px = coords[0];
             py = coords[1];
             x = coords[2];
@@ -658,10 +711,15 @@ SvgImporter.prototype.importPath = function(dData) {
                 px = x;
                 py = y;
             }
-            this.importBezier(ox, oy,
-                              x-(px-x), y-(py-y),
-                              x + coords[0], y + coords[1],
-                              x + coords[2], y + coords[3]);
+
+            shapes.push(
+                        this.createBezier(ox, oy,
+                                          x-(px-x), y-(py-y),
+                                          x + coords[0], y + coords[1],
+                                          x + coords[2], y + coords[3])
+                        );
+
+
             px = x + coords[0];
             py = y + coords[1];
             x += coords[2];
@@ -673,15 +731,19 @@ SvgImporter.prototype.importPath = function(dData) {
             py = coords[1];
             x = coords[2];
             y = coords[3];
-            this.importBezier2(ox, oy,
+            shapes.push(
+                        this.createBezier2(ox, oy,
                               coords[0], coords[1],
-                              coords[2], coords[3]);
+                              coords[2], coords[3])
+                        );
             break;
 
         case 'q':
-            this.importBezier2(ox, oy,
-                              coords[0] + x, coords[1] + y,
-                              coords[2] + x, coords[3] + y);
+            shapes.push(
+                        this.createBezier2(ox, oy,
+                                           coords[0] + x, coords[1] + y,
+                                           coords[2] + x, coords[3] + y)
+                        );
             px = x + coords[0];
             py = y + coords[1];
             x += coords[2];
@@ -696,9 +758,11 @@ SvgImporter.prototype.importPath = function(dData) {
                 px = x-(px-x);
                 py = y-(py-y);
             }
-            this.importBezier2(ox, oy,
-                              px, py,
-                              coords[0], coords[1]);
+            shapes.push(
+                        this.createBezier2(ox, oy,
+                                           px, py,
+                                           coords[0], coords[1])
+                        );
             px = x-(px-x);
             py = y-(py-y);
             x = coords[0];
@@ -713,9 +777,11 @@ SvgImporter.prototype.importPath = function(dData) {
                 px = x-(px-x);
                 py = y-(py-y);
             }
-            this.importBezier2(ox, oy,
-                              px, py,
-                              coords[0] + x, coords[1] + y);
+            shapes.push(
+                        this.createBezier2(ox, oy,
+                                           px, py,
+                                           coords[0] + x, coords[1] + y)
+                        );
             x += coords[0];
             y += coords[1];
             break;
@@ -730,7 +796,9 @@ SvgImporter.prototype.importPath = function(dData) {
                 x = coords[k+5];
                 y = coords[k+6];
                 px = py = null;
-                this.importArc(ox, oy, x, y, rx, ry, angle, isLarge===1, sweep===1);
+                shapes.push(
+                            this.createArc(ox, oy, x, y, rx, ry, angle, isLarge===1, sweep===1)
+                            );
                 ox = x;
                 oy = y;
             }
@@ -746,7 +814,10 @@ SvgImporter.prototype.importPath = function(dData) {
                 x += coords[k+5];
                 y += coords[k+6];
                 px = py = null;
-                this.importArc(ox, oy, x, y, rx, ry, angle, isLarge===1, sweep===1);
+                shapes.push(
+                            this.createArc(ox, oy, x, y, rx, ry, angle, isLarge===1, sweep===1)
+                            );
+
                 ox = x;
                 oy = y;
             }
@@ -757,7 +828,7 @@ SvgImporter.prototype.importPath = function(dData) {
             x = x0;
             y = y0;
             if (ox!==x || oy!==y) {
-                this.importLine(ox,oy, x,y);
+                shapes.push(new RLine(ox,oy, x,y));
             }
             ox = x;
             oy = y;
@@ -765,6 +836,35 @@ SvgImporter.prototype.importPath = function(dData) {
         }
         pc = cmd;
     }
+
+    // add as many shapes as polyline as possible:
+    var pl = new RPolyline();
+    for (var i=0; i<shapes.length; i++) {
+        var shape = shapes[i];
+
+        if (isLineShape(shape) || isArcShape(shape)) {
+            pl.appendShape(shape);
+        }
+        else {
+            // shape cannot be part of a polyline or is undefined (gap):
+
+            // end current polyline:
+            if (!pl.isEmpty()) {
+                this.importShape(pl);
+            }
+            // start new polyline:
+            pl = new RPolyline();
+
+            // import shape that is not a line or arc separately:
+            if (!isNull(shape)) {
+                this.importShape(shape);
+            }
+        }
+    }
+    if (!pl.isEmpty()) {
+        this.importShape(pl);
+    }
+
 };
 
 /**

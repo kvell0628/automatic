@@ -36,7 +36,7 @@ RRulerQt::RRulerQt(QWidget* parent) :
     lastSize(0,0),
     viewportChanged(false),
     darkGuiBackground(-1) {
-    
+
     qreal dpr = 1.0;
 #if QT_VERSION >= 0x050000
     dpr = devicePixelRatio();
@@ -152,9 +152,7 @@ void RRulerQt::paintEvent(QPaintEvent* e) {
     dpr = devicePixelRatio();
 #endif
 
-    if (darkGuiBackground<0) {
-        darkGuiBackground = RSettings::hasDarkGuiBackground();
-    }
+    darkGuiBackground = RSettings::hasDarkGuiBackground();
 
     if (orientation == Qt::Horizontal) {
         if (sizeHint().height()*dpr != lastSize.height()) {
@@ -183,7 +181,10 @@ void RRulerQt::paintEvent(QPaintEvent* e) {
     }
 
     if (viewportChanged) {
-        buffer.fill(Qt::transparent);
+        // 20190515: bug with rulers displayed on top of each other:
+        //buffer.fill(Qt::transparent);
+        buffer.fill(palette().color(QPalette::Window));
+
         painter = new QPainter(&buffer);
         painter->setPen(Qt::black);
         painter->setFont(getFont());

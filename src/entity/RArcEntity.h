@@ -42,6 +42,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -84,13 +85,16 @@ public:
 
     void setShape(const RArc& a);
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual void exportEntity(RExporter& e, bool preview=false, bool forceSelected=false) const;
+
+    virtual QSharedPointer<REntity> scaleNonUniform(const RVector& scaleFactors, const RVector& center);
+    static QSharedPointer<REntity> scaleNonUniform(REntity& entity, const RVector& scaleFactors, const RVector& center);
 
     virtual RArcData& getData() {
         return data;
@@ -166,6 +170,10 @@ public:
 
     RS::Side getSideOfPoint(const RVector& point) const {
         return data.getSideOfPoint(point);
+    }
+
+    double getSweep() const {
+        return data.getSweep();
     }
 
     RS::Ending getTrimEnd(const RVector& trimPoint, const RVector& clickPoint) {

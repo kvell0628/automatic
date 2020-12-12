@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 include("scripts/sprintf.js");
-include("../Widgets.js");
+include("scripts/Widgets/Widgets.js");
 include("ListViewEventHandler.js");
 include("ItemDelegate.js");
 include("FileIconProvider.js");
@@ -202,7 +202,6 @@ LibraryBrowser.getSourceList = function() {
     }
 
     sourceList = sourceList.unique();
-    qDebug("sourceList: ", sourceList);
 
     return sourceList;
 };

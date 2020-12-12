@@ -43,6 +43,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -62,6 +63,11 @@ public:
     static RPropertyTypeId PropertyLowerTolerance;
     static RPropertyTypeId PropertyMeasuredValue;
     static RPropertyTypeId PropertyFontName;
+    static RPropertyTypeId PropertyArrow1Flipped;
+    static RPropertyTypeId PropertyArrow2Flipped;
+
+    static RPropertyTypeId PropertyExtLineFix;
+    static RPropertyTypeId PropertyExtLineFixLength;
 
     static RPropertyTypeId PropertyDimScale;
     static RPropertyTypeId PropertyDimBlockName;
@@ -94,11 +100,11 @@ public:
         return new RDimOrdinateEntity(*this);
     }
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual RDimOrdinateData& getData() {
         return data;

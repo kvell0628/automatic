@@ -41,6 +41,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -55,6 +56,12 @@ public:
     static RPropertyTypeId PropertyInsertionPointX;
     static RPropertyTypeId PropertyInsertionPointY;
     static RPropertyTypeId PropertyInsertionPointZ;
+
+    static RPropertyTypeId PropertyUX;
+    static RPropertyTypeId PropertyUY;
+    static RPropertyTypeId PropertyVX;
+    static RPropertyTypeId PropertyVY;
+
     static RPropertyTypeId PropertyScaleFactorX;
     static RPropertyTypeId PropertyScaleFactorY;
     static RPropertyTypeId PropertyAngle;
@@ -77,11 +84,11 @@ public:
 
     virtual RImageEntity* clone() const;
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual void exportEntity(RExporter& e, bool preview=false, bool forceSelected=false) const;
 

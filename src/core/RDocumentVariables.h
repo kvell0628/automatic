@@ -43,6 +43,7 @@ public:
     static RPropertyTypeId PropertyUnit;
     static RPropertyTypeId PropertyLinetypeScale;
     static RPropertyTypeId PropertyDimensionFont;
+    static RPropertyTypeId PropertyWorkingSetBlockReferenceId;
 
 public:
     RDocumentVariables(RDocument* document);
@@ -58,14 +59,11 @@ public:
         return new RDocumentVariables(*this);
     }
 
-    virtual bool isSelectedForPropertyEditing() {
-        return false;
-    }
-
     virtual QPair<QVariant, RPropertyAttributes>
             getProperty(RPropertyTypeId& propertyTypeId,
                     bool humanReadable = false,
-                    bool noAttributes = false);
+                    bool noAttributes = false,
+                    bool showOnRequest = false);
 
     virtual bool setProperty(RPropertyTypeId propertyTypeId,
         const QVariant& value, RTransaction* transaction=NULL);
@@ -74,6 +72,7 @@ public:
 
     QSet<RPropertyTypeId> getCustomPropertyTypeIds() const;
     void setKnownVariable(RS::KnownVariable key, const RVector& value);
+    void setKnownVariable(RS::KnownVariable key, const RColor& value);
     void setKnownVariable(RS::KnownVariable key, const QVariant& value);
     QVariant getKnownVariable(RS::KnownVariable key) const;
     bool hasKnownVariable(RS::KnownVariable key) const;
@@ -131,6 +130,17 @@ public:
         dimensionFont = f;
     }
 
+//    RObject::Id getWorkingSetBlockReferenceId() const {
+//        return workingSetBlockReferenceId;
+//    }
+
+//    void setWorkingSetBlockReferenceId(RObject::Id id) {
+//        workingSetBlockReferenceId = id;
+//    }
+
+    QString addAutoVariable(double value);
+    QStringList getAutoVariables() const;
+
     virtual void print(QDebug dbg) const;
 
 private:
@@ -143,6 +153,8 @@ private:
     double linetypeScale;
     QString dimensionFont;
     QHash<RS::KnownVariable, QVariant> knownVariables;
+    // ID of block reference that we are currently editing in-place (current working set):
+    RObject::Id workingSetBlockReferenceId;
 };
 
 Q_DECLARE_METATYPE(RDocumentVariables*)

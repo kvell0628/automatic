@@ -44,6 +44,7 @@
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"RStorage.h"</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"RTerminateEvent.h"</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"RTextLabel.h"</cpp:file></cpp:include>
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"RTransactionListener.h"</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"RUcs.h"</cpp:file></cpp:include>
 
 <cpp:define>#<cpp:directive>define</cpp:directive> <name>RDEFAULT_QLIST_QREAL</name> <name>QList</name>&lt;qreal&gt;()</cpp:define>
@@ -125,13 +126,19 @@
     <function_decl><type><name>RStorage</name>&amp;</type> <name>getStorage</name><parameter_list>()</parameter_list>;</function_decl>
     <function_decl><type><name>QList<argument_list>&lt;<argument><name>RGraphicsScene</name>*</argument>&gt;</argument_list></name></type> <name>getGraphicsScenes</name><parameter_list>()</parameter_list>;</function_decl>
     <function_decl><type><name>RGraphicsView</name>*</type> <name>getGraphicsViewWithFocus</name><parameter_list>()</parameter_list>;</function_decl>
+    <function_decl><type><name>RGraphicsScene</name>*</type> <name>getGraphicsSceneWithFocus</name><parameter_list>()</parameter_list>;</function_decl>
 
     <function_decl><type><name>void</name></type> <name>addCoordinateListener</name><parameter_list>(<param><decl><type><name>RCoordinateListener</name>*</type> <name>l</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>void</name></type> <name>notifyCoordinateListeners</name><parameter_list>()</parameter_list>;</function_decl>
 
     <function_decl><type><name>void</name></type> <name>addLayerListener</name><parameter_list>(<param><decl><type><name>RLayerListener</name>*</type> <name>l</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>void</name></type> <name>removeLayerListener</name><parameter_list>(<param><decl><type><name>RLayerListener</name>*</type> <name>l</name></decl></param>)</parameter_list>;</function_decl>
-    <function_decl><type><name>void</name></type> <name>notifyLayerListeners</name><parameter_list>()</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>notifyLayerListeners</name><parameter_list>(<param><decl><type><name>QList<argument_list>&lt;<argument><name><name>RLayer</name>::<name>Id</name></name></argument>&gt;</argument_list></name>&amp;</type> <name>layerIds</name></decl></param>)</parameter_list>;</function_decl>
+
+    <function_decl><type><name>int</name></type> <name>addTransactionListener</name><parameter_list>(<param><decl><type><name>RTransactionListener</name>*</type> <name>l</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>removeTransactionListener</name><parameter_list>(<param><decl><type><name>int</name></type> <name>key</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>removeTransactionListener</name><parameter_list>(<param><decl><type><name>RTransactionListener</name>*</type> <name>l</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>notifyTransactionListeners</name><parameter_list>(<param><decl><type><name>RTransaction</name>*</type> <name>t</name></decl></param>)</parameter_list>;</function_decl>
 
     <function_decl><type><name>void</name></type> <name>clear</name><parameter_list>(<param><decl><type><name>bool</name></type> <name>beforeLoad</name>=<init><expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
 
@@ -213,6 +220,8 @@
     <function_decl><type><name>QString</name></type> <name>getCorrectedFileName</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>fileName</name></decl></param>, <param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>fileVersion</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>bool</name></type> <name>exportFile</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>fileName</name></decl></param>, <param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>fileVersion</name> =<init> <expr>""</expr></init></decl></param>, <param><decl><type><name>bool</name></type> <name>resetModified</name> =<init> <expr><name>true</name></expr></init></decl></param>)</parameter_list>;</function_decl>
 
+    <function_decl><type><name>void</name></type> <name>tagState</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>tag</name> =<init> <expr>""</expr></init></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>undoToTag</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>tag</name> =<init> <expr>""</expr></init></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>void</name></type> <name>undo</name><parameter_list>()</parameter_list>;</function_decl>
     <function_decl><type><name>void</name></type> <name>redo</name><parameter_list>()</parameter_list>;</function_decl>
     <function_decl><type><name>void</name></type> <name>flushTransactions</name><parameter_list>()</parameter_list>;</function_decl>
@@ -225,6 +234,7 @@
     <function_decl><type><name>RSnapRestriction</name>*</type> <name>getSnapRestriction</name><parameter_list>()</parameter_list>;</function_decl>
 
     <function_decl><type><name>RVector</name></type> <name>snap</name><parameter_list>(<param><decl><type><name>RMouseEvent</name>&amp;</type> <name>event</name></decl></param>, <param><decl><type><name>bool</name></type> <name>preview</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>RVector</name></type> <name>restrictOrtho</name><parameter_list>(<param><decl><type><name>const</name> <name>RVector</name>&amp;</type> <name>position</name></decl></param>, <param><decl><type><name>const</name> <name>RVector</name>&amp;</type> <name>relativeZero</name></decl></param>, <param><decl><type><name><name>RS</name>::<name>OrthoMode</name></name></type> <name>mode</name> =<init> <expr><name><name>RS</name>::<name>Orthogonal</name></name></expr></init></decl></param>)</parameter_list>;</function_decl>
 
     <function_decl><type><name><name>REntity</name>::<name>Id</name></name></type> <name>getClosestEntity</name><parameter_list>(<param><decl><type><name>RInputEvent</name>&amp;</type> <name>event</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name><name>REntity</name>::<name>Id</name></name></type> <name>getClosestEntity</name><parameter_list>(<param><decl><type><name>const</name> <name>RVector</name>&amp;</type> <name>position</name></decl></param>,
@@ -269,7 +279,7 @@
     <function_decl><type><name>void</name></type> <name>previewOperation</name><parameter_list>(<param><decl><type><name>ROperation</name>*</type> <name>operation</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>RTransaction</name></type> <name>applyOperation</name><parameter_list>(<param><decl><type><name>ROperation</name>*</type> <name>operation</name></decl></param>)</parameter_list>;</function_decl>
 
-    <function_decl><type><name>void</name></type> <name>objectChangeEvent</name><parameter_list>(<param><decl><type><name>QList<argument_list>&lt;<argument><name><name>RObject</name>::<name>Id</name></name></argument>&gt;</argument_list></name>&amp;</type> <name>objectIds</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>objectChangeEvent</name><parameter_list>(<param><decl><type><name>RTransaction</name>&amp;</type> <name>transaction</name></decl></param>)</parameter_list>;</function_decl>
 
     <function_decl><type><name>RVector</name></type> <name>getRelativeZero</name><parameter_list>()</parameter_list> <specifier>const</specifier>;</function_decl>
     <function_decl><type><name>RVector</name></type> <name>getLastPosition</name><parameter_list>()</parameter_list> <specifier>const</specifier>;</function_decl>
@@ -368,6 +378,7 @@
 
     <decl_stmt><decl><type><name>QList<argument_list>&lt;<argument><name>RCoordinateListener</name>*</argument>&gt;</argument_list></name></type> <name>coordinateListeners</name></decl>;</decl_stmt>
     <decl_stmt><decl><type><name>QList<argument_list>&lt;<argument><name>RLayerListener</name>*</argument>&gt;</argument_list></name></type> <name>layerListeners</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>QMap<argument_list>&lt;<argument><name>int</name></argument>, <argument><name>RTransactionListener</name>*</argument>&gt;</argument_list></name></type> <name>transactionListeners</name></decl>;</decl_stmt>
 
     <decl_stmt><decl><type><name>RSnap</name>*</type> <name>currentSnap</name></decl>;</decl_stmt>
     <decl_stmt><decl><type><name>RSnapRestriction</name>*</type> <name>currentSnapRestriction</name></decl>;</decl_stmt>
@@ -390,6 +401,8 @@
 
     <decl_stmt><decl><type><name>bool</name></type> <name>keepPreviewOnce</name></decl>;</decl_stmt>
     <decl_stmt><decl><type><name>bool</name></type> <name>mouseTrackingEnabled</name></decl>;</decl_stmt>
+
+    <decl_stmt><decl><type><name>QMap<argument_list>&lt;<argument><name>QString</name></argument>, <argument><name>int</name></argument>&gt;</argument_list></name></type> <name>tags</name></decl>;</decl_stmt>
 
     <comment type="line">// transform for all input coordinates:</comment>
 <comment type="line">//    QTransform inputTransform;</comment>

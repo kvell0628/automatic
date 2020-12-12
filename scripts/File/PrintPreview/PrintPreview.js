@@ -138,6 +138,10 @@ function PrintPreviewImpl(guiAction) {
     this.saveView = false;
     this.savedScale = undefined;
     this.savedOffset = undefined;
+    this.savedColumns = undefined;
+    this.savedRows = undefined;
+
+    this.optOutRelativeZeroResume = true;
 }
 
 PrintPreviewImpl.prototype = NewFile.getDefaultAction(false);
@@ -150,9 +154,15 @@ PrintPreviewImpl.State = {
 PrintPreviewImpl.prototype.beginEvent = function() {
     var di = this.getDocumentInterface();
 
-    if (this.saveView===true) {
+    var appWin = RMainWindowQt.getMainWindow();
+    var initialZoom = appWin.property("PrintPreview/InitialZoom");
+
+    if (initialZoom==="View") {
         this.savedScale = Print.getScale(this.getDocument());
         this.savedOffset = Print.getOffset(this.getDocument());
+        this.savedColumns = Print.getColumns(this.getDocument());
+        this.savedRows = Print.getRows(this.getDocument());
+        this.saveView = true;
     }
 
 //    if (!isNull(this.guiAction)) {
@@ -190,12 +200,12 @@ PrintPreviewImpl.prototype.beginEvent = function() {
     var action = RGuiAction.getByScriptFile("scripts/Edit/DrawingPreferences/DrawingPreferences.js");
     action.triggered.connect(this, "updateBackgroundDecoration");
 
-    var appWin = RMainWindowQt.getMainWindow();
-    var initialZoom = appWin.property("PrintPreview/InitialZoom");
     if (initialZoom==="Auto") {
         this.slotAutoFitDrawing();
     }
     else if (initialZoom==="View") {
+        Print.setColumns(di, 1);
+        Print.setRows(di, 1);
         this.slotAutoFitBox(this.view.getBox());
     }
 
@@ -248,6 +258,9 @@ PrintPreviewImpl.prototype.finishEvent = function() {
     this.parentClass.prototype.finishEvent.call(this);
     var di = this.getDocumentInterface();
 
+    var appWin = RMainWindowQt.getMainWindow();
+    var initialZoom = appWin.property("PrintPreview/InitialZoom");
+
     if (!isNull(this.view)) {
         this.view.setPrintPreview(false);
         this.view.setBackgroundColor(this.bgColor);
@@ -281,9 +294,14 @@ PrintPreviewImpl.prototype.finishEvent = function() {
         if (!isNull(this.savedOffset)) {
             Print.setOffset(di, this.savedOffset);
         }
+        if (!isNull(this.savedColumns)) {
+            Print.setColumns(di, this.savedColumns);
+        }
+        if (!isNull(this.savedRows)) {
+            Print.setRows(di, this.savedRows);
+        }
     }
 
-    var appWin = RMainWindowQt.getMainWindow();
     if (!isNull(this.pAdapter)) {
         appWin.removePreferencesListener(this.pAdapter);
     }
@@ -418,9 +436,11 @@ PrintPreviewImpl.prototype.showUiOptions = function(resume) {
     }
 
     if (Print.getHairlineMode(document)) {
-        widgets["Hairline"].blockSignals(true);
-        widgets["Hairline"].checked=true;
-        widgets["Hairline"].blockSignals(false);
+        if (!isNull(widgets["Hairline"])) {
+            widgets["Hairline"].blockSignals(true);
+            widgets["Hairline"].checked=true;
+            widgets["Hairline"].blockSignals(false);
+        }
     }
 
     widgets["Portrait"].blockSignals(true);
@@ -487,11 +507,26 @@ PrintPreviewImpl.prototype.updateBackgroundDecoration = function() {
         return;
     }
 
+    var colBg;
+    var colShadow;
+    var colBorder;
+
+    if (RSettings.hasDarkGuiBackground()) {
+        colBg = "#888888";
+        colShadow = "#333333";
+        colBorder = "black";
+    }
+    else {
+        colBg = "lightgray";
+        colShadow = "gray";
+        colBorder = "#c8c8c8";
+    }
+
     path = new RPainterPath();
     path.setPen(new QPen(Qt.NoPen));
-    path.setBrush(new QBrush(new QColor("lightgray")));
+    path.setBrush(new QBrush(new QColor(colBg)));
     path.addRect(new QRectF(-1.0e8, -1.0e8, 2.0e8, 2.0e8));
-    this.view.addToBackground(path);
+    this.view.addToBackground(RGraphicsSceneDrawable.createFromPainterPath(path));
 
     // page border with shadow
     if (Print.getShowPaperBorders(document)) {
@@ -499,9 +534,9 @@ PrintPreviewImpl.prototype.updateBackgroundDecoration = function() {
         for (i = 0; i < pages.length; ++i) {
             path = new RPainterPath();
             path.setPen(new QPen(Qt.NoPen));
-            path.setBrush(new QBrush(new QColor("gray")));
+            path.setBrush(new QBrush(new QColor(colShadow)));
             this.drawShadow(path, pages[i]);
-            this.view.addToBackground(path);
+            this.view.addToBackground(RGraphicsSceneDrawable.createFromPainterPath(path));
         }
 
         // paper background
@@ -512,16 +547,16 @@ PrintPreviewImpl.prototype.updateBackgroundDecoration = function() {
                     backgroundColor.blue());
             path.setBrush(new QBrush(color));
             this.drawPaper(path, pages[i]);
-            this.view.addToBackground(path);
+            this.view.addToBackground(RGraphicsSceneDrawable.createFromPainterPath(path));
         }
 
         // paper border
         for (i = 0; i < pages.length; ++i) {
             path = new RPainterPath();
-            path.setPen(new QPen(new QColor(0xc8, 0xc8, 0xc8)));
+            path.setPen(new QPen(new QColor(colBorder)));
             path.setBrush(new QBrush(Qt.NoBrush));
             this.drawPaper(path, pages[i]);
-            this.view.addToBackground(path);
+            this.view.addToBackground(RGraphicsSceneDrawable.createFromPainterPath(path));
         }
     }
 
@@ -543,17 +578,17 @@ PrintPreviewImpl.prototype.updateBackgroundDecoration = function() {
     for (i = 0; i < pages.length; ++i) {
         this.drawGlueMargins(path, pages[i]);
     }
-    this.view.addToBackground(path);
+    this.view.addToBackground(RGraphicsSceneDrawable.createFromPainterPath(path));
 
-    // TODO: hook for page tags
+    // hook for page tags, footer, etc.:
     this.addDecorations(pages);
 
-    // crop marks
+    // crop marks:
     if (Print.getPrintCropMarks(document)) {
         for ( i = 0; i < pages.length; ++i) {
             path = new RPainterPath();
             Print.drawCropMarks(document, path, pages[i], false);
-            this.view.addToBackground(path);
+            this.view.addToBackground(RGraphicsSceneDrawable.createFromPainterPath(path));
         }
     }
 
@@ -633,20 +668,29 @@ PrintPreviewImpl.prototype.slotPdfExport = function() {
         initialFileName = fileInfo.absoluteFilePath();
     }
 
-    var filters = [ "PDF File (*.pdf)" ];
+    var filterStrings = [ "PDF File (*.pdf)",  "PDF/A-1B File (*.pdf)"];
+    if (RSettings.getQtVersion()<0x050A00) {
+        filterStrings = [ "PDF File (*.pdf)" ];
+    }
+
+    filterStrings = translateFilterStrings(filterStrings);
 
     var ret = File.getSaveFileName(appWin, qsTr("Export to PDF"),
-                   initialFileName, filters);
+                   initialFileName, filterStrings);
 
     if (isNull(ret)) {
         return;
     }
 
     var pdfFile = ret[0];
+    var pdfVersion = undefined;
+    if (ret[1].indexOf("PDF/A")!==-1) {
+        pdfVersion = "A-1B";
+    }
 
     appWin.handleUserMessage(qsTr("Exporting to %1...").arg(pdfFile));
 
-    var success = this.slotPrint(pdfFile);
+    var success = this.slotPrint(pdfFile, pdfVersion);
 
     if (success) {
         appWin.handleUserMessage(qsTr("Export complete: %1").arg(pdfFile));
@@ -664,18 +708,18 @@ PrintPreviewImpl.slotPdfExport = function() {
     pp.slotPdfExport();
 };
 
-PrintPreviewImpl.prototype.slotPrint = function(pdfFile) {
-    return PrintPreviewImpl.slotPrint(pdfFile);
+PrintPreviewImpl.prototype.slotPrint = function(pdfFile, pdfVersion) {
+    return PrintPreviewImpl.slotPrint(pdfFile, pdfVersion);
 };
 
 /**
  * Prints the drawing or exports it to the given PDF file.
  */
-PrintPreviewImpl.slotPrint = function(pdfFile) {
+PrintPreviewImpl.slotPrint = function(pdfFile, pdfVersion) {
     var mdiChild = EAction.getMdiChild();
     var view = mdiChild.getLastKnownViewWithFocus();
     var print = new Print(undefined, EAction.getDocument(), view);
-    return print.print(pdfFile);
+    return print.print(pdfFile, undefined, pdfVersion);
 };
 
 /**

@@ -124,6 +124,10 @@
             
             REcmaHelper::registerFunction(&engine, proto, setPatternName, "setPatternName");
             
+            REcmaHelper::registerFunction(&engine, proto, getTransparency, "getTransparency");
+            
+            REcmaHelper::registerFunction(&engine, proto, setTransparency, "setTransparency");
+            
             REcmaHelper::registerFunction(&engine, proto, clearCustomPattern, "clearCustomPattern");
             
             REcmaHelper::registerFunction(&engine, proto, getLoopBoundary, "getLoopBoundary");
@@ -133,6 +137,8 @@
             REcmaHelper::registerFunction(&engine, proto, getShapes, "getShapes");
             
             REcmaHelper::registerFunction(&engine, proto, getExploded, "getExploded");
+            
+            REcmaHelper::registerFunction(&engine, proto, setViewportContext, "setViewportContext");
             
         engine.setDefaultPrototype(
             qMetaTypeId<RHatchEntityPointer>(), *proto);
@@ -160,6 +166,10 @@
             
             ctor.setProperty("PropertyProtected",
                 qScriptValueFromValue(&engine, RHatchEntity::PropertyProtected),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyWorkingSet",
+                qScriptValueFromValue(&engine, RHatchEntity::PropertyWorkingSet),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyType",
@@ -200,6 +210,10 @@
             
             ctor.setProperty("PropertySolid",
                 qScriptValueFromValue(&engine, RHatchEntity::PropertySolid),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyTransparency",
+                qScriptValueFromValue(&engine, RHatchEntity::PropertyTransparency),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyPatternName",
@@ -1316,6 +1330,105 @@
     a1
         ,
     a2);
+        // return type: QPair < QVariant , RPropertyAttributes >
+                // Pair of ...:
+                //result = REcmaHelper::pairToScriptValue(engine, cppResult);
+                QVariantList vl;
+                QVariant v;
+                
+                    // first type of pair is variant:
+                    if (QString(cppResult.first.typeName())=="RLineweight::Lineweight") {
+                        v.setValue((int)cppResult.first.value<RLineweight::Lineweight>());
+                    }
+                    else {
+                        v.setValue(cppResult.first);
+                    }
+                  
+
+                vl.append(v);
+                v.setValue(cppResult.second);
+                vl.append(v);
+                result = qScriptValueFromValue(engine, vl);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RHatchEntity: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QPair < QVariant , RPropertyAttributes >'
+    QPair < QVariant , RPropertyAttributes > cppResult =
+        
+               self->getProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
         // return type: QPair < QVariant , RPropertyAttributes >
                 // Pair of ...:
                 //result = REcmaHelper::pairToScriptValue(engine, cppResult);
@@ -2484,6 +2597,110 @@
             return result;
         }
          QScriptValue
+        REcmaSharedPointerHatchEntity::getTransparency
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerHatchEntity::getTransparency", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerHatchEntity::getTransparency";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RHatchEntity* self = 
+                        getSelf("getTransparency", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'int'
+    int cppResult =
+        
+               self->getTransparency();
+        // return type: int
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RHatchEntity.getTransparency().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerHatchEntity::getTransparency", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerHatchEntity::setTransparency
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerHatchEntity::setTransparency", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerHatchEntity::setTransparency";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RHatchEntity* self = 
+                        getSelf("setTransparency", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isNumber()
+        ) /* type: int */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    int
+                    a0 =
+                    (int)
+                    
+                    context->argument( 0 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setTransparency(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RHatchEntity.setTransparency().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerHatchEntity::setTransparency", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaSharedPointerHatchEntity::clearCustomPattern
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -2914,6 +3131,73 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaSharedPointerHatchEntity::getExploded", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerHatchEntity::setViewportContext
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerHatchEntity::setViewportContext", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerHatchEntity::setViewportContext";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RHatchEntity* self = 
+                        getSelf("setViewportContext", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RViewportData */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RViewportData*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RViewportData*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RHatchEntity: Argument 0 is not of type RViewportData.",
+                               context);                    
+                    }
+                    RViewportData 
+                    a0 = 
+                    *ap0;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setViewportContext(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RHatchEntity.setViewportContext().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerHatchEntity::setViewportContext", context, engine);
             return result;
         }
          QScriptValue REcmaSharedPointerHatchEntity::toString

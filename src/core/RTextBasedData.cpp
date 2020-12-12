@@ -44,13 +44,8 @@ RTextBasedData::RTextBasedData(RDocument *document)
    lineSpacingStyle(RS::Exact),
    lineSpacingFactor(1.0),
    fontName("standard"),
-   bold(false),
-   italic(false),
    angle(0.0),
    xScale(1.0),
-   simple(false),
-   dimensionLabel(false),
-   highlighted(false),
    height(RNANDOUBLE), width(RNANDOUBLE), dirty(true), gotDraft(false) {
 }
 
@@ -102,17 +97,15 @@ RTextBasedData::RTextBasedData(const RVector& position,
       lineSpacingStyle(lineSpacingStyle),
       lineSpacingFactor(lineSpacingFactor),
       fontName(fontName),
-      bold(bold),
-      italic(italic),
       angle(angle),
       xScale(1.0),
-      simple(simple),
-      dimensionLabel(false),
-      highlighted(false),
       height(RNANDOUBLE), width(RNANDOUBLE),
       dirty(true), gotDraft(false) {
 
     setText(text);
+    setBold(bold);
+    setItalic(italic);
+    setSimple(simple);
 }
 
 bool RTextBasedData::isSane() const {
@@ -123,10 +116,6 @@ RBox RTextBasedData::getBoundingBox(bool ignoreEmpty) const {
     if (!boundingBox.isValid() || dirty) {
         getPainterPaths(gotDraft);
     }
-
-//    if (!ignoreEmpty && boundingBox.getWidth()<RS::PointTolerance && boundingBox.getHeight()<RS::PointTolerance) {
-//        RDebug::printBacktrace();
-//    }
 
     if (ignoreEmpty && boundingBox.getWidth()<RS::PointTolerance && boundingBox.getHeight()<RS::PointTolerance) {
         return RBox();
@@ -294,8 +283,9 @@ QList<RRefPoint> RTextBasedData::getReferencePoints(RS::ProjectionRenderingHint 
     return ret;
 }
 
-bool RTextBasedData::moveReferencePoint(const RVector& referencePoint,
-        const RVector& targetPoint) {
+bool RTextBasedData::moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers) {
+    Q_UNUSED(modifiers)
+
     bool ret = false;
     if (referencePoint.equalsFuzzy(position)) {
         position = targetPoint;
@@ -330,6 +320,40 @@ bool RTextBasedData::scale(const RVector& scaleFactors, const RVector& center) {
     alignmentPoint.scale(scaleFactors, center);
     textWidth*=scaleFactors.x;
     textHeight*=scaleFactors.x;
+
+
+
+    // handle mirroring:
+//    if (scaleFactors.x<0 && scaleFactors.y>0 ||
+//        scaleFactors.x>0 && scaleFactors.y<0) {
+
+//        bool readable = RMath::isAngleReadable(angle);
+//        qDebug() << "angle: " << angle;
+
+//        RVector vec = RVector::createPolar(1.0, angle);
+//        vec.scale(scaleFactors, RVector(0,0));
+//        //vec.mirror(RVector(0.0,0.0), axis.getEndPoint()-axis.getStartPoint());
+//        angle = vec.getAngle();
+
+//        bool corr;
+//        angle = RMath::makeAngleReadable(angle, readable, &corr);
+
+//        if (corr) {
+//            if (horizontalAlignment==RS::HAlignLeft) {
+//                horizontalAlignment=RS::HAlignRight;
+//            } else if (horizontalAlignment==RS::HAlignRight) {
+//                horizontalAlignment=RS::HAlignLeft;
+//            }
+//        } else {
+//            if (verticalAlignment==RS::VAlignTop) {
+//                verticalAlignment=RS::VAlignBase;
+//            } else if (verticalAlignment==RS::VAlignBase) {
+//                verticalAlignment=RS::VAlignTop;
+//            }
+//        }
+//    }
+
+
 
     if (!isSimple()) {
         // change height in height tags inside MText entities:
@@ -387,22 +411,28 @@ bool RTextBasedData::mirror(const RLine& axis) {
     vec.mirror(RVector(0.0,0.0), axis.getEndPoint()-axis.getStartPoint());
     angle = vec.getAngle();
 
-    bool corr;
-    angle = RMath::makeAngleReadable(angle, readable, &corr);
+    if (isSimple() && document->getKnownVariable(RS::MIRRTEXT, 0)!=0) {
+        setUpsideDown(!isUpsideDown());
+    }
+    else {
+        bool corr;
+        angle = RMath::makeAngleReadable(angle, readable, &corr);
 
-    if (corr) {
-        if (horizontalAlignment==RS::HAlignLeft) {
-            horizontalAlignment=RS::HAlignRight;
-        } else if (horizontalAlignment==RS::HAlignRight) {
-            horizontalAlignment=RS::HAlignLeft;
-        }
-    } else {
-        if (verticalAlignment==RS::VAlignTop) {
-            verticalAlignment=RS::VAlignBase;
-        } else if (verticalAlignment==RS::VAlignBase) {
-            verticalAlignment=RS::VAlignTop;
+        if (corr) {
+            if (horizontalAlignment==RS::HAlignLeft) {
+                horizontalAlignment=RS::HAlignRight;
+            } else if (horizontalAlignment==RS::HAlignRight) {
+                horizontalAlignment=RS::HAlignLeft;
+            }
+        } else {
+            if (verticalAlignment==RS::VAlignTop) {
+                verticalAlignment=RS::VAlignBase;
+            } else if (verticalAlignment==RS::VAlignBase) {
+                verticalAlignment=RS::VAlignTop;
+            }
         }
     }
+
     update(false);
     return true;
 }
@@ -527,6 +557,13 @@ QList<QSharedPointer<RShape> > RTextBasedData::getExploded() const {
 //    return shapes;
 }
 
+void RTextBasedData::setFontName(const QString& fontName) {
+    this->fontName = fontName;
+    // reset fontFile if font name changed:
+    this->fontFile = "";
+    update();
+}
+
 void RTextBasedData::update(bool layout) const {
     dirty = true;
     if (layout) {
@@ -560,7 +597,7 @@ QList<RTextLayout> RTextBasedData::getTextLayouts() const {
  * Complex formatted texts are split up into smaller text blocks,
  * each with unique formatting, color, etc.
  */
-QList<RTextBasedData> RTextBasedData::getSimpleTextBlocks() const {
+QList<RTextBasedData> RTextBasedData::getSimpleTextBlocks() {
     if (hasProxy()) {
         return getTextProxy()->getSimpleTextBlocks(*this);
     }
@@ -574,12 +611,13 @@ QList<RTextBasedData> RTextBasedData::getSimpleTextBlocks() const {
  * \param fontHeightFactor factor applied to all font heights. This allows
  *      the text edit to use a bigger / smaller font that needed in the end.
  */
-QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const RColor& initialColor, double fontHeightFactor) {
+QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const RColor& initialColor, double fontHeightFactor, bool simpleText) {
     QString ret = "";
 
     QString fontFamily = textDocument.defaultFont().family();
     int fontWeight = textDocument.defaultFont().weight();
     bool fontItalic = textDocument.defaultFont().italic();
+    bool fontUnderline = textDocument.defaultFont().underline();
     double fontHeight = textDocument.defaultFont().pointSizeF() / fontHeightFactor;
     QTextCharFormat::VerticalAlignment fontVerticalAlignment = QTextCharFormat::AlignNormal;
     QTextCharFormat::VerticalAlignment previousVerticalAlignment = QTextCharFormat::AlignNormal;
@@ -611,6 +649,7 @@ QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const R
             //qDebug() << "text fragment: " << fragment.text();
 
             bool fontChanged = false;
+            bool underlineChanged = false;
             bool colorChanged = false;
             bool heightChanged = false;
             bool verticalAlignmentChanged = false;
@@ -627,6 +666,12 @@ QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const R
             if (format.fontItalic()!=fontItalic) {
                 fontItalic = format.fontItalic();
                 fontChanged = true;
+            }
+
+            // detect underline change:
+            if (format.fontUnderline()!=fontUnderline) {
+                fontUnderline = format.fontUnderline();
+                underlineChanged = true;
             }
 
             // detect vertical alignment change (subscript / superscript):
@@ -673,29 +718,6 @@ QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const R
                 //qDebug() << "height: " << format.fontPointSize();
             }
 
-            // handle stacked text:
-            QString text;
-            if (verticalAlignmentChanged) {
-                if (previousVerticalAlignment==QTextCharFormat::AlignNormal) {
-                    ret += "\\S";
-                    if (fontVerticalAlignment==QTextCharFormat::AlignSubScript) {
-                        ret += "^";
-                    }
-                }
-                else if (previousVerticalAlignment==QTextCharFormat::AlignSuperScript) {
-                    ret += "^";
-                    if (fontVerticalAlignment==QTextCharFormat::AlignNormal) {
-                        ret += ";";
-                    }
-                }
-                else if (previousVerticalAlignment==QTextCharFormat::AlignSubScript) {
-                    ret += ";";
-                    if (fontVerticalAlignment==QTextCharFormat::AlignSuperScript) {
-                        ret += "\\S";
-                    }
-                }
-            }
-
             if (fontChanged) {
                 if (RFontList::isCadFont(fontFamily, "")) {
                     ret += QString("\\F%1|c0;")
@@ -719,11 +741,42 @@ QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const R
                 }
             }
 
+            if (underlineChanged) {
+                if (fontUnderline) {
+                    ret += (simpleText ? QString("%%u") : QString("\\L"));
+                }
+                else {
+                    ret += (simpleText ? QString("%%u") : QString("\\l"));
+                }
+            }
+
             if (heightChanged) {
                 ret += QString("\\H%1;").arg(fontHeight);
             }
 
-            text = fragment.text();
+            // handle stacked text:
+            if (verticalAlignmentChanged) {
+                if (previousVerticalAlignment==QTextCharFormat::AlignNormal) {
+                    ret += "\\S";
+                    if (fontVerticalAlignment==QTextCharFormat::AlignSubScript) {
+                        ret += "^";
+                    }
+                }
+                else if (previousVerticalAlignment==QTextCharFormat::AlignSuperScript) {
+                    ret += "^";
+                    if (fontVerticalAlignment==QTextCharFormat::AlignNormal) {
+                        ret += ";";
+                    }
+                }
+                else if (previousVerticalAlignment==QTextCharFormat::AlignSubScript) {
+                    ret += ";";
+                    if (fontVerticalAlignment==QTextCharFormat::AlignSuperScript) {
+                        ret += "\\S";
+                    }
+                }
+            }
+
+            QString text = fragment.text();
 
             //qDebug() << "text frag:";
             //RDebug::hexDump(text);
@@ -744,12 +797,13 @@ QString RTextBasedData::toEscapedText(const QTextDocument& textDocument, const R
             text.replace(' ', "\\~");
             text.replace("&nbsp;", "\\~");
             //text.replace(QChar(QChar::Nbsp), "\\~");
-            // degree:
-            text.replace(RTextRenderer::chDegree, RTextRenderer::escDegree);
-            // plus minus:
-            text.replace(RTextRenderer::chPlusMinus, RTextRenderer::escPlusMinus);
-            // diameter:
-            text.replace(RTextRenderer::chDiameter, RTextRenderer::escDiameter);
+            // degree (%%d):
+            text.replace(RTextRenderer::chDegree, RTextRenderer::escDegreeStr);
+            // plus minus (%%p):
+            text.replace(RTextRenderer::chPlusMinus, RTextRenderer::escPlusMinusStr);
+            // diameter (%%d):
+            text.replace(RTextRenderer::chDiameter, RTextRenderer::escDiameterStr);
+
             /*
             // unicode:
             QString t;

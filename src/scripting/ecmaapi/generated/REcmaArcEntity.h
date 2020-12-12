@@ -71,6 +71,9 @@
         exportEntity
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        scaleNonUniform
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getData
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -123,6 +126,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getSideOfPoint
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getSweep
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getTrimEnd

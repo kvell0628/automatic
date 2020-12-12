@@ -110,6 +110,10 @@
                 qScriptValueFromValue(&engine, RTextEntity::PropertyProtected),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
+            ctor.setProperty("PropertyWorkingSet",
+                qScriptValueFromValue(&engine, RTextEntity::PropertyWorkingSet),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
             ctor.setProperty("PropertyType",
                 qScriptValueFromValue(&engine, RTextEntity::PropertyType),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
@@ -204,6 +208,14 @@
             
             ctor.setProperty("PropertyVAlign",
                 qScriptValueFromValue(&engine, RTextEntity::PropertyVAlign),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyBackward",
+                qScriptValueFromValue(&engine, RTextEntity::PropertyBackward),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyUpsideDown",
+                qScriptValueFromValue(&engine, RTextEntity::PropertyUpsideDown),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
 

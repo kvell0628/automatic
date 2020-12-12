@@ -20,7 +20,7 @@
  * along with QCAD.
  */
 
-include("../Information.js");
+include("scripts/Information/Information.js");
 
 /**
  * \class InfoArcCircleArea
@@ -70,7 +70,7 @@ InfoArcCircleArea.prototype.setState = function(state) {
     var trSelectEntity = qsTr("Choose arc, circle, ellipse or elliptical arc");
     this.setCommandPrompt(trSelectEntity);
     this.setLeftMouseTip(trSelectEntity);
-    this.setRightMouseTip(qsTr("Done"));
+    this.setRightMouseTip(EAction.trDone);
 
     EAction.showSnapTools();
 };

@@ -32,10 +32,6 @@
     <message>
         <location filename="../src/gui/RColorCombo.cpp" line="+126"/>
         <source>Custom</source>
-        <translatorcomment>--exact match--
---file: pt_PT.po--
-Customize..
-Configurar...</translatorcomment>
         <translation>Personalizado</translation>
     </message>
 </context>
@@ -90,7 +86,7 @@ Configurar...</translatorcomment>
 <context>
     <name>RMathLineEdit</name>
     <message>
-        <location filename="../src/gui/RMathLineEdit.cpp" line="+156"/>
+        <location filename="../src/gui/RMathLineEdit.cpp" line="+172"/>
         <source>Invalid</source>
         <translation>Inválido</translation>
     </message>

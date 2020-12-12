@@ -133,6 +133,9 @@
         isEntitySelected
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isPatternContinuous
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         startExport
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -154,6 +157,9 @@
         exportLayers
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        exportLayerStates
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         exportBlocks
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -164,6 +170,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         exportLayer
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        exportLayerState
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         exportBlock
@@ -259,6 +268,12 @@
         exportClipRectangle
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        exportTransform
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        exportEndTransform
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         exportThickPolyline
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -323,6 +338,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getPixelSizeHint
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getCurrentPixelSizeHint
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         setPixelSizeHint

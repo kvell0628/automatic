@@ -70,8 +70,7 @@ public:
 
     virtual QList<RRefPoint> getReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
 
-    virtual bool moveReferencePoint(const RVector& referencePoint, 
-        const RVector& targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     virtual bool move(const RVector& offset);
     virtual bool rotate(double rotation, const RVector& center = RDEFAULT_RVECTOR);
@@ -107,8 +106,14 @@ public:
     RVector getUVector() const {
         return uVector;
     }
+    void setUVector(const RVector& v) {
+        uVector = v;
+    }
     RVector getVVector() const {
         return vVector;
+    }
+    void setVVector(const RVector& v) {
+        vVector = v;
     }
     void setWidth(double w, bool keepRatio=false);
     void setHeight(double h, bool keepRatio=false);
@@ -122,17 +127,32 @@ public:
     int getBrightness() const {
         return brightness;
     }
+    void setBrightness(int v) {
+        brightness = v;
+    }
     int getContrast() const {
         return contrast;
     }
+    void setContrast(int v) {
+        contrast = v;
+    }
     int getFade() const {
         return fade;
+    }
+    void setFade(int v) {
+        fade = v;
     }
     QImage getImage() const;
 
     void load() const;
     void reload();
 
+    RVector getScaleVector() const;
+    RVector mapToImage(const RVector& v) const;
+    RVector mapFromImage(const RVector& v) const;
+
+    QList<RVector> getCornersPx() const;
+    QList<RVector> getCorners() const;
     QList<RLine> getEdges() const;
 
 private:

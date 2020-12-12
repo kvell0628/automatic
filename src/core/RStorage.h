@@ -31,6 +31,7 @@
 #include "RDocumentVariables.h"
 #include "REntity.h"
 #include "RLayer.h"
+#include "RLayerState.h"
 #include "RLinetype.h"
 #include "RLinetypePattern.h"
 #include "RModifiedListener.h"
@@ -105,6 +106,8 @@ public:
 
     QList<RBlock::Id> sortBlocks(const QList<RBlock::Id>& blockIds) const;
 
+    QList<RLayer::Id> sortLayers(const QList<RLayer::Id>& layerIds) const;
+
     /**
      * \nonscriptable
      */
@@ -113,7 +116,7 @@ public:
     /**
      * \return A set of all object IDs of the document.
      */
-    virtual QSet<RObject::Id> queryAllObjects() = 0;
+    virtual QSet<RObject::Id> queryAllObjects() const = 0;
 
     virtual QSet<REntity::Id> queryAllVisibleEntities() = 0;
 
@@ -127,6 +130,11 @@ public:
             bool allBlocks, QList<RS::EntityType> types) = 0;
 
     /**
+     * \return A set of all entity IDs in the current working set.
+     */
+    virtual QSet<REntity::Id> queryWorkingSetEntities() = 0;
+
+    /**
      * \return A set of all UCS IDs of the document.
      */
     virtual QSet<RUcs::Id> queryAllUcs() = 0;
@@ -137,6 +145,11 @@ public:
     virtual QSet<RLayer::Id> queryAllLayers(bool undone = false) = 0;
 
     /**
+     * \return A set of all layer state IDs of the document.
+     */
+    virtual QSet<RLayerState::Id> queryAllLayerStates(bool undone = false) const = 0;
+
+    /**
      * \return A set of all block IDs of the document.
      */
     virtual QSet<RBlock::Id> queryAllBlocks(bool undone = false) = 0;
@@ -144,7 +157,7 @@ public:
     /**
      * \return A set of all block IDs of layout blocks of the document.
      */
-    virtual QSet<RBlock::Id> queryAllLayoutBlocks(bool includeModelSpace = false, bool undone = false) = 0;
+    virtual QSet<RBlock::Id> queryAllLayoutBlocks(bool includeModelSpace = false, bool undone = false) const = 0;
 
     /**
      * \return A set of all layout IDs of layouts of the document.
@@ -185,18 +198,18 @@ public:
      */
     virtual QSet<REntity::Id> queryChildEntities(REntity::Id parentId, RS::EntityType type = RS::EntityAll) = 0;
 
-    virtual bool hasChildEntities(REntity::Id parentId) = 0;
+    virtual bool hasChildEntities(REntity::Id parentId) const = 0;
 
     /**
      * \return A set of all block reference entity IDs that reference
      * the given block.
      */
-    virtual QSet<REntity::Id> queryBlockReferences(RBlock::Id blockId) = 0;
+    virtual QSet<REntity::Id> queryBlockReferences(RBlock::Id blockId) const = 0;
 
     /**
      * \return A set of all block reference entity IDs.
      */
-    virtual QSet<REntity::Id> queryAllBlockReferences() = 0;
+    virtual QSet<REntity::Id> queryAllBlockReferences() const = 0;
 
     /**
      * \return A set of entity IDs of all selected entities.
@@ -204,9 +217,14 @@ public:
     virtual QSet<REntity::Id> querySelectedEntities() const = 0;
 
     /**
+     * \return A set of object IDs of all selected objects (layers, ...).
+     */
+    virtual QSet<RObject::Id> querySelectedLayers() const = 0;
+
+    /**
      * \return A set of entity IDs of all infinite entities (xlines).
      */
-    virtual QSet<REntity::Id> queryInfiniteEntities() = 0;
+    virtual QSet<REntity::Id> queryInfiniteEntities() const = 0;
 
     virtual QSharedPointer<RDocumentVariables> queryDocumentVariables() const = 0;
     virtual QSharedPointer<RDocumentVariables> queryDocumentVariablesDirect() const = 0;
@@ -230,6 +248,20 @@ public:
 
     virtual QSharedPointer<REntity> queryEntityDirect(REntity::Id entityId) const {
         return queryEntity(entityId);
+    }
+
+    virtual QSharedPointer<REntity> queryVisibleEntityDirect(REntity::Id entityId) const {
+        QSharedPointer<REntity> ret = queryEntityDirect(entityId);
+//        if (ret->isUndone()) {
+//            return QSharedPointer<REntity>();
+//        }
+//        if (ret->getBlockId()!=currentBlockId) {
+//            return QSharedPointer<REntity>();
+//        }
+        if (!ret->isVisible()) {
+            return QSharedPointer<REntity>();
+        }
+        return ret;
     }
 
     /**
@@ -270,6 +302,26 @@ public:
     virtual QSharedPointer<RLayer> queryCurrentLayer() {
         return queryLayer(getCurrentLayerId());
     }
+
+    /**
+     * \return A pointer to the layer state with the given \c layerStateId
+     *      or NULL if no such layer state exists.
+     */
+    virtual QSharedPointer<RLayerState> queryLayerState(RLayerState::Id layerStateId) const = 0;
+
+    virtual QSharedPointer<RLayerState> queryLayerStateDirect(RLayerState::Id layerStateId) const {
+        return queryLayerState(layerStateId);
+    }
+    virtual QSharedPointer<RLayerState> queryLayerStateDirect(const QString& layerStateName) const {
+        return queryLayerStateDirect(getLayerStateId(layerStateName));
+    }
+
+    /**
+     * \return A pointer to the layer with the given \c layerName
+     *      or NULL if no such layer exists.
+     */
+    virtual QSharedPointer<RLayerState> queryLayerState(const QString& layerStateName) const = 0;
+
 
     /**
      * \return A pointer to the layout with the given \c layoutId
@@ -398,8 +450,11 @@ public:
     virtual double getLinetypeScale() const;
 
     virtual QString getBlockName(RBlock::Id blockId) const = 0;
+    virtual QString getBlockNameFromLayout(const QString& layoutName) const = 0;
+    virtual QString getBlockNameFromLayout(RLayout::Id layoutId) const = 0;
     virtual QSet<QString> getBlockNames(const QString& rxStr = RDEFAULT_QSTRING) const = 0;
     virtual RBlock::Id getBlockId(const QString& blockName) const = 0;
+    virtual RBlock::Id getBlockIdAuto(const QString& blockLayoutName) const = 0;
     virtual bool hasBlock(const QString& blockName) const;
 
     virtual QString getViewName(RView::Id viewId) const = 0;
@@ -417,6 +472,12 @@ public:
         return layer0Id;
     }
     virtual bool hasLayer(const QString& layerName) const;
+
+    virtual QString getLayerStateName(RLayerState::Id layerStateId) const = 0;
+    virtual QSet<QString> getLayerStateNames(const QString& rxStr = RDEFAULT_QSTRING) const = 0;
+    virtual RLayer::Id getLayerStateId(const QString& layerStateName) const = 0;
+    virtual bool hasLayerStates() const;
+    virtual bool hasLayerState(const QString& layerStateName) const;
 
     virtual QString getLayoutName(RLayout::Id layoutId) const = 0;
     virtual QSet<QString> getLayoutNames(const QString& rxStr = RDEFAULT_QSTRING) const = 0;
@@ -510,7 +571,7 @@ public:
     /**
      * Sets the selection status of all entities.
      */
-    virtual void selectAllEntites(QSet<REntity::Id>* affectedEntities = NULL) = 0;
+    virtual void selectAllEntities(QSet<REntity::Id>* affectedEntities = NULL) = 0;
 
     /**
      * Selects the entity with the given ID.
@@ -571,6 +632,11 @@ public:
         return (!e.isNull() && e->isSelected());
     }
 
+    virtual bool isSelectedWorkingSet(REntity::Id entityId) {
+        QSharedPointer<REntity> e = queryEntityDirect(entityId);
+        return (!e.isNull() && e->isSelectedWorkingSet());
+    }
+
     virtual bool isEntity(RObject::Id objectId) {
         QSharedPointer<REntity> e = queryEntityDirect(objectId);
         return !e.isNull();
@@ -592,11 +658,17 @@ public:
     virtual bool isParentLayerFrozen(RLayer::Id layerId) const;
     virtual bool isParentLayerFrozen(const RLayer& layer) const;
 
+    virtual bool isLayerSnappable(RLayer::Id layerId) const;
+    virtual bool isLayerSnappable(const RLayer& layer) const;
     virtual bool isParentLayerSnappable(RLayer::Id layerId) const;
     virtual bool isParentLayerSnappable(const RLayer& layer) const;
 
+    virtual bool isLayerPlottable(RLayer::Id layerId) const;
+    virtual bool isLayerPlottable(const RLayer& layer) const;
     virtual bool isParentLayerPlottable(RLayer::Id layerId) const;
     virtual bool isParentLayerPlottable(const RLayer& layer) const;
+
+    virtual bool isEntityVisible(const REntity& entity, RBlock::Id blockId) const;
 
     /**
      * \return True if the given block is frozen.
@@ -786,6 +858,9 @@ public:
      * Clear caches:
      */
     virtual void update() {}
+
+//    RBlockReferenceEntity::Id getWorkingSetBlockReferenceId() const;
+//    void setWorkingSetBlockReferenceId(RBlockReferenceEntity::Id id, int group = -1, RTransaction* transaction = NULL);
 
 protected:
     QDateTime lastModified;

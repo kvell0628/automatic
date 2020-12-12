@@ -75,6 +75,8 @@
             
             REcmaHelper::registerFunction(&engine, proto, getLine, "getLine");
             
+            REcmaHelper::registerFunction(&engine, proto, getBoundingBox, "getBoundingBox");
+            
             REcmaHelper::registerFunction(&engine, proto, getHull, "getHull");
             
             REcmaHelper::registerFunction(&engine, proto, getStartPoint, "getStartPoint");
@@ -460,6 +462,66 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaLineData::getLine", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaLineData::getBoundingBox
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaLineData::getBoundingBox", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaLineData::getBoundingBox";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RLineData* self = 
+                        getSelf("getBoundingBox", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'RBox'
+    RBox cppResult =
+        
+               self->getBoundingBox(a0);
+        // return type: RBox
+                // not standard type nor reference
+                result = qScriptValueFromValue(engine, cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RLineData.getBoundingBox().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaLineData::getBoundingBox", context, engine);
             return result;
         }
          QScriptValue
@@ -1594,6 +1656,88 @@
                self->moveReferencePoint(a0
         ,
     a1);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    3 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(2).isNumber()
+        ) /* type: Qt::KeyboardModifiers */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RLineData: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("RLineData: Argument 1 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a1 = 
+                    *ap1;
+                
+                    // argument isStandardType
+                    Qt::KeyboardModifiers
+                    a2 =
+                    (Qt::KeyboardModifiers)
+                    (int)
+                    context->argument( 2 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->moveReferencePoint(a0
+        ,
+    a1
+        ,
+    a2);
         // return type: bool
                 // standard Type
                 result = QScriptValue(cppResult);

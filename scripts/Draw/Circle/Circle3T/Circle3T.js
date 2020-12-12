@@ -202,9 +202,10 @@ Circle3T.prototype.pickEntity = function(event, preview) {
         break;
 
     case Circle3T.State.ChoosingShape3:
-        if (entityId!==this.entity3Id) {
+        // optimization breaks when choosing three segments of the same polyline:
+        //if (entityId!==this.entity3Id) {
             this.candidates = undefined;
-        }
+        //}
 
         this.entity3 = entity;
         this.entity3Id = entityId;
@@ -267,7 +268,11 @@ Circle3T.prototype.getOperation = function(preview) {
     var op = new RAddObjectsOperation();
     op.setText(this.getToolTitle());
     for (var i=0; i<shapes.length; i++) {
-        var entity = new RCircleEntity(doc, new RCircleData(shapes[i]));
+        var s = shapes[i];
+        if  (isFunction(s.data)) {
+            s = s.data();
+        }
+        var entity = new RCircleEntity(doc, new RCircleData(s));
         op.addObject(entity);
     }
 

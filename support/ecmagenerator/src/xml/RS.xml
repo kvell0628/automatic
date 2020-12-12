@@ -19,6 +19,7 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="ObjectUnknown" />
       <value name="ObjectBlock" />
       <value name="ObjectLayer" />
+      <value name="ObjectLayerState" />
       <value name="ObjectLinetype" />
       <value name="ObjectView" />
       <value name="ObjectLayout" />
@@ -51,12 +52,16 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="EntityDimRadial" />
       <value name="EntityDimDiametric" />
       <value name="EntityDimAngular" />
+      <value name="EntityDimAngular2L" />
+      <value name="EntityDimAngular3P" />
+      <value name="EntityDimArcLength" />
       <value name="EntityDimOrdinate" />
       <value name="EntityHatch" />
       <value name="EntityImage" />
       <value name="EntityLeader" />
       <value name="EntitySpline" />
       <value name="EntityViewport" />
+      <value name="EntityTolerance" />
       <value name="EntityUser" />
     </enum>
     <enum name="ProjectionRenderingHint">
@@ -64,6 +69,11 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="RenderSide" />
       <value name="RenderFront" />
       <value name="RenderThreeD" />
+    </enum>
+    <enum name="OrthoMode">
+      <value name="OrthoVertical" />
+      <value name="OrthoHorizonal" />
+      <value name="Orthogonal" />
     </enum>
     <enum name="Side">
       <value name="NoSide" />
@@ -103,11 +113,10 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="FromStart" />
       <value name="FromEnd" />
       <value name="FromAny" />
-      <value name="FromStart" />
-      <value name="FromEnd" />
       <value name="AlongPolyline" />
     </enum>
     <enum name="IsoProjectionType">
+      <value name="NoProjection" />
       <value name="Top" />
       <value name="Bottom" />
       <value name="Left" />
@@ -126,23 +135,11 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="User3" />
       <value name="User4" />
       <value name="IsoTop" />
-      <value name="Top" />
-      <value name="Isometric" />
       <value name="IsoBottom" />
-      <value name="Bottom" />
-      <value name="Isometric" />
       <value name="IsoLeft" />
-      <value name="Left" />
-      <value name="Isometric" />
       <value name="IsoLeftBack" />
-      <value name="LeftBack" />
-      <value name="Isometric" />
       <value name="IsoRight" />
-      <value name="Right" />
-      <value name="Isometric" />
       <value name="IsoRightBack" />
-      <value name="RightBack" />
-      <value name="Isometric" />
     </enum>
     <enum name="Measurement">
       <value name="UnknownMeasurement" />
@@ -172,7 +169,6 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="Lightyear" />
       <value name="Parsec" />
       <value name="MaxUnit" />
-      <value name="Parsec" />
     </enum>
     <enum name="AngleFormat">
       <value name="DegreesDecimal" />
@@ -354,7 +350,6 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="VISRETAIN" />
       <value name="WORLDVIEW" />
       <value name="MaxKnownVariable" />
-      <value name="WORLDVIEW" />
       <value name="INVALID" />
     </enum>
     <enum name="BooleanOperation">
@@ -388,6 +383,49 @@ xmlns:rs="http://www.ribbonsoft.com">
       <value name="EndOpenRound" />
       <value name="EndOpenSingle" />
     </enum>
+    <enum name="Easing">
+      <value name="Linear" />
+      <value name="InQuad" />
+      <value name="OutQuad" />
+      <value name="InOutQuad" />
+      <value name="OutInQuad" />
+      <value name="InCubic" />
+      <value name="OutCubic" />
+      <value name="InOutCubic" />
+      <value name="OutInCubic" />
+      <value name="InQuart" />
+      <value name="OutQuart" />
+      <value name="InOutQuart" />
+      <value name="OutInQuart" />
+      <value name="InQuint" />
+      <value name="OutQuint" />
+      <value name="InOutQuint" />
+      <value name="OutInQuint" />
+      <value name="InSine" />
+      <value name="OutSine" />
+      <value name="InOutSine" />
+      <value name="OutInSine" />
+      <value name="InExpo" />
+      <value name="OutExpo" />
+      <value name="InOutExpo" />
+      <value name="OutInExpo" />
+      <value name="InCirc" />
+      <value name="OutCirc" />
+      <value name="InOutCirc" />
+      <value name="OutInCirc" />
+      <value name="InElastic" />
+      <value name="OutElastic" />
+      <value name="InOutElastic" />
+      <value name="OutInElastic" />
+      <value name="InBack" />
+      <value name="OutBack" />
+      <value name="InOutBack" />
+      <value name="OutInBack" />
+      <value name="InBounce" />
+      <value name="OutBounce" />
+      <value name="InOutBounce" />
+      <value name="OutInBounce" />
+    </enum>
     <method name="compare" cppName="compare" specifier="public"
     isStatic="true" isVirtual="false" isScriptOverwritable="true">
       <variant returnType="bool" isPureVirtual="false">
@@ -395,6 +433,8 @@ xmlns:rs="http://www.ribbonsoft.com">
         isConst="true" />
         <arg type="QVariant &amp;" typeName="QVariant" name="v2"
         isConst="true" />
+        <arg type="bool" typeName="bool" name="noTolerance"
+        hasDefault="true" default="false" isConst="false" />
       </variant>
       <variant returnType="bool" isPureVirtual="false">
         <arg type="QPair &lt; QVariant , RPropertyAttributes &gt; &amp;"
@@ -403,11 +443,18 @@ xmlns:rs="http://www.ribbonsoft.com">
         <arg type="QPair &lt; QVariant , RPropertyAttributes &gt; &amp;"
         typeName="QPair &lt; QVariant , RPropertyAttributes &gt;"
         name="p2" isConst="true" />
+        <arg type="bool" typeName="bool" name="noTolerance"
+        hasDefault="true" default="false" isConst="false" />
       </variant>
     </method>
     <method name="getCpuCores" cppName="getCpuCores"
     specifier="public" isStatic="true" isVirtual="false"
     isScriptOverwritable="true">
+      <variant returnType="int" isPureVirtual="false" />
+    </method>
+    <method name="getIdealThreadCount"
+    cppName="getIdealThreadCount" specifier="public"
+    isStatic="true" isVirtual="false" isScriptOverwritable="true">
       <variant returnType="int" isPureVirtual="false" />
     </method>
     <method name="getBuildCpuArchitecture"
@@ -466,6 +513,42 @@ xmlns:rs="http://www.ribbonsoft.com">
       <variant returnType="QStringList" isPureVirtual="false">
         <arg type="bool" typeName="bool" name="metric"
         isConst="false" />
+      </variant>
+    </method>
+    <method name="sortAlphanumerical" cppName="sortAlphanumerical"
+    specifier="public" isStatic="true" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="QStringList" isPureVirtual="false">
+        <arg type="QStringList &amp;" typeName="QStringList"
+        name="list" isConst="true" />
+      </variant>
+    </method>
+    <method name="compareChunkify" cppName="compareChunkify"
+    specifier="public" isStatic="true" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="QStringList" isPureVirtual="false">
+        <arg type="QString &amp;" typeName="QString" name="s"
+        isConst="true" />
+      </variant>
+    </method>
+    <method name="compareAlphanumerical"
+    cppName="compareAlphanumerical" specifier="public"
+    isStatic="true" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="int" isPureVirtual="false">
+        <arg type="QString &amp;" typeName="QString" name="s1"
+        isConst="true" />
+        <arg type="QString &amp;" typeName="QString" name="s2"
+        isConst="true" />
+      </variant>
+    </method>
+    <method name="lessThanAlphanumerical"
+    cppName="lessThanAlphanumerical" specifier="public"
+    isStatic="true" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false">
+        <arg type="QString &amp;" typeName="QString" name="s1"
+        isConst="true" />
+        <arg type="QString &amp;" typeName="QString" name="s2"
+        isConst="true" />
       </variant>
     </method>
     <property name="PointTolerance" type="double" isConst="true"

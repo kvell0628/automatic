@@ -49,6 +49,8 @@ public:
              bool reversed);
     virtual ~REllipse();
 
+    static REllipse createInscribed(const RVector& p1, const RVector& p2, const RVector& p3, const RVector& p4);
+
     virtual RShape::Type getShapeType() const {
         return Ellipse;
     }
@@ -76,6 +78,7 @@ public:
     virtual QList<RVector> getCenterPoints() const;
     virtual QList<RVector> getPointsWithDistanceToEnd(
         double distance, int from = RS::FromAny) const;
+    virtual QList<RVector> getPointCloud(double segmentLength) const;
 
     virtual RVector getVectorTo(const RVector& point,
             bool limited = true, double strictRange = RMAXDOUBLE) const;

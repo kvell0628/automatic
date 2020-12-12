@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../File.js");
+include("scripts/File/File.js");
 include("BitmapExportWorker.js");
 include("scripts/Tools/arguments.js");
 
@@ -75,12 +75,12 @@ BitmapExport.prototype.beginEvent = function() {
         print("Error: cannot save file: ", bmpFileName);
         print("Error: ", res[1]);
         appWin.handleUserWarning(
-                qsTr("Error while generating Bitmap file '%1': %2")
+                qsTr("Error while generating bitmap file \"%1\": %2")
                     .arg(bmpFileName).arg(res[1]));
     }
     else {
         appWin.handleUserMessage(
-                qsTr("Bitmap file has been exported to '%1'").arg(bmpFileName));
+                qsTr("Bitmap file has been exported to \"%1\"").arg(bmpFileName));
     }
 
     this.terminate();
@@ -164,6 +164,7 @@ BitmapExport.prototype.getProperties = function() {
     var antiAliasingCheckbox = this.dialog.findChild("AntiAliasing");
 
     var selectionCheckbox = this.dialog.findChild("Selection");
+    selectionCheckbox.toggled.connect(this, "selectionChanged");
     var weightMarginCheckbox = this.dialog.findChild("WeightMargin");
 
     widthEdit.valueChanged.connect(
@@ -213,16 +214,24 @@ BitmapExport.prototype.getProperties = function() {
       ret["grayscale"] = true;
     }
 
-    ret["noweightmargin"] = !weightMarginCheckbox.checked;
+    ret["noWeightMargin"] = !weightMarginCheckbox.checked;
 
     if (selectionCheckbox.checked) {
         var doc = this.getDocument();
-        ret["entityids"] = doc.querySelectedEntities();
+        ret["entityIds"] = doc.querySelectedEntities();
     }
 
     this.dialog.destroy();
     EAction.activateMainWindow();
     return ret;
+};
+
+BitmapExport.prototype.selectionChanged = function(value) {
+    this.documentWidth = undefined;
+    this.documentHeight = undefined;
+
+    var resolutionCombo = this.dialog.findChild("Resolution");
+    this.resolutionChanged(resolutionCombo.currentText);
 };
 
 BitmapExport.prototype.resolutionChanged = function(str) {

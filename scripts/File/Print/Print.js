@@ -17,10 +17,10 @@
  * along with QCAD.
  */
 
-include("../File.js");
+include("scripts/File/File.js");
 include("scripts/sprintf.js");
 if (RSettings.isGuiEnabled() && typeof(PrintPreview)=="undefined") {
-    include("../PrintPreview/PrintPreview.js");
+    include("scripts/File/PrintPreview/PrintPreview.js");
 }
 if (typeof(PageSettings)=="undefined") {
     include("scripts/Edit/DrawingPreferences/PageSettings/PageSettings.js");
@@ -36,9 +36,6 @@ function Print(guiAction, document, view) {
     this.document = document;
     this.view = view;
 
-    // save and restore current view:
-    this.saveView = false;
-
     if (!isNull(view)) {
         this.scene = view.getScene();
     }
@@ -46,7 +43,19 @@ function Print(guiAction, document, view) {
 
 Print.prototype = new File();
 
-Print.defaultPrinter = new QPrinter();
+
+Print.defaultPrinter = undefined;
+
+Print.getDefaultPrinter = function() {
+    if (isNull(Print.defaultPrinter)) {
+        Print.defaultPrinter = new QPrinter();
+    }
+    return Print.defaultPrinter;
+};
+
+Print.setProxy = function(p) {
+    Print.proxy = p;
+};
 
 Print.prototype.beginEvent = function() {
     File.prototype.beginEvent.call(this);
@@ -55,7 +64,6 @@ Print.prototype.beginEvent = function() {
     if (!PrintPreview.isRunning()) {
         var guiAction = RGuiAction.getByScriptFile("scripts/File/PrintPreview/PrintPreview.js");
         var action = new PrintPreview(guiAction);
-        action.saveView = this.saveView;
         action.initialAction = "Print";
         var di = EAction.getDocumentInterface();
         di.setCurrentAction(action);
@@ -68,15 +76,43 @@ Print.prototype.beginEvent = function() {
     this.terminate();
 };
 
-/**
- * Prints the given document.
- */
-Print.prototype.print = function(pdfFile) {
-    var printer = new QPrinter(QPrinter.HighResolution);
+Print.prototype.createPrinter = function(pdfFile, printerName, pdfVersion) {
+    var printer = undefined;
 
-    if (isString(pdfFile)) {
-        printer.setOutputFormat(QPrinter.PdfFormat);
-        printer.setOutputFileName(pdfFile);
+    // print directly to given printer or default printer:
+    if (!isNull(printerName)) {
+        if (printerName==="") {
+            printerName = getDefaultPrinterName();
+        }
+        printer = createPrinter(printerName);
+        if (isNull(printer)) {
+            qWarning("invalid printer name: ", printerName);
+            printer = undefined;
+        }
+    }
+
+    if (isNull(pdfVersion)) {
+        pdfVersion = "1.4";
+    }
+
+    if (isNull(printer)) {
+        // create printer on the fly:
+        printer = new QPrinter(QPrinter.HighResolution);
+
+        if (isString(pdfFile)) {
+            printer.setOutputFormat(QPrinter.PdfFormat);
+            if (pdfVersion.toLowerCase()==="a-1b" || pdfVersion.toLowerCase()==="a1b" || pdfVersion.toLowerCase()==="a") {
+                printer.setPdfVersion(1 /*QPagedPaintDevice.PdfVersion_A1b*/);
+            }
+            else if (pdfVersion.toLowerCase()==="1.6") {
+                printer.setPdfVersion(2 /*QPagedPaintDevice.PdfVersion_1_6*/);
+            }
+            else {
+                printer.setPdfVersion(0 /*QPagedPaintDevice.PdfVersion_1_4*/);
+            }
+
+            printer.setOutputFileName(pdfFile);
+        }
     }
 
     var paperSizeEnum = Print.getPaperSizeEnum(this.document);
@@ -98,10 +134,12 @@ Print.prototype.print = function(pdfFile) {
         printer.setColorMode(QPrinter.GrayScale);
     }
 
-    // show printer dialog if we are not printing to a PDF file:
-    if (!isString(pdfFile)) {
+    // show printer dialog if we are not printing to a PDF file
+    // or running as command line tool:
+    var appWin = EAction.getMainWindow();
+    if (!isString(pdfFile) && !isNull(appWin) && isNull(printerName)) {
         Print.cancel = false;
-        Print.printDialog = new QPrintDialog(printer, EAction.getMainWindow());
+        Print.printDialog = new QPrintDialog(printer, appWin);
 
         if (RSettings.isQt(5)) {
             Print.printDialog.rejected.connect(function() { Print.cancel = true; });
@@ -146,15 +184,65 @@ Print.prototype.print = function(pdfFile) {
 
         if (Print.cancel===true) {
             printer.destroy();
-            return;
+            return undefined;
         }
     }
 
+    return printer;
+};
+
+/**
+ * Prints the given document.
+ *
+ * \param pdfFile Name of PDF file.
+ * \param printerName Name of printer to print to or "" for default printer.
+ * \param printer QPrinter object or undefined to create on the fly.
+ */
+Print.prototype.print = function(pdfFile, printerName, pdfVersion) {
+    // make sure selected entities are not printed with selection color:
+    var di = EAction.getDocumentInterface();
+    if (!isNull(di)) {
+        di.deselectAll();
+    }
+
+    var printer = this.createPrinter(pdfFile, printerName, pdfVersion);
+    if (isNull(printer)) {
+        qWarning("Print.prototype.print: no printer created");
+        return false;
+    }
+
+    var painter = new QPainter();
+    if (!painter.begin(printer)) {
+        printer.destroy();
+        return false;
+    }
+
+    this.printCurrentBlock(printer, painter);
+
+    painter.end();
+    printer.destroy();
+
+    return true;
+};
+
+/**
+ * Prints / exports the given block on a single or on multiple pages (if columns/rows are > 1).
+ */
+Print.prototype.printCurrentBlock = function(printer, painter) {
+
     // set background color of view to match printing preference:
     var bgColor = this.view.getBackgroundColor();
+    var scale = Print.getScale(this.document);
 
     this.view.setBackgroundColor(Print.getBackgroundColor(this.document));
     this.view.setPrinting(true);
+    // 20191007: avoid invisible lines in prints and PDF output:
+    var minLineweightSet = false;
+    if (this.view.getMinimumLineweight()<RS.PointTolerance) {
+        // no minimum lineweight defined: force minimum lineweight of 0.01mm for printing:
+        this.view.setMinimumLineweight(RUnit.convert(0.01/scale, RS.Millimeter, this.document.getUnit()));
+        minLineweightSet = true;
+    }
 
     var draftMode = false;
     var screenBasedLinetypes = false;
@@ -165,12 +253,6 @@ Print.prototype.print = function(pdfFile) {
         this.scene.setDraftMode(false);
         this.scene.setScreenBasedLinetypes(false);
         this.scene.regenerate();
-    }
-
-    var painter = new QPainter();
-    if (!painter.begin(printer)) {
-        printer.destroy();
-        return false;
     }
 
     // scale factor from drawing unit to mm:
@@ -185,13 +267,20 @@ Print.prototype.print = function(pdfFile) {
         printer.paperRect().height() / heightInMM
     );
 
-    // printer calibration goes here (future use):
-    printerFactor.x *= RSettings.getDoubleValue(printer.printerName() + "/FactorX", 1.0);
-    printerFactor.y *= RSettings.getDoubleValue(printer.printerName() + "/FactorY", 1.0);
+    // printer calibration:
+    var printerName = printer.printerName();
+    if (printerName.length===0) {
+        if (printer.outputFileName().length!==0) {
+            // PDF output:
+            printerName = "PDF";
+        }
+    }
+
+    printerFactor.x *= RSettings.getDoubleValue(printerName + "/FactorX", 1.0);
+    printerFactor.y *= RSettings.getDoubleValue(printerName + "/FactorY", 1.0);
 
     this.view.setPrintPointSize(new RVector(1.0/printerFactor.x, 1.0/printerFactor.y));
 
-    var scale = Print.getScale(this.document);
     var offset = Print.getOffset(this.document);
 
     var previousPixelSizeHint = this.scene.getPixelSizeHint();
@@ -204,16 +293,16 @@ Print.prototype.print = function(pdfFile) {
     }
 
     // iterate through all pages and print the appropriate area
-    var first = true;
+    var firstPage = true;
 
     var pages = Print.getPages(this.document);
     for (var i = 0; i < pages.length; ++i) {
         // if this is not the first page, add new page:
-        if (!first) {
+        if (!firstPage) {
             printer.newPage();
         }
         else {
-            first = false;
+            firstPage = false;
         }
 
         var c = Print.getBackgroundColor(this.document);
@@ -277,10 +366,11 @@ Print.prototype.print = function(pdfFile) {
         if (Print.getEnablePageTags(this.document)) {
             Print.drawPageTags(this.document, painter, i, pageBorderTransformed, true, printerFactor);
         }
-    }
 
-    painter.end();
-    printer.destroy();
+        if (Print.hasFooter(this.document)) {
+            Print.drawPageFooter(this.document, painter, i, pageBorderTransformed, true, printerFactor);
+        }
+    }
 
     this.scene.setPixelSizeHint(previousPixelSizeHint);
 
@@ -290,8 +380,11 @@ Print.prototype.print = function(pdfFile) {
 
     this.view.setBackgroundColor(bgColor);
     this.view.setPrinting(false);
+    if (minLineweightSet) {
+        this.view.setMinimumLineweight(0.0);
+    }
 
-    return true;
+    //return true;
 };
 
 /**
@@ -308,6 +401,8 @@ Print.prototype.printPage = function(painter, rect) {
             new RVector(rect.x()+rect.width(), rect.y()+rect.height())
         )
     );
+
+    this.view.paintOverlay(painter);
 };
 
 /**
@@ -341,7 +436,7 @@ Print.autoFitDrawing = function(di) {
     var document = di.getDocument();
     // drawing bounding box in drawing units:
     var bBox = document.getBoundingBox(true, true);
-    qDebug("bb: ", bBox);
+    //qDebug("bb: ", bBox);
     Print.autoFitBox(di, bBox);
     Print.centerBox(di, bBox);
 };
@@ -387,7 +482,7 @@ Print.autoFitBox = function(di, bBox) {
         f = 1.0;
     }
 
-    qDebug("f:", f);
+    //qDebug("f:", f);
 
     Print.setScale(di, f);
     Print.centerBox(di, bBox);
@@ -435,6 +530,14 @@ Print.centerBox = function(di, bBox) {
  * \param painter QPainter object if we are printing, RPainterPath for print preview.
  */
 Print.drawCropMarks = function(document, painter, border, printing) {
+    var isPainter = isFunction(painter.drawLinesF);
+
+    var clipping = false;
+    if (isPainter) {
+        clipping = painter.hasClipping();
+        painter.setClipping(false);
+    }
+
     var scale = Print.getScale(document);
     var offset = Print.getOffset(document);
     var unitScale = Print.getUnitScale(document);
@@ -462,7 +565,7 @@ Print.drawCropMarks = function(document, painter, border, printing) {
 
 
     // printing:
-    if (isFunction(painter.drawLinesF)) {
+    if (isPainter) {
         for (var k=0; k<lines.length; ++k) {
             lines[k].translate(-offset.x, -offset.y);
         }
@@ -477,6 +580,9 @@ Print.drawCropMarks = function(document, painter, border, printing) {
         }
     }
 
+    if (isPainter) {
+        painter.setClipping(clipping);
+    }
 };
 
 /**
@@ -640,7 +746,20 @@ Print.drawPageTags = function(document, painter, index, border, printing, printe
     else {
         painter.addPath(new RPainterPath(path));
     }
+};
 
+
+/**
+ * Draws the page footer for printing (black, small, border area).
+ * \param index page index
+ * \param border page border geometry of the page
+ * \param painter QPainter object if we are printing, RTextData for print preview.
+ * \param printerFactor Factor from Millimeter to printer unit.
+ */
+Print.drawPageFooter = function(document, painterOrText, index, border, printing, printerFactor) {
+    if (!isNull(Print.proxy)) {
+        Print.proxy.drawPageFooter(document, painterOrText, index, border, printing, printerFactor);
+    }
 };
 
 /**
@@ -807,7 +926,7 @@ Print.getColorModeString = function(colorModeEnum) {
  * \return Default page rect of default printer in paper units.
  */
 Print.getDefaultPageRect = function(document, paperUnit) {
-    var r = Print.defaultPrinter.pageRect(QPrinter.Millimeter);
+    var r = Print.getDefaultPrinter().pageRect(QPrinter.Millimeter);
     if (isNull(paperUnit)) {
         if (!isNull(document)) {
             paperUnit = Print.getPaperUnit(document);
@@ -829,7 +948,7 @@ Print.getDefaultPageRect = function(document, paperUnit) {
  * \return Default paper rect of default printer in paper units.
  */
 Print.getDefaultPaperRect = function(document, paperUnit) {
-    var r = Print.defaultPrinter.paperRect(QPrinter.Millimeter);
+    var r = Print.getDefaultPrinter().paperRect(QPrinter.Millimeter);
     if (isNull(paperUnit)) {
         if (!isNull(document)) {
             paperUnit = Print.getPaperUnit(document);
@@ -980,7 +1099,7 @@ Print.setOffset = function(di, offset) {
  * \return Paper size in MM as QSizeF object.
  */
 Print.getPaperSizeMM = function(document) {
-    //var defaultPaperSizeMM = Print.defaultPrinter.paperSize(QPrinter.Millimeter);
+    //var defaultPaperSizeMM = Print.getDefaultPrinter().paperSize(QPrinter.Millimeter);
     var wMM = RUnit.convert(Print.getPaperWidth(document), Print.getPaperUnit(document), RS.Millimeter);
     var hMM = RUnit.convert(Print.getPaperHeight(document), Print.getPaperUnit(document), RS.Millimeter);
     return new QSizeF(wMM, hMM);
@@ -991,7 +1110,7 @@ Print.getPaperSizeMM = function(document) {
  * or QPrinter.
  */
 Print.getDefaultPaperSizeMM = function() {
-    var defaultPaperSizeMM = Print.defaultPrinter.paperSize(QPrinter.Millimeter);
+    var defaultPaperSizeMM = Print.getDefaultPrinter().paperSize(QPrinter.Millimeter);
 
     var dwMM = defaultPaperSizeMM.width();
     var dhMM = defaultPaperSizeMM.height();
@@ -1293,11 +1412,6 @@ Print.setScaleString = function(di, scaleString) {
 };
 
 Print.getColumns = function(document) {
-    var appWin = RMainWindowQt.getMainWindow();
-    if (!isNull(appWin) && appWin.property("PrintPreview/InitialZoom")==="View") {
-        return 1;
-    }
-
     return Print.getIntValue("MultiPageSettings/Columns", 1, document);
 };
 
@@ -1306,11 +1420,6 @@ Print.setColumns = function(di, columns) {
 };
 
 Print.getRows = function(document) {
-    var appWin = RMainWindowQt.getMainWindow();
-    if (!isNull(appWin) && appWin.property("PrintPreview/InitialZoom")==="View") {
-        return 1;
-    }
-
     return Print.getIntValue("MultiPageSettings/Rows", 1, document);
 };
 
@@ -1343,6 +1452,10 @@ Print.getEnablePageTags = function(document) {
     return Print.getBoolValue("PageTagSettings/EnablePageTags", false, document);
 };
 
+Print.hasFooter = function(document) {
+    return Print.getIntValue("FooterSettings/Footer", 0, document) > 0;
+};
+
 //Print.getIdentifyPageTags = function(document) {
 //    return Print.getBoolValue("PageTagSettings/IdentifyPageTags", false, document);
 //};
@@ -1370,6 +1483,27 @@ Print.getTagPosition = function(document) {
 Print.getTagAlignment = function(document) {
     return Print.getValue("PageTagSettings/TagAlignment", "Inside", document);
 };
+
+Print.getFooterPosition = function(document) {
+    return Print.getValue("FooterSettings/FooterPosition", "TopLeft", document);
+};
+
+Print.getFooterFont = function(document) {
+    var ret = Print.getValue("FooterSettings/FooterFont", new QFont(), document);
+    if (isOfType(ret, QFont)) {
+        return ret;
+    }
+
+    if (isString(ret)) {
+        var f = new QFont();
+        f.fromString(ret);
+        return f;
+    }
+
+    qWarning("FooterFont is not a valid font");
+    return new QFont();
+};
+
 
 /**
  * Parses the given scale string (e.g. "1:2") and returns the scale as number (e.g. 0.5).

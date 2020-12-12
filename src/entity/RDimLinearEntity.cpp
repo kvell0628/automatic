@@ -22,6 +22,7 @@
 RPropertyTypeId RDimLinearEntity::PropertyCustom;
 RPropertyTypeId RDimLinearEntity::PropertyHandle;
 RPropertyTypeId RDimLinearEntity::PropertyProtected;
+RPropertyTypeId RDimLinearEntity::PropertyWorkingSet;
 RPropertyTypeId RDimLinearEntity::PropertyType;
 RPropertyTypeId RDimLinearEntity::PropertyBlock;
 RPropertyTypeId RDimLinearEntity::PropertyLayer;
@@ -45,6 +46,11 @@ RPropertyTypeId RDimLinearEntity::PropertyDimScale;
 RPropertyTypeId RDimLinearEntity::PropertyDimBlockName;
 RPropertyTypeId RDimLinearEntity::PropertyAutoTextPos;
 RPropertyTypeId RDimLinearEntity::PropertyFontName;
+RPropertyTypeId RDimLinearEntity::PropertyArrow1Flipped;
+RPropertyTypeId RDimLinearEntity::PropertyArrow2Flipped;
+
+RPropertyTypeId RDimLinearEntity::PropertyExtLineFix;
+RPropertyTypeId RDimLinearEntity::PropertyExtLineFixLength;
 
 RPropertyTypeId RDimLinearEntity::PropertyDimensionLinePosX;
 RPropertyTypeId RDimLinearEntity::PropertyDimensionLinePosY;
@@ -68,6 +74,7 @@ void RDimLinearEntity::init() {
     RDimLinearEntity::PropertyCustom.generateId(typeid(RDimLinearEntity), RObject::PropertyCustom);
     RDimLinearEntity::PropertyHandle.generateId(typeid(RDimLinearEntity), RObject::PropertyHandle);
     RDimLinearEntity::PropertyProtected.generateId(typeid(RDimLinearEntity), RObject::PropertyProtected);
+    RDimLinearEntity::PropertyWorkingSet.generateId(typeid(RDimLinearEntity), RObject::PropertyWorkingSet);
     RDimLinearEntity::PropertyType.generateId(typeid(RDimLinearEntity), REntity::PropertyType);
     RDimLinearEntity::PropertyBlock.generateId(typeid(RDimLinearEntity), REntity::PropertyBlock);
     RDimLinearEntity::PropertyLayer.generateId(typeid(RDimLinearEntity), REntity::PropertyLayer);
@@ -90,17 +97,23 @@ void RDimLinearEntity::init() {
     RDimLinearEntity::PropertyDimBlockName.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyDimBlockName);
     RDimLinearEntity::PropertyAutoTextPos.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyAutoTextPos);
     RDimLinearEntity::PropertyFontName.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyFontName);
+    RDimLinearEntity::PropertyArrow1Flipped.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyArrow1Flipped);
+    RDimLinearEntity::PropertyArrow2Flipped.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyArrow2Flipped);
 
-    RDimLinearEntity::PropertyDimensionLinePosX.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimLinearEntity::PropertyDimensionLinePosY.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimLinearEntity::PropertyDimensionLinePosZ.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimLinearEntity::PropertyExtLineFix.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyExtLineFix);
+    RDimLinearEntity::PropertyExtLineFixLength.generateId(typeid(RDimLinearEntity), RDimensionEntity::PropertyExtLineFixLength);
 
-    RDimLinearEntity::PropertyExtensionPoint1X.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimLinearEntity::PropertyExtensionPoint1Y.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimLinearEntity::PropertyExtensionPoint1Z.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "Z"));
-    RDimLinearEntity::PropertyExtensionPoint2X.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimLinearEntity::PropertyExtensionPoint2Y.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimLinearEntity::PropertyExtensionPoint2Z.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimLinearEntity::PropertyDimensionLinePosX.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RDimLinearEntity::PropertyDimensionLinePosY.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RDimLinearEntity::PropertyDimensionLinePosZ.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+
+    RDimLinearEntity::PropertyExtensionPoint1X.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RDimLinearEntity::PropertyExtensionPoint1Y.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RDimLinearEntity::PropertyExtensionPoint1Z.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+
+    RDimLinearEntity::PropertyExtensionPoint2X.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RDimLinearEntity::PropertyExtensionPoint2Y.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RDimLinearEntity::PropertyExtensionPoint2Z.generateId(typeid(RDimLinearEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 }
 
 bool RDimLinearEntity::setProperty(RPropertyTypeId propertyTypeId,
@@ -127,14 +140,25 @@ bool RDimLinearEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RDimLinearEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
-    if (propertyTypeId == PropertyExtensionPoint1X) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
+
+    if (propertyTypeId == PropertyDimensionLinePosX) {
+        return qMakePair(QVariant(getData().definitionPoint.x), RPropertyAttributes());
+    } else if (propertyTypeId == PropertyDimensionLinePosY) {
+        return qMakePair(QVariant(getData().definitionPoint.y), RPropertyAttributes());
+    } else if (propertyTypeId == PropertyDimensionLinePosZ) {
+        return qMakePair(QVariant(getData().definitionPoint.z), RPropertyAttributes());
+    }
+
+    else if (propertyTypeId == PropertyExtensionPoint1X) {
         return qMakePair(QVariant(getData().extensionPoint1.x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyExtensionPoint1Y) {
         return qMakePair(QVariant(getData().extensionPoint1.y), RPropertyAttributes());
     } else if (propertyTypeId == PropertyExtensionPoint1Z) {
         return qMakePair(QVariant(getData().extensionPoint1.z), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint2X) {
+    }
+
+    else if (propertyTypeId == PropertyExtensionPoint2X) {
         return qMakePair(QVariant(getData().extensionPoint2.x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyExtensionPoint2Y) {
         return qMakePair(QVariant(getData().extensionPoint2.y), RPropertyAttributes());
@@ -142,7 +166,7 @@ QPair<QVariant, RPropertyAttributes> RDimLinearEntity::getProperty(
         return qMakePair(QVariant(getData().extensionPoint2.z), RPropertyAttributes());
     }
 
-    return RDimensionEntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return RDimensionEntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RDimLinearEntity::print(QDebug dbg) const {

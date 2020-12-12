@@ -67,6 +67,9 @@
         setZ
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isFlat
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getVectorProperties
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -103,6 +106,9 @@
         insertVertexAt
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        insertVertexAtDistance
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         removeFirstVertex
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -128,6 +134,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         setVertexAt
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        moveVertexAt
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getVertexAt
@@ -223,6 +232,9 @@
         convertArcToLineSegments
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        convertArcToLineSegmentsLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         contains
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -245,6 +257,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         moveEndPoint
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        moveSegmentAt
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getDirection1
@@ -286,7 +301,13 @@
         getCenterPoints
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getPointAtPercent
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getPointsWithDistanceToEnd
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getPointCloud
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getAngleAt
@@ -319,6 +340,9 @@
         reverse
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getReversed
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         stretch
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -338,6 +362,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getOutline
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getLeftRightOutline
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isInterpolated
@@ -391,6 +418,9 @@
         modifyPolylineCorner
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isConcave
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getConvexVertices
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -398,6 +428,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         splitAtDiscontinuities
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        splitAtSegmentTypeChange
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getBaseAngle
@@ -413,6 +446,15 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         setHeight
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        morph
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        roundAllCorners
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getPolygonHull
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         hasProxy

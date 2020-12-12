@@ -69,6 +69,8 @@
             
             REcmaHelper::registerFunction(&engine, proto, getBoundingBox, "getBoundingBox");
             
+            REcmaHelper::registerFunction(&engine, proto, getPointOnEntity, "getPointOnEntity");
+            
             REcmaHelper::registerFunction(&engine, proto, isValid, "isValid");
             
             REcmaHelper::registerFunction(&engine, proto, isSane, "isSane");
@@ -105,11 +107,33 @@
             
             REcmaHelper::registerFunction(&engine, proto, setDimScale, "setDimScale");
             
+            REcmaHelper::registerFunction(&engine, proto, isArrow1Flipped, "isArrow1Flipped");
+            
+            REcmaHelper::registerFunction(&engine, proto, setArrow1Flipped, "setArrow1Flipped");
+            
+            REcmaHelper::registerFunction(&engine, proto, isArrow2Flipped, "isArrow2Flipped");
+            
+            REcmaHelper::registerFunction(&engine, proto, setArrow2Flipped, "setArrow2Flipped");
+            
+            REcmaHelper::registerFunction(&engine, proto, isExtLineFix, "isExtLineFix");
+            
+            REcmaHelper::registerFunction(&engine, proto, setExtLineFix, "setExtLineFix");
+            
+            REcmaHelper::registerFunction(&engine, proto, getExtLineFixLength, "getExtLineFixLength");
+            
+            REcmaHelper::registerFunction(&engine, proto, setExtLineFixLength, "setExtLineFixLength");
+            
+            REcmaHelper::registerFunction(&engine, proto, adjustExtensionLineFixLength, "adjustExtensionLineFixLength");
+            
+            REcmaHelper::registerFunction(&engine, proto, hasSpaceForArrows, "hasSpaceForArrows");
+            
             REcmaHelper::registerFunction(&engine, proto, getDistanceTo, "getDistanceTo");
             
             REcmaHelper::registerFunction(&engine, proto, intersectsWith, "intersectsWith");
             
             REcmaHelper::registerFunction(&engine, proto, getReferencePoints, "getReferencePoints");
+            
+            REcmaHelper::registerFunction(&engine, proto, clickReferencePoint, "clickReferencePoint");
             
             REcmaHelper::registerFunction(&engine, proto, moveReferencePoint, "moveReferencePoint");
             
@@ -677,6 +701,55 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaDimensionData::getBoundingBox", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::getPointOnEntity
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::getPointOnEntity", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::getPointOnEntity";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("getPointOnEntity", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'RVector'
+    RVector cppResult =
+        
+               self->getPointOnEntity();
+        // return type: RVector
+                // not standard type nor reference
+                result = qScriptValueFromValue(engine, cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.getPointOnEntity().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::getPointOnEntity", context, engine);
             return result;
         }
          QScriptValue
@@ -1672,6 +1745,640 @@
             return result;
         }
          QScriptValue
+        REcmaDimensionData::isArrow1Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::isArrow1Flipped", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::isArrow1Flipped";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("isArrow1Flipped", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isArrow1Flipped();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.isArrow1Flipped().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::isArrow1Flipped", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::setArrow1Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::setArrow1Flipped", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::setArrow1Flipped";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("setArrow1Flipped", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setArrow1Flipped(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.setArrow1Flipped().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::setArrow1Flipped", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::isArrow2Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::isArrow2Flipped", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::isArrow2Flipped";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("isArrow2Flipped", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isArrow2Flipped();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.isArrow2Flipped().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::isArrow2Flipped", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::setArrow2Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::setArrow2Flipped", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::setArrow2Flipped";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("setArrow2Flipped", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setArrow2Flipped(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.setArrow2Flipped().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::setArrow2Flipped", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::isExtLineFix
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::isExtLineFix", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::isExtLineFix";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("isExtLineFix", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isExtLineFix();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.isExtLineFix().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::isExtLineFix", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::setExtLineFix
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::setExtLineFix", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::setExtLineFix";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("setExtLineFix", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setExtLineFix(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.setExtLineFix().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::setExtLineFix", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::getExtLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::getExtLineFixLength", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::getExtLineFixLength";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("getExtLineFixLength", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'double'
+    double cppResult =
+        
+               self->getExtLineFixLength();
+        // return type: double
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.getExtLineFixLength().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::getExtLineFixLength", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::setExtLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::setExtLineFixLength", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::setExtLineFixLength";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("setExtLineFixLength", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isNumber()
+        ) /* type: double */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    double
+                    a0 =
+                    (double)
+                    
+                    context->argument( 0 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setExtLineFixLength(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.setExtLineFixLength().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::setExtLineFixLength", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::adjustExtensionLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::adjustExtensionLineFixLength", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::adjustExtensionLineFixLength";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("adjustExtensionLineFixLength", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    2 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RLine */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RLine */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RLine*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RLine*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 0 is not of type RLine.",
+                               context);                    
+                    }
+                    RLine 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RLine*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RLine*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 1 is not of type RLine.",
+                               context);                    
+                    }
+                    RLine 
+                    a1 = 
+                    *ap1;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->adjustExtensionLineFixLength(a0
+        ,
+    a1);
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    3 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RLine */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RLine */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RLine*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RLine*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 0 is not of type RLine.",
+                               context);                    
+                    }
+                    RLine 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RLine*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RLine*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 1 is not of type RLine.",
+                               context);                    
+                    }
+                    RLine 
+                    a1 = 
+                    *ap1;
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->adjustExtensionLineFixLength(a0
+        ,
+    a1
+        ,
+    a2);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.adjustExtensionLineFixLength().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::adjustExtensionLineFixLength", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaDimensionData::hasSpaceForArrows
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::hasSpaceForArrows", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::hasSpaceForArrows";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("hasSpaceForArrows", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->hasSpaceForArrows();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.hasSpaceForArrows().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::hasSpaceForArrows", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaDimensionData::getDistanceTo
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -2201,6 +2908,78 @@
             return result;
         }
          QScriptValue
+        REcmaDimensionData::clickReferencePoint
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaDimensionData::clickReferencePoint", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaDimensionData::clickReferencePoint";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RDimensionData* self = 
+                        getSelf("clickReferencePoint", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->clickReferencePoint(a0);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RDimensionData.clickReferencePoint().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaDimensionData::clickReferencePoint", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaDimensionData::moveReferencePoint
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -2282,6 +3061,88 @@
                self->moveReferencePoint(a0
         ,
     a1);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    3 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(2).isNumber()
+        ) /* type: Qt::KeyboardModifiers */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("RDimensionData: Argument 1 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a1 = 
+                    *ap1;
+                
+                    // argument isStandardType
+                    Qt::KeyboardModifiers
+                    a2 =
+                    (Qt::KeyboardModifiers)
+                    (int)
+                    context->argument( 2 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->moveReferencePoint(a0
+        ,
+    a1
+        ,
+    a2);
         // return type: bool
                 // standard Type
                 result = QScriptValue(cppResult);

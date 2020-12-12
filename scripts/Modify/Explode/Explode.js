@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Modify.js");
+include("scripts/Modify/Modify.js");
 include("scripts/ShapeAlgorithms.js");
 
 function Explode(guiAction) {
@@ -72,7 +72,7 @@ Explode.explodeSelection = function(di, toolTitle) {
     var storage = document.getStorage();
     var ids = document.querySelectedEntities();
     var i, k, e, n;
-    var polyline, shapes, shape;
+    var polyline, shapes;
 
     var options = {};
     options["splineTolerance"] = RSettings.getDoubleValue("Explode/SplineTolerance", 0.01);
@@ -83,10 +83,14 @@ Explode.explodeSelection = function(di, toolTitle) {
     options["multilineTextToSimpleText"] = RSettings.getBoolValue("Explode/MultilineTextToSimpleText", true);
 
     var op = new RAddObjectsOperation();
-
     if (!isNull(toolTitle)) {
         op.setText(toolTitle);
     }
+
+    // map old block reference IDs to block reference entities:
+    var blockReferenceMap = {};
+    // list of attribute entities:
+    var attributeEntities = [];
 
     for (i=0; i<ids.length; i++) {
         var id = ids[i];
@@ -98,8 +102,10 @@ Explode.explodeSelection = function(di, toolTitle) {
         // these entity types are not explodable:
         if (isPointEntity(entity) ||
             isLineEntity(entity) ||
+            isXLineEntity(entity) ||
+            isRayEntity(entity) ||
+            isImageEntity(entity) ||
             isArcEntity(entity) ||
-            isCircleEntity(entity) ||
             isViewportEntity(entity)) {
             continue;
         }
@@ -114,17 +120,28 @@ Explode.explodeSelection = function(di, toolTitle) {
             // add entities based on shapes that resulted from the explosion:
             for (k=0; k<news.length; k++) {
                 if (isEntity(news[k])) {
+                    var newEntity = news[k];
+
                     // add entities based on entities that resulted from the explosion:
-                    op.addObject(news[k], false);
+                    op.addObject(newEntity, false, true);
+
+                    if (isBlockReferenceEntity(newEntity)) {
+                        qDebug("old block ref id: ", newEntity.getId());
+                        blockReferenceMap[newEntity.getId()] = newEntity;
+                    }
+                    else if (isAttributeEntity(newEntity)) {
+                        attributeEntities.push(newEntity);
+                    }
                 }
                 else {
-                    shape = news[k];
-                    e = shapeToEntity(entity.getDocument(), shape);
+                    var newShape = news[k];
+
+                    e = shapeToEntity(entity.getDocument(), newShape);
                     if (!isNull(e)) {
                         e.setSelected(true);
                         e.copyAttributesFrom(entity.data());
-                        if (!isNull(shape.color)) {
-                            e.setColor(new RColor(shape.color));
+                        if (!isNull(newShape.color)) {
+                            e.setColor(new RColor(newShape.color));
                         }
                         op.addObject(e, false);
                     }
@@ -139,8 +156,31 @@ Explode.explodeSelection = function(di, toolTitle) {
             op.deleteObject(entity);
         }
     }
-
     di.applyOperation(op);
+
+    // update block reference attributes:
+    if (attributeEntities.length>0) {
+        op = new RAddObjectsOperation();
+        //op.setTransactionGroup(doc.getTransactionGroup());
+        if (!isNull(toolTitle)) {
+            op.setText(toolTitle);
+        }
+
+        // fix attribute links to block references:
+        for (i=0; i<attributeEntities.length; i++) {
+            var attributeEntity = attributeEntities[i].clone();
+
+            // find parent entity of attribute:
+            var blockReferenceEntity = blockReferenceMap[attributeEntity.getParentId()];
+            if (!isNull(blockReferenceEntity)) {
+                // update parent ID:
+                storage.setEntityParentId(attributeEntity, blockReferenceEntity.getId());
+                op.addObject(attributeEntity, false);
+            }
+        }
+
+        di.applyOperation(op);
+    }
 };
 
 /**
@@ -200,13 +240,92 @@ Explode.explodeEntity = function(entity, options) {
         }
     }
 
+    // explode circle into polyline with two arc segments:
+    else if (isCircleEntity(entity)) {
+        var circle = entity.getData().castToShape();
+        polyline = new RPolyline();
+        polyline.appendShape(new RArc(circle.getCenter(), circle.getRadius(), 0.0, Math.PI, false));
+        polyline.appendShape(new RArc(circle.getCenter(), circle.getRadius(), Math.PI, 2*Math.PI, false));
+        ret.push(polyline);
+    }
+
     // explode polyline into line and arc segments:
     else if (isPolylineEntity(entity)) {
         polyline = entity.getData().castToShape();
+
+        // explode polyline with segment widths:
         if (RPolyline.hasProxy() && polyline.hasWidths()) {
-            var pls = polyline.getOutline();
+
+            // list of polyline pairs (left / right):
+            var pls = polyline.getLeftRightOutline();
+
+            var first = true;
+            var lastSegment = undefined;
+            var prevLeftPl = undefined;
+            var prevRightPl = undefined;
+
             for (k=0; k<pls.length; k++) {
-                ret.push(pls[k]);
+                if (pls[k].length!==2) {
+                    qWarning("invalid result from RPolyline::getLeftRightOutline");
+                    continue;
+                }
+
+                var leftPl = pls[k][0];
+                var rightPl = pls[k][1];
+
+                if (leftPl.countSegments()===1 && rightPl.countSegments()===1) {
+                    if (first) {
+                        // add orthogonal segment at start of this sequence:
+                        //ret.push(pls[k].getSegmentAt(3));
+                        if (isNull(prevLeftPl) || isNull(prevRightPl)) {
+                            ret.push(new RLine(leftPl.getStartPoint(), rightPl.getStartPoint()));
+                        }
+                        else {
+                            var dirLeft = prevLeftPl.getDirection2() + Math.PI;
+                            var dirRight = prevRightPl.getDirection2() + Math.PI;
+                            //qDebug("dirLeft:", dirLeft);
+                            //qDebug("new dir:", leftPl.getDirection1());
+                            if (!RMath.fuzzyAngleCompare(dirLeft, leftPl.getDirection1(), 0.01) ||
+                                !RMath.fuzzyAngleCompare(dirRight, rightPl.getDirection1(), 0.01)) {
+                                ret.push(new RLine(leftPl.getStartPoint(), rightPl.getStartPoint()));
+                            }
+                        }
+                    }
+
+                    // add left segment:
+                    ret.push(leftPl);
+                    // add right segment:
+                    ret.push(rightPl);
+
+                    lastSegment = new RLine(leftPl.getEndPoint(), rightPl.getEndPoint());
+                    prevLeftPl = leftPl;
+                    prevRightPl = rightPl;
+                }
+                //else if (leftPl.countSegments()>1 || rightPl.countSegments()>1) {
+                else if (!leftPl.isEmpty()) {
+                    //ret.push(pls[k]);
+                    if (!rightPl.isEmpty()) {
+                        ret.push(new RLine(leftPl.getStartPoint(), rightPl.getStartPoint()));
+                    }
+
+                    ret.push(leftPl);
+                    if (!rightPl.isEmpty()) {
+                        ret.push(rightPl);
+                        ret.push(new RLine(leftPl.getEndPoint(), rightPl.getEndPoint()));
+                    }
+                    first = true;
+                    if (!isNull(lastSegment)) {
+                        ret.push(lastSegment);
+                        lastSegment = undefined;
+                        prevLeftPl = undefined;
+                        prevRightPl = undefined;
+                    }
+
+                    continue;
+                }
+            }
+            if (!isNull(lastSegment)) {
+                ret.push(lastSegment);
             }
         }
         else {
@@ -279,6 +398,8 @@ Explode.explodeEntity = function(entity, options) {
         e = new RTextEntity(entity.getDocument(), textData);
         e.setSelected(true);
         e.copyAttributesFrom(entity.data());
+        var textColor = document.getKnownVariable(RS.DIMCLRT, new RColor(RColor.ByBlock));
+        e.setColor(textColor);
         ret.push(e);
     }
 
@@ -288,6 +409,27 @@ Explode.explodeEntity = function(entity, options) {
         for (k=0; k<shapes.length; k++) {
             shape = shapes[k].data();
             ret.push(shape.clone());
+        }
+    }
+
+    // explode tolerances into lines and texts:
+    else if (isToleranceEntity(entity)) {
+        shapes = entity.getFrame();
+        for (k=0; k<shapes.length; k++) {
+            shape = shapes[k];
+            ret.push(shape.clone());
+        }
+
+        var textDatas = entity.getTextLabels();
+        for (k=0; k<textDatas.length; k++) {
+            var d = textDatas[k];
+            e = new RTextEntity(document, new RTextData(d))
+            e.setSelected(true);
+            e.copyAttributesFrom(entity.data());
+            if (e.getColor()!==d.getColor()) {
+                e.setColor(d.getColor());
+            }
+            ret.push(e);
         }
     }
 
@@ -434,7 +576,7 @@ Explode.explodeEntity = function(entity, options) {
         if (data.getColumnCount()>1 || data.getRowCount()>1) {
             for (col=0; col<data.getColumnCount(); col++) {
                 for (row=0; row<data.getRowCount(); row++) {
-                    var offset = data.getColumnRowOffset(col, row);
+                    var offset = data.getColumnRowOffset(col, row, true);
 
                     e = entity.clone();
                     e.setRowCount(1);
@@ -451,7 +593,7 @@ Explode.explodeEntity = function(entity, options) {
         else {
             var subIds = document.queryBlockEntities(data.getReferencedBlockId());
             for (k=0; k<subIds.length; k++) {
-                var subEntity = data.queryEntity(subIds[k]);
+                var subEntity = data.queryEntity(subIds[k], true);
                 if (isNull(subEntity)) {
                     continue;
                 }
@@ -463,8 +605,10 @@ Explode.explodeEntity = function(entity, options) {
 
                 e = subEntity.clone();
                 //data.applyColumnRowOffsetTo(e, col, row);
-                storage.setObjectId(e, RObject.INVALID_ID);
+                // we need the old ID to update attribute parent IDs:
+                //storage.setObjectId(e, RObject.INVALID_ID);
                 e.setBlockId(document.getCurrentBlockId());
+
                 e.setSelected(true);
                 ret.push(e);
             }

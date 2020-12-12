@@ -45,6 +45,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -92,11 +93,11 @@ public:
         return new RSplineEntity(*this);
     }
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual void exportEntity(RExporter& e, bool preview=false, bool forceSelected=false) const;
 
@@ -317,6 +318,10 @@ public:
 
     void simplify(double tolerance) {
         data.simplify(tolerance);
+    }
+
+    QList<RSpline> getBezierSegments(const RBox& queryBox = RDEFAULT_RBOX) const {
+        return data.getBezierSegments(queryBox);
     }
 
     /*

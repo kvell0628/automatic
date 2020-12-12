@@ -54,6 +54,9 @@
         getBoundingBox
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getPointOnEntity
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         isValid
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -108,6 +111,36 @@
         setDimScale
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isArrow1Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setArrow1Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isArrow2Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setArrow2Flipped
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isExtLineFix
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setExtLineFix
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getExtLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setExtLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        adjustExtensionLineFixLength
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        hasSpaceForArrows
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getDistanceTo
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -115,6 +148,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getReferencePoints
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        clickReferencePoint
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         moveReferencePoint

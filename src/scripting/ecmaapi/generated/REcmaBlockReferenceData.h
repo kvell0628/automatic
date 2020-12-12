@@ -60,6 +60,12 @@
         getBoundingBox
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        to2D
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getPointOnEntity
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getInternalReferencePoints
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -160,6 +166,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         applyTransformationTo
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getTransform
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getColumnRowOffset

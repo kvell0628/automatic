@@ -22,6 +22,7 @@
 RPropertyTypeId RDimRadialEntity::PropertyCustom;
 RPropertyTypeId RDimRadialEntity::PropertyHandle;
 RPropertyTypeId RDimRadialEntity::PropertyProtected;
+RPropertyTypeId RDimRadialEntity::PropertyWorkingSet;
 RPropertyTypeId RDimRadialEntity::PropertyType;
 RPropertyTypeId RDimRadialEntity::PropertyBlock;
 RPropertyTypeId RDimRadialEntity::PropertyLayer;
@@ -45,6 +46,11 @@ RPropertyTypeId RDimRadialEntity::PropertyDimScale;
 RPropertyTypeId RDimRadialEntity::PropertyDimBlockName;
 RPropertyTypeId RDimRadialEntity::PropertyAutoTextPos;
 RPropertyTypeId RDimRadialEntity::PropertyFontName;
+RPropertyTypeId RDimRadialEntity::PropertyArrow1Flipped;
+RPropertyTypeId RDimRadialEntity::PropertyArrow2Flipped;
+
+RPropertyTypeId RDimRadialEntity::PropertyExtLineFix;
+RPropertyTypeId RDimRadialEntity::PropertyExtLineFixLength;
 
 RPropertyTypeId RDimRadialEntity::PropertyCenterPointX;
 RPropertyTypeId RDimRadialEntity::PropertyCenterPointY;
@@ -65,6 +71,7 @@ void RDimRadialEntity::init() {
     RDimRadialEntity::PropertyCustom.generateId(typeid(RDimRadialEntity), RObject::PropertyCustom);
     RDimRadialEntity::PropertyHandle.generateId(typeid(RDimRadialEntity), RObject::PropertyHandle);
     RDimRadialEntity::PropertyProtected.generateId(typeid(RDimRadialEntity), RObject::PropertyProtected);
+    RDimRadialEntity::PropertyWorkingSet.generateId(typeid(RDimRadialEntity), RObject::PropertyWorkingSet);
     RDimRadialEntity::PropertyType.generateId(typeid(RDimRadialEntity), REntity::PropertyType);
     RDimRadialEntity::PropertyBlock.generateId(typeid(RDimRadialEntity), REntity::PropertyBlock);
     RDimRadialEntity::PropertyLayer.generateId(typeid(RDimRadialEntity), REntity::PropertyLayer);
@@ -89,14 +96,19 @@ void RDimRadialEntity::init() {
     RDimRadialEntity::PropertyDimBlockName.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyDimBlockName);
     RDimRadialEntity::PropertyAutoTextPos.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyAutoTextPos);
     RDimRadialEntity::PropertyFontName.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyFontName);
+    RDimRadialEntity::PropertyArrow1Flipped.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyArrow1Flipped);
+    RDimRadialEntity::PropertyArrow2Flipped.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyArrow2Flipped);
 
-    RDimRadialEntity::PropertyCenterPointX.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "X"), true);
-    RDimRadialEntity::PropertyCenterPointY.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Y"), true);
-    RDimRadialEntity::PropertyCenterPointZ.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Z"), true);
+    RDimRadialEntity::PropertyExtLineFix.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyExtLineFix);
+    RDimRadialEntity::PropertyExtLineFixLength.generateId(typeid(RDimRadialEntity), RDimensionEntity::PropertyExtLineFixLength);
 
-    RDimRadialEntity::PropertyChordPointX.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Chord Point"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimRadialEntity::PropertyChordPointY.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Chord Point"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimRadialEntity::PropertyChordPointZ.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Chord Point"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimRadialEntity::PropertyCenterPointX.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "X"), true, RPropertyAttributes::Geometry);
+    RDimRadialEntity::PropertyCenterPointY.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Y"), true, RPropertyAttributes::Geometry);
+    RDimRadialEntity::PropertyCenterPointZ.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Z"), true, RPropertyAttributes::Geometry);
+
+    RDimRadialEntity::PropertyChordPointX.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Chord Point"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RDimRadialEntity::PropertyChordPointY.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Chord Point"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RDimRadialEntity::PropertyChordPointZ.generateId(typeid(RDimRadialEntity), QT_TRANSLATE_NOOP("REntity", "Chord Point"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 }
 
 bool RDimRadialEntity::setProperty(RPropertyTypeId propertyTypeId,
@@ -119,7 +131,7 @@ bool RDimRadialEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RDimRadialEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyCenterPointX) {
         return qMakePair(QVariant(data.definitionPoint.x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyCenterPointY) {
@@ -134,7 +146,7 @@ QPair<QVariant, RPropertyAttributes> RDimRadialEntity::getProperty(
         return qMakePair(QVariant(data.chordPoint.z), RPropertyAttributes());
     }
 
-    return RDimensionEntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return RDimensionEntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RDimRadialEntity::print(QDebug dbg) const {

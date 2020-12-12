@@ -65,7 +65,7 @@ public:
     }
 
     bool canHaveArrowHead() const;
-    bool updateArrowHead();
+    bool updateArrowHead() const;
 
 //    void setPolyline(const RPolyline& polyline) {
 //        *((RPolyline*)this) = polyline;
@@ -93,7 +93,7 @@ public:
 
     virtual QList<RRefPoint> getReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
 
-    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     QList<QSharedPointer<RShape> > getExploded(int segments = RDEFAULT_MIN1) const {
         return RPolyline::getExploded(segments);
@@ -120,9 +120,11 @@ public:
     REntity::Id getDimLeaderBlockId() const;
     void setDimLeaderBlockId(REntity::Id id);
 
+    virtual void update() const;
+
 private:
     /** Arrow head on / off */
-    bool arrowHead;
+    mutable bool arrowHead;
     /** Arrow size */
     double dimaszOverride;
     /** Dimension scale */

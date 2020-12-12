@@ -24,6 +24,7 @@
 RPropertyTypeId RSplineEntity::PropertyCustom;
 RPropertyTypeId RSplineEntity::PropertyHandle;
 RPropertyTypeId RSplineEntity::PropertyProtected;
+RPropertyTypeId RSplineEntity::PropertyWorkingSet;
 RPropertyTypeId RSplineEntity::PropertyType;
 RPropertyTypeId RSplineEntity::PropertyBlock;
 RPropertyTypeId RSplineEntity::PropertyLayer;
@@ -72,6 +73,7 @@ void RSplineEntity::init() {
     RSplineEntity::PropertyCustom.generateId(typeid(RSplineEntity), RObject::PropertyCustom);
     RSplineEntity::PropertyHandle.generateId(typeid(RSplineEntity), RObject::PropertyHandle);
     RSplineEntity::PropertyProtected.generateId(typeid(RSplineEntity), RObject::PropertyProtected);
+    RSplineEntity::PropertyWorkingSet.generateId(typeid(RSplineEntity), RObject::PropertyWorkingSet);
     RSplineEntity::PropertyType.generateId(typeid(RSplineEntity), REntity::PropertyType);
     RSplineEntity::PropertyBlock.generateId(typeid(RSplineEntity), REntity::PropertyBlock);
     RSplineEntity::PropertyLayer.generateId(typeid(RSplineEntity), REntity::PropertyLayer);
@@ -81,26 +83,30 @@ void RSplineEntity::init() {
     RSplineEntity::PropertyColor.generateId(typeid(RSplineEntity), REntity::PropertyColor);
     RSplineEntity::PropertyDisplayedColor.generateId(typeid(RSplineEntity), REntity::PropertyDisplayedColor);
     RSplineEntity::PropertyDrawOrder.generateId(typeid(RSplineEntity), REntity::PropertyDrawOrder);
+
     RSplineEntity::PropertyPeriodic.generateId(typeid(RSplineEntity), "", QT_TRANSLATE_NOOP("REntity", "Closed Periodic"));
     RSplineEntity::PropertyDegree.generateId(typeid(RSplineEntity), "", QT_TRANSLATE_NOOP("REntity", "Degree"));
-    RSplineEntity::PropertyControlPointNX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Control Point"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RSplineEntity::PropertyControlPointNY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Control Point"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RSplineEntity::PropertyControlPointNZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Control Point"), QT_TRANSLATE_NOOP("REntity", "Z"));
-    RSplineEntity::PropertyFitPointNX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Fit Point"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RSplineEntity::PropertyFitPointNY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Fit Point"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RSplineEntity::PropertyFitPointNZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Fit Point"), QT_TRANSLATE_NOOP("REntity", "Z"));
+
+    RSplineEntity::PropertyControlPointNX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Control Point"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyControlPointNY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Control Point"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyControlPointNZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Control Point"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyFitPointNX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Fit Point"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyFitPointNY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Fit Point"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyFitPointNZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Fit Point"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
     RSplineEntity::PropertyKnotN.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Knot Vector"), QT_TRANSLATE_NOOP("REntity", "Knot"));
+
     RSplineEntity::PropertyLength.generateId(typeid(RSplineEntity), "", QT_TRANSLATE_NOOP("REntity", "Length"));
     RSplineEntity::PropertyTotalLength.generateId(typeid(RSplineEntity), "", QT_TRANSLATE_NOOP("REntity", "Total Length"));
+
     // TODO: tangent support:
     RSplineEntity::PropertyUseStartTangent.generateId(typeid(RSplineEntity), "", QT_TRANSLATE_NOOP("REntity", "Use Start Tangent"));
-    RSplineEntity::PropertyStartTangentX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Start Tangent"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RSplineEntity::PropertyStartTangentY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Start Tangent"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RSplineEntity::PropertyStartTangentZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Start Tangent"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RSplineEntity::PropertyStartTangentX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Start Tangent"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyStartTangentY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Start Tangent"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyStartTangentZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "Start Tangent"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
     RSplineEntity::PropertyUseEndTangent.generateId(typeid(RSplineEntity), "", QT_TRANSLATE_NOOP("REntity", "Use End Tangent"));
-    RSplineEntity::PropertyEndTangentX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "End Tangent"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RSplineEntity::PropertyEndTangentY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "End Tangent"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RSplineEntity::PropertyEndTangentZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "End Tangent"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RSplineEntity::PropertyEndTangentX.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "End Tangent"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyEndTangentY.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "End Tangent"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RSplineEntity::PropertyEndTangentZ.generateId(typeid(RSplineEntity), QT_TRANSLATE_NOOP("REntity", "End Tangent"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 }
 
 bool RSplineEntity::setProperty(RPropertyTypeId propertyTypeId,
@@ -154,7 +160,7 @@ bool RSplineEntity::setProperty(RPropertyTypeId propertyTypeId,
 
 QPair<QVariant, RPropertyAttributes> RSplineEntity::getProperty(
         RPropertyTypeId& propertyTypeId, bool humanReadable,
-        bool noAttributes) {
+        bool noAttributes, bool showOnRequest) {
 
     if (!data.controlPoints.isEmpty() && data.fitPoints.isEmpty()) {
         if (propertyTypeId == PropertyControlPointNX) {
@@ -248,7 +254,7 @@ QPair<QVariant, RPropertyAttributes> RSplineEntity::getProperty(
         }
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RSplineEntity::setShape(const RSpline& s) {

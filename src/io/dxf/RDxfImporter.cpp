@@ -33,7 +33,8 @@
 #include "RColor.h"
 #include "RDebug.h"
 #include "RDimAlignedEntity.h"
-#include "RDimAngularEntity.h"
+#include "RDimAngular2LEntity.h"
+#include "RDimAngular3PEntity.h"
 #include "RDimDiametricEntity.h"
 #include "RDimRadialEntity.h"
 #include "RDimRotatedEntity.h"
@@ -113,6 +114,7 @@ bool RDxfImporter::importFile(const QString& fileName, const QString& nameFilter
     setKnownVariable(RS::DIMTSZ, 0.0);
     setKnownVariable(RS::DIMTXT, 0.18);
     setKnownVariable(RS::DIMZIN, 0);
+    setKnownVariable(RS::DIMDLI, 0.18*2);
     setKnownVariable(RS::LTSCALE, 1);
 
     setCurrentBlockId(document->getModelSpaceBlockId());
@@ -120,7 +122,15 @@ bool RDxfImporter::importFile(const QString& fileName, const QString& nameFilter
     RImporter::startImport();
 
     DL_Dxf dxflib;
+
+#ifdef Q_OS_WIN
+    wchar_t* winfn = new wchar_t[2000];
+    int len = fileName.toWCharArray(winfn);
+    winfn[len] = '\0';
+    bool success = dxflib.in((std::istream&)std::ifstream(winfn, std::ifstream::in), this);
+#else
     bool success = dxflib.in((const char*)fileName.toUtf8(), this);
+#endif
 
     if (success==false) {
         qWarning() << "Cannot open DXF file: " << fileName;
@@ -132,6 +142,11 @@ bool RDxfImporter::importFile(const QString& fileName, const QString& nameFilter
     // make sure dimension font is set to standard,
     // the only dimension font supported by the QCAD CE:
     document->setDimensionFont("Standard");
+
+    // dimension text color always by block:
+    QVariant v;
+    v.setValue(RColor(RColor::ByBlock));
+    document->setKnownVariable(RS::DIMCLRT, v);
 
     // lock locked layers now. they are unlocked during import to load
     // the entities on them:
@@ -705,6 +720,8 @@ void RDxfImporter::addTextStyle(const DL_StyleData& data) {
     s.font = decode(data.primaryFontFile.c_str());
     //qDebug() << "text style: name:" << (const char*)data.name.c_str();
     //qDebug() << "text style: s.font:" << s.font;
+    s.font = s.font.replace(".ttf", "", Qt::CaseInsensitive);
+    s.font = s.font.replace(".shx", "", Qt::CaseInsensitive);
     if (s.font.isEmpty()) {
         s.font = xDataFont;
         //qDebug() << "text style: xDataFont:" << xDataFont;
@@ -1032,6 +1049,8 @@ RDimensionData RDxfImporter::convDimensionData(const DL_DimensionData& data) {
                        data.angle);
     ret.setUpperTolerance(uTol);
     ret.setLowerTolerance(lTol);
+    ret.setArrow1Flipped(data.arrow1Flipped);
+    ret.setArrow2Flipped(data.arrow2Flipped);
 
     if (midP.isValid()) {
         ret.setCustomTextPosition(true);
@@ -1109,31 +1128,30 @@ void RDxfImporter::addDimDiametric(const DL_DimensionData& data,
 }
 
 void RDxfImporter::addDimAngular(const DL_DimensionData& data,
-                                 const DL_DimAngularData& edata) {
+                                 const DL_DimAngular2LData& edata) {
     RDimensionData dimData = convDimensionData(data);
     RVector dp1(edata.dpx1, edata.dpy1);
     RVector dp2(edata.dpx2, edata.dpy2);
     RVector dp3(edata.dpx3, edata.dpy3);
     RVector dp4(edata.dpx4, edata.dpy4);
 
-    RDimAngularData d(dimData, dp1, dp2, dp3, dp4);
+    RDimAngular2LData d(dimData, dp1, dp2, dp3, dp4);
 
-    QSharedPointer<RDimAngularEntity> entity(new RDimAngularEntity(document, d));
+    QSharedPointer<RDimAngular2LEntity> entity(new RDimAngular2LEntity(document, d));
     importEntity(entity);
 }
 
 void RDxfImporter::addDimAngular3P(const DL_DimensionData& data,
                                    const DL_DimAngular3PData& edata) {
+
     RDimensionData dimData = convDimensionData(data);
-    RVector dp1(edata.dpx3, edata.dpy3);
-    RVector dp2(edata.dpx1, edata.dpy1);
-    RVector dp3(edata.dpx3, edata.dpy3);
-    RVector dp4 = dimData.getDefinitionPoint();
-    dimData.setDefinitionPoint(RVector(edata.dpx2, edata.dpy2));
+    RVector center(edata.dpx3, edata.dpy3);
+    RVector dp1(edata.dpx1, edata.dpy1);
+    RVector dp2(edata.dpx2, edata.dpy2);
 
-    RDimAngularData d(dimData, dp1, dp2, dp3, dp4);
+    RDimAngular3PData d(dimData, center, dp1, dp2);
 
-    QSharedPointer<RDimAngularEntity> entity(new RDimAngularEntity(document, d));
+    QSharedPointer<RDimAngular3PEntity> entity(new RDimAngular3PEntity(document, d));
     importEntity(entity);
 }
 

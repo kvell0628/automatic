@@ -43,6 +43,7 @@
 #include <QDragMoveEvent>
 #include <QDragLeaveEvent>
 #include <QDropEvent>
+#include <QEasingCurve>
 #include <QEvent>
 #include <QFocusEvent>
 #include <QFocusFrame>
@@ -54,7 +55,6 @@
 #include <QFileSystemModel>
 #include <QFrame>
 #include <QGestureEvent>
-#include <QGLWidget>
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGridLayout>
@@ -110,6 +110,7 @@
 #include <QSwipeGesture>
 #include <QTabBar>
 #include <QTemporaryFile>
+#include <QTextCharFormat>
 #include <QTextBrowser>
 #include <QTextCodec>
 #include <QTextEdit>
@@ -141,7 +142,9 @@
 #include "RSingleApplication.h"
 
 Q_DECLARE_METATYPE(int*)
+#ifdef _LP64
 Q_DECLARE_METATYPE(unsigned int*)
+#endif
 Q_DECLARE_METATYPE(qint64*)
 
 #if !defined Q_OS_WIN && !defined Q_OS_LINUX && !defined Q_OS_FREEBSD
@@ -197,7 +200,6 @@ Q_DECLARE_METATYPE(QFontMetrics*)
 Q_DECLARE_METATYPE(QFontDatabase*)
 Q_DECLARE_METATYPE(QFrame*)
 Q_DECLARE_METATYPE(QGestureEvent*)
-Q_DECLARE_METATYPE(QGLWidget*)
 Q_DECLARE_METATYPE(QGraphicsView*)
 Q_DECLARE_METATYPE(QGridLayout*)
 Q_DECLARE_METATYPE(QHelpEvent*)
@@ -208,6 +210,7 @@ Q_DECLARE_METATYPE(QInputEvent*)
 Q_DECLARE_METATYPE(QInputMethodEvent*)
 Q_DECLARE_METATYPE(QItemDelegate*)
 Q_DECLARE_METATYPE(QItemSelection*)
+Q_DECLARE_METATYPE(QItemSelectionModel*)
 Q_DECLARE_METATYPE(QKeyEvent*)
 Q_DECLARE_METATYPE(QKeySequence*)
 Q_DECLARE_METATYPE(QLayout*)
@@ -271,6 +274,7 @@ Q_DECLARE_METATYPE(QTextDocument*)
 Q_DECLARE_METATYPE(QTabBar*)
 Q_DECLARE_METATYPE(QTabletEvent*)
 Q_DECLARE_METATYPE(QTemporaryFile*)
+Q_DECLARE_METATYPE(QTextCharFormat*)
 Q_DECLARE_METATYPE(QTextBrowser*)
 Q_DECLARE_METATYPE(QTextCodec*)
 Q_DECLARE_METATYPE(QTextEdit*)
@@ -339,6 +343,10 @@ Q_DECLARE_METATYPE(QVector<uint>)
 Q_DECLARE_METATYPE(QVector<uint>*)
 
 Q_DECLARE_METATYPE(QEvent::Type)
+Q_DECLARE_METATYPE(QKeySequence::SequenceFormat)
+Q_DECLARE_METATYPE(QKeySequence::SequenceFormat*)
+Q_DECLARE_METATYPE(Qt::Axis)
+Q_DECLARE_METATYPE(Qt::Axis*)
 Q_DECLARE_METATYPE(Qt::DropActions)
 Q_DECLARE_METATYPE(Qt::CursorShape)
 Q_DECLARE_METATYPE(Qt::GlobalColor)
@@ -355,6 +363,7 @@ Q_DECLARE_METATYPE(QPrinter::PaperSize)
 #endif
 Q_DECLARE_METATYPE(QVariant::Type)
 Q_DECLARE_METATYPE(QAbstractItemView::ScrollHint)
+Q_DECLARE_METATYPE(QEasingCurve::Type)
 
 Q_DECLARE_METATYPE(QtMsgType*)
 Q_DECLARE_METATYPE(QtMsgType)

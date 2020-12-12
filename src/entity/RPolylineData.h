@@ -58,15 +58,18 @@ public:
 
     virtual QList<RRefPoint> getReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
 
-    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     virtual RShape* castToShape() {
         return this;
     }
 
     virtual double getDistanceTo(const RVector& point, bool limited = true, double range = 0.0, bool draft = false, double strictRange = RMAXDOUBLE) const {
-        Q_UNUSED(draft)
+        if (!hasWidths()) {
+            return REntityData::getDistanceTo(point, limited, range, draft, strictRange);
+        }
 
+        // polylines with custom segment widths:
         double ret = RPolyline::getDistanceTo(point, limited, strictRange);
         if (ret>range) {
             return RNANDOUBLE;
@@ -178,6 +181,46 @@ public:
         return RPolyline::getOrientation(implicitelyClosed);
     }
 
+    void setGlobalWidth(double w) {
+        RPolyline::setGlobalWidth(w);
+    }
+
+    void setStartWidthAt(int i, double w) {
+        RPolyline::setStartWidthAt(i, w);
+    }
+
+    double getStartWidthAt(int i) const {
+        return RPolyline::getStartWidthAt(i);
+    }
+
+    void setEndWidthAt(int i, double w) {
+        RPolyline::setEndWidthAt(i, w);
+    }
+
+    double getEndWidthAt(int i) const {
+        return RPolyline::getEndWidthAt(i);
+    }
+
+    bool hasWidths() const {
+        return RPolyline::hasWidths();
+    }
+
+    void setStartWidths(const QList<double>& sw) {
+        RPolyline::setStartWidths(sw);
+    }
+
+    QList<double> getStartWidths() const {
+        return RPolyline::getStartWidths();
+    }
+
+    void setEndWidths(const QList<double>& ew) {
+        RPolyline::setEndWidths(ew);
+    }
+
+    QList<double> getEndWidths() const {
+        return RPolyline::getEndWidths();
+    }
+
     QList<QSharedPointer<RShape> > getExploded(int segments = RDEFAULT_MIN1) const {
         return RPolyline::getExploded(segments);
     }
@@ -188,6 +231,10 @@ public:
 
     void simplify(double angleTolerance) {
         RPolyline::simplify(angleTolerance);
+    }
+
+    RPolyline roundAllCorners(double radius) {
+        return RPolyline::roundAllCorners(radius);
     }
 
     QList<RVector> verifyTangency(double toleranceMin = RS::AngleTolerance, double toleranceMax = M_PI_4) {
@@ -206,6 +253,8 @@ public:
     bool getPolylineGen() const {
         return polylineGen;
     }
+    void setElevation(double v);
+    double getElevation() const;
 
 protected:
     bool polylineGen;

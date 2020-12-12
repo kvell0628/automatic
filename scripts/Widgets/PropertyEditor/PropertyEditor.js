@@ -330,11 +330,11 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
     var scrollArea = this.widget.findChild("ScrollArea");
     var layout = scrollArea.layout();
 
-    if (!onlyChanges) {
+    //if (!onlyChanges) {
         selectionCombo.clear();
         // TODO: add 'no selection' item to choose current pen:
         //selectionCombo.addItem(qsTr("No Selection"), -2);
-    }
+    //}
 
     var groups = this.getGroupTitles();
 
@@ -418,6 +418,24 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
         }
     }
 
+    // clear custom property group and child (block attributes) groups:
+    // these are always rebuilt:
+    var groupsToClear = [this.customGroup, this.childGroup];
+    for (var gtci=0; gtci<groupsToClear.length; gtci++) {
+        var groupToClear = groupsToClear[gtci];
+        if (!isNull(groupToClear)) {
+            var children = groupToClear.children();
+            for (var i=0; i<children.length; i++) {
+                var child = children[i];
+                if (isOfType(child, QGridLayout)) {
+                    // don't destroy layout:
+                    continue;
+                }
+                children[i].destroy();
+            }
+        }
+    }
+
     var firstEntry = true;
     var gotLayerProperty = false;
     var gotLinetypeScaleProperty = false;
@@ -438,7 +456,19 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
             //qDebug("value: ", value);
 
             var attributes = this.getPropertyAttributes(group, title);
-            var propertyTypeId = attributes.getPropertyTypeId();
+            //var propertyTypeId = attributes.getPropertyTypeId();
+            var propertyTypeId = RPropertyTypeId.getPropertyTypeId(group, title);
+
+            var onlyChangesProp = onlyChanges;
+
+            // don't use isCustom here:
+            if (propertyTypeId.getId()===-1) {
+                // property is custom property
+                // make sure it knows it's titles, etc:
+                propertyTypeId.setCustomPropertyTitle(group);
+                propertyTypeId.setCustomPropertyName(title);
+                onlyChangesProp = false;
+            }
 
             //qDebug("isMixed: ", attributes.isMixed());
 
@@ -514,7 +544,7 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
 
             // other properties:
             else {
-                var gridLayout;
+                var gridLayout = undefined;
                 var groupBox = undefined;
                 if (propertyTypeId.isCustom()) {
                     // block reference attributes:
@@ -542,10 +572,11 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
                 // add group title and index controls if the property is a list:
                 if (pi===0 && !isNull(gridLayout) && !isNull(groupBox)) {
                     // create group label:
-                    if (!onlyChanges && group.length!==0 &&
-                            // situation with two splines, one with fit points,
-                            // one with control points: no group label for fit points:
-                            attributes.isList()===isArray(value)) {
+                    if (!onlyChangesProp && group.length!==0 &&
+                        // situation with two splines, one with fit points,
+                        // one with control points: no group label for fit points:
+                        attributes.isList()===isArray(value)) {
+
                         var groupLabel = new QLabel(RSettings.translate("REntity", group), groupBox);
                         groupLabel.styleSheet = "margin-bottom:0px;font-weight:bold;";
                         if (!firstEntry) {
@@ -556,7 +587,7 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
                     }
 
                     // if property is a list, add list index control:
-                    if (!onlyChanges && attributes.isList()) {
+                    if (!onlyChangesProp && attributes.isList()) {
                         row = gridLayout.rowCount();
                         var indexLabel = new QLabel(qsTr("Index"), groupBox);
                         indexLabel.alignment = Qt.AlignRight | Qt.AlignVCenter;
@@ -573,21 +604,33 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
 
                 var controls = undefined;
                 if (!isNull(gridLayout)) {
-                    // don't display any Z values:
-                    if (RSettings.getBoolValue("PropertyEditor/ShowZCoordinates", false)===false && title==="Z" && !propertyTypeId.isCustom()) {
+                    // don't display any Z values or polyline elevation:
+                    var hide = false;
+                    if (!propertyTypeId.isCustom()) {
+                        if (RSettings.getBoolValue("PropertyEditor/ShowZCoordinates", false)===false) {
+                            if (title===RPolylineEntity.PropertyVertexNZ.getPropertyTitle() ||
+                                title===RPolylineEntity.PropertyElevation.getPropertyTitle()) {
+                                hide = true;
+                            }
+                        }
+                    }
+
+                    if (hide) {
                         controls = undefined;
                     }
                     else {
-                        controls = this.initControls(propertyTypeId, onlyChanges);
+                        controls = this.initControls(propertyTypeId, onlyChangesProp);
                     }
                 }
 
                 // add property name and controls to layout:
-                if (!onlyChanges) {
+                if (!onlyChangesProp) {
                     if (!isNull(controls) && !isNull(gridLayout)) {
                         row = gridLayout.rowCount();
                         var localTitle = title;
-                        if (propertyTypeId.isCustom() && group!==RSettings.getAppId()) {
+                        if (propertyTypeId.isCustom() && group!==RSettings.getAppId() &&
+                            propertyTypeId.getCustomPropertyTitle()!=="Attributes") {
+
                             var pos = title.indexOf("_");
                             if (pos!==-1) {
                                 localTitle = title.mid(pos+1);
@@ -669,6 +712,7 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
     this.widget.findChild("LabelLinetypeScale").enabled = gotLinetypeScaleProperty;
     w = this.widget.findChild("LinetypeScale");
     w.enabled = gotLinetypeScaleProperty;
+    w.setTextColor(false);
     if (!gotLinetypeScaleProperty) {
         w.text = "";
     }
@@ -680,7 +724,7 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
     }
 
     // update selection combo box at the top for entity filters:
-    if (!onlyChanges) {
+    //if (!onlyChanges) {
         var types = this.getTypes();
         var totalCount = 0;
         for (var ti=0; ti<types.length; ti++) {
@@ -689,7 +733,7 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
             totalCount += typeCount;
 
             //qDebug("type: ", type, " / count: ", typeCount);
-            selectionCombo.addItem(entityTypeToString(type) + " (" + typeCount + ")", type);
+            selectionCombo.addItem(entityTypeToString(type) + " [" + typeCount + "]", type);
         }
         if (types.length!==1) {
             // TODO: add at 0 if 'no selection' item present at 0:
@@ -706,11 +750,13 @@ PropertyEditorImpl.prototype.updateGui = function(onlyChanges) {
         }
 
         generalGroup.enabled = true;
-        this.geometryGroup.enabled = true;
-    }
+        if (!isNull(this.geometryGroup)) {
+            this.geometryGroup.enabled = true;
+        }
+    //}
 
     // add custom property button:
-    if (!onlyChanges) {
+    if (!isNull(gridLayoutCustom)) {
         if (RSettings.isXDataEnabled() && RSettings.getBoolValue("PropertyEditor/AddCustomProperties", true)!==false) {
             var addCustomPropertyButton = new QToolButton(this.widget);
             addCustomPropertyButton.icon = new QIcon(this.basePath + "/AddCustomProperty.svg");
@@ -755,6 +801,20 @@ PropertyEditorImpl.prototype.initControls = function(propertyTypeId, onlyChanges
         }
     }
 
+    // property available on request:
+    // add button to request all properties:
+    if (attributes.isOnRequest()) {
+        var requestAllButton = new QToolButton(this.geometryGroup);
+        requestAllButton.objectName = objectName + "_request";
+        requestAllButton.text = qsTr("Show");
+        requestAllButton.toolTip = qsTr("Show all properties");
+        requestAllButton.clicked.connect(this, "requestAllProperties");
+        requestAllButton.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred);
+
+        return new Array(requestAllButton);
+    }
+
+
     // Layer:
 //    if (propertyTypeId.getId()===REntity.PropertyLayer.getId()) {
 //        WidgetFactory.initLayerCombo(control, EAction.getDocument());
@@ -765,19 +825,26 @@ PropertyEditorImpl.prototype.initControls = function(propertyTypeId, onlyChanges
     if (propertyTypeId.getId()===RTextEntity.PropertyHAlign.getId()) {
         controls = this.initChoiceControls(
                     objectName, propertyTypeId, onlyChanges, control, false, true);
-//                    [ qsTr("Left"), qsTr("Center"), qsTr("Right"),
-//                      qsTr("Aligned"), qsTr("Middle"), qsTr("Fit")],
-//                    [ RS.HAlignLeft, RS.HAlignCenter, RS.HAlignRight,
-//                      RS.HAlignAlign, RS.HAlignMid, RS.HAlignFit]);
     }
 
     // Vertical alignment: combo box:
     else if (propertyTypeId.getId()===RTextEntity.PropertyVAlign.getId()) {
         controls = this.initChoiceControls(
                     objectName, propertyTypeId, onlyChanges, control, false, true);
-//                    [qsTr("Top"), qsTr("Middle"), qsTr("Base"), qsTr("Bottom")],
-//                    [RS.VAlignTop, RS.VAlignMiddle, RS.VAlignBase, RS.VAlignBottom]);
     }
+
+    // Polyline orientation: combo box:
+    else if (propertyTypeId.getId()===RPolylineEntity.PropertyOrientation.getId()) {
+        controls = this.initChoiceControls(
+                    objectName, propertyTypeId, onlyChanges, control, false, true);
+    }
+
+    // Arc dimension arc symbol type: combo box:
+    else if (propertyTypeId.getId()===RDimArcLengthEntity.PropertyDimArcSymbolType.getId()) {
+        controls = this.initChoiceControls(
+                    objectName, propertyTypeId, onlyChanges, control, false, true);
+    }
+
 
     // Hatch pattern: combo box with hatch names:
     else if (propertyTypeId.getId()===RHatchEntity.PropertyPatternName.getId()) {
@@ -899,6 +966,10 @@ PropertyEditorImpl.prototype.initNumberControls = function(objectName, propertyT
         if (attributes.isAngleType()) {
             control.setAngle(true);
         }
+        // TODO: support scale in RMathLineEdit:
+//        if (attributes.isScaleType()) {
+//            control.setScale(true);
+//        }
         control.objectName = objectName;
     }
 
@@ -912,11 +983,23 @@ PropertyEditorImpl.prototype.initNumberControls = function(objectName, propertyT
                 value = RMath.rad2deg(value);
             }
             var document = EAction.getDocument();
-            if (!attributes.isAngleType() &&
+            if (RSettings.getBoolValue("PropertyEditor/FormatAsDecimal", false)!==true &&
+                !attributes.isAngleType() &&
+                !attributes.isAreaType() &&
+                !attributes.isUnitLess() /*&&
                 (document.getLinearFormat()===RS.Fractional ||
-                 document.getLinearFormat()===RS.FractionalStacked)) {
+                 document.getLinearFormat()===RS.FractionalStacked)*/) {
 
                 newText = RUnit.getLabel(value, document, 8);
+
+                if (document.getLinearFormat()===RS.Architectural ||
+                    document.getLinearFormat()===RS.ArchitecturalStacked ||
+                    document.getLinearFormat()===RS.Engineering) {
+
+                    // show 3'-4" as 3' 4" to avoid ambiguous expressions:
+                    newText = newText.replace("'-", "' ");
+                }
+
             }
             else {
                 newText = sprintf("%.6f", value);
@@ -1113,6 +1196,12 @@ PropertyEditorImpl.prototype.initChoiceControls = function(
     else if (propertyTypeId.getId()===RTextEntity.PropertyVAlign.getId()) {
         WidgetFactory.initVAlignCombo(control);
     }
+    else if (propertyTypeId.getId()===RPolylineEntity.PropertyOrientation.getId()) {
+        WidgetFactory.initOrientationCombo(control);
+    }
+    else if (propertyTypeId.getId()===RDimArcLengthEntity.PropertyDimArcSymbolType.getId()) {
+        WidgetFactory.initArcSymbolTypeCombo(control);
+    }
     else if (isOfType(control, QComboBox) /*&& propertyTypeId.getId()!==REntity.PropertyLayer.getId()*/) {
         control.clear();
         if (isNull(choices)) {
@@ -1247,6 +1336,24 @@ PropertyEditorImpl.prototype.filterChanged = function() {
     this.updateFromDocument(doc, false, entityTypeFilter, true);
 };
 
+/**
+ * Called when the user requests all properties to be shown.
+ */
+PropertyEditorImpl.prototype.requestAllProperties = function() {
+    var doc = EAction.getDocument();
+    if (isNull(doc)) {
+        return;
+    }
+
+    var selectionCombo = this.widget.findChild("Selection");
+    var entityTypeFilter = selectionCombo.itemData(selectionCombo.currentIndex);
+    if (isNull(entityTypeFilter)) {
+        entityTypeFilter = RS.EntityAll;
+    }
+
+    this.updateFromDocument(doc, false, entityTypeFilter, true, true);
+};
+
 PropertyEditorImpl.prototype.getAdjustedPropertyValue = function(propertyTypeId) {
     // show handle as hex reprensentation (string):
     if (propertyTypeId.getId()===RObject.PropertyHandle.getId()) {
@@ -1269,10 +1376,23 @@ PropertyEditorImpl.prototype.makeReadOnly = function(control) {
     }
 
     var p = control.palette;
-    p.setColor(QPalette.Base, new QColor("#eeeeee"));
+    if (isNull(control.oriPalette)) {
+        control.setProperty("oriPalette", control.palette);
+    }
+
+    p.setColor(QPalette.Active, QPalette.Text, control.oriPalette.color(QPalette.Disabled, QPalette.WindowText));
+    p.setColor(QPalette.Inactive, QPalette.Text, control.oriPalette.color(QPalette.Disabled, QPalette.WindowText));
+
+//    if (RSettings.hasDarkGuiBackground()) {
+//        p.setColor(QPalette.Base, new QColor("#0a0a0a"));
+//    }
+//    else {
+//        p.setColor(QPalette.Base, new QColor("#eeeeee"));
+//    }
     control.palette = p;
+
     control.readOnly = true;
-    // leave enebaled to allow copy / page (20140411):
+    // leave enabled to allow copy / page (20140411):
     //control.enabled = false;
 };
 
@@ -1285,8 +1405,20 @@ PropertyEditorImpl.prototype.makeReadWrite = function(control) {
     }
 
     var p = control.palette;
-    p.setColor(QPalette.Base, new QColor("#ffffff"));
+    if (isNull(control.oriPalette)) {
+        control.setProperty("oriPalette", control.palette);
+    }
+
+    p.setColor(QPalette.Active, QPalette.Text, control.oriPalette.color(QPalette.Active, QPalette.WindowText));
+    p.setColor(QPalette.Inactive, QPalette.Text, control.oriPalette.color(QPalette.Inactive, QPalette.WindowText));
+//    //if (RSettings.hasDarkGuiBackground()) {
+//        p.setColor(QPalette.Base, control.oriBase);
+////    }
+////    else {
+////        p.setColor(QPalette.Base, new QColor("#ffffff"));
+////    }
     control.palette = p;
+
     control.readOnly = false;
     control.enabled = true;
 };

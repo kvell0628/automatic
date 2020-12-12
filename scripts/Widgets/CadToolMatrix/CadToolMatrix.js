@@ -37,24 +37,24 @@ function RCadToolMatrixTreePanel(parent, objectName) {
     //var colorName = color.name();
     //var colorLightName = color.lighter(105).name();
 
-    this.styleSheet =
-          //"QWidget#" + objectName + " { background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 " + colorName + ", stop:1 " + colorLightName + "); }"
-         "QToolButton {"
-        + "  border-style: none;"
-        + "}"
-        + RCadToolMatrixTreePanel.getCheckedStyle()
-        + RCadToolMatrixTreePanel.getPressedStyle();
+    if (!RSettings.hasCustomStyleSheet()) {
+        this.styleSheet =
+              //"QWidget#" + objectName + " { background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 " + colorName + ", stop:1 " + colorLightName + "); }"
+             "QToolButton {"
+            + "  border-style: none;"
+            + "}"
+            + RCadToolMatrixTreePanel.getCheckedStyle()
+            + RCadToolMatrixTreePanel.getPressedStyle();
+    }
 }
 
 RCadToolMatrixTreePanel.prototype = new QWidget();
 
 RCadToolMatrixTreePanel.getCheckedStyle = function() {
-    if (!RSettings.hasCustomStyleSheet()) {
-        return "QToolButton:checked {"
-                + "  border-radius: 4px; "
-                + "  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #b7b7b7, stop: 0.8 #cfcfcf, stop: 1 #d1d1d1);"
-                + "}";
-    }
+    return "QToolButton:checked {"
+            + "  border-radius: 4px; "
+            + "  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #b7b7b7, stop: 0.8 #cfcfcf, stop: 1 #d1d1d1);"
+            + "}";
 };
 
 RCadToolMatrixTreePanel.getPressedStyle = function() {
@@ -168,7 +168,7 @@ RCadToolMatrixTree.prototype.updatePanelSizes = function() {
         embeddedWidget.setFixedHeight(height);
         subItem.setSizeHint(0, new QSize(width, height));
     }
-    this.updateGeometries();
+    //this.updateGeometries();
 };
 
 /**
@@ -258,8 +258,14 @@ RCadToolMatrixTree.getItemsAndEmbeddedWidgets = function(tree) {
 };
 
 RCadToolMatrixTree.prototype.filter = function(text) {
+    var re;
     // hide all tool buttons / categories which don't match the filter:
-    var re = new RegExp(text, "gi");
+    try {
+        re = new RegExp(text, "gi");
+    }
+    catch(e) {
+        re = new RegExp("", "gi");
+    }
 
     var embeddedWidgets = RCadToolMatrixTree.getItemsAndEmbeddedWidgets(this);
     for (var i=0; i<embeddedWidgets.length; i++) {
@@ -274,7 +280,7 @@ RCadToolMatrixTree.prototype.filter = function(text) {
         var found = false;
         for (var k=0; k<children.length; k++) {
             var child = children[k];
-            if (!isOfType(child, QToolButton)) {
+            if (!isOfType(child, RToolButton) && !isOfType(child, QToolButton)) {
                 continue;
             }
 
@@ -282,7 +288,6 @@ RCadToolMatrixTree.prototype.filter = function(text) {
             if (isNull(action)) {
                 continue;
             }
-
 
             if (text.length===0) {
                 // no filter:
@@ -394,7 +399,9 @@ RCadToolMatrixTree.prototype.updateListViewMode = function() {
 };
 
 RCadToolMatrixTree.prototype.setListViewMode = function(enable) {
-    this.setProperty("listViewMode", enable);
+    if (isFunction(this.setProperty)) {
+        this.setProperty("listViewMode", enable);
+    }
     var embeddedWidgets = RCadToolMatrixTree.getItemsAndEmbeddedWidgets(this);
     for (var i=0; i<embeddedWidgets.length; i++) {
         var embeddedWidget = embeddedWidgets[i][2];
@@ -418,7 +425,6 @@ CadToolMatrix.getPreferencesCategory = function() {
 };
 
 CadToolMatrix.applyPreferences = function(doc) {
-    qDebug("CadToolMatrix.applyPreferences");
     if (!isNull(doc)) {
         // document settings: nothing to do
         return;

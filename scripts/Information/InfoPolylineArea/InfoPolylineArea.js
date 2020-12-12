@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Information.js");
+include("scripts/Information/Information.js");
 
 /**
  * \class InfoPolylineArea
@@ -56,7 +56,7 @@ InfoPolylineArea.prototype.setState = function(state) {
     case InfoPolylineArea.State.ChoosingPolyline:
         this.setCommandPrompt(trSelectPolyline);
         this.setLeftMouseTip(trSelectPolyline);
-        this.setRightMouseTip(qsTr("Done"));
+        this.setRightMouseTip(EAction.trDone);
         break;
     }
 
@@ -75,14 +75,18 @@ InfoPolylineArea.prototype.pickEntity = function(event, preview) {
     } else {
         this.polyline = entity;
     }
+    this.shape = this.polyline.getData().castToShape();
+
     if (!preview) {
-        this.shape = this.polyline.getData().castToShape();
         this.slotCalculate();
+    }
+    else {
+        this.updatePreview();
     }
 };
 
 InfoPolylineArea.prototype.getOperation = function(preview) {
-    if (isNull(this.polyline)) {
+    if (isNull(this.polyline) || isNull(this.shape)) {
         return undefined;
     }
 
@@ -103,12 +107,32 @@ InfoPolylineArea.prototype.getOperation = function(preview) {
     var c = this.shape.getLastVertex();
     if (c.isValid()) {
         this.addTextLabel(op, view, c, label2, preview);
-        var v = new RVector(0, this.textHeight * 1.4);
-        c = c.operator_add(v);
+        var v;
+        if (preview) {
+            var font = RSettings.getInfoLabelFont();
+            font.setPointSizeF(font.pointSizeF()*view.getDevicePixelRatio());
+            var fm = new QFontMetrics(font);
+            var h = fm.height()+10;
+            v = new RVector(0, view.mapDistanceFromView(h));
+            c = c.operator_add(v);
+        }
+        else {
+            v = new RVector(0, this.textHeight * 1.4);
+            c = c.operator_add(v);
+        }
+
         this.addTextLabel(op, view, c, label1, preview);
     }
 
     return op;
+};
+
+InfoPolylineArea.prototype.getHighlightedEntities = function() {
+    var ret = [];
+    if (isEntity(this.polyline)) {
+        ret.push(this.polyline.getId());
+    }
+    return ret;
 };
 
 InfoPolylineArea.prototype.getArea = function() {

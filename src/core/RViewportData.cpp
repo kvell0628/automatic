@@ -56,14 +56,37 @@ RBox RViewportData::getBoundingBox(bool ignoreEmpty) const {
     return RBox(position, width, height);
 }
 
+void RViewportData::to2D() {
+    RPoint::to2D();
+
+    viewCenter = viewCenter.get2D();
+    viewTarget = viewTarget.get2D();
+}
+
 /**
  * \return Offset or position of 0/0 of view (model space block) for this viewport.
  */
 RVector RViewportData::getViewOffset() const {
     RVector offset(0,0);
-    offset -= viewCenter * scaleFactor;
-    offset -= viewTarget * scaleFactor;
+    offset -= viewCenter.get2D() * scaleFactor;
+    offset -= viewTarget.get2D() * scaleFactor;
     return position + offset;
+}
+
+QList<RRefPoint> RViewportData::getInternalReferencePoints(RS::ProjectionRenderingHint hint) const {
+    QList<RRefPoint> ret;
+
+    QList<QSharedPointer<RShape> > shapes = getShapes();
+    for (int i=0; i<shapes.size(); i++) {
+        QSharedPointer<RShape> shape = shapes[i];
+
+        QList<RVector> ps = shape->getArcReferencePoints();
+        for (int k=0; k<ps.length(); k++) {
+            ret.append(RRefPoint(ps[k], RRefPoint::Tertiary));
+        }
+    }
+
+    return ret;
 }
 
 QList<RRefPoint> RViewportData::getReferencePoints(RS::ProjectionRenderingHint hint) const {
@@ -82,8 +105,9 @@ QList<RRefPoint> RViewportData::getReferencePoints(RS::ProjectionRenderingHint h
     return ret;
 }
 
-bool RViewportData::moveReferencePoint(const RVector& referencePoint,
-        const RVector& targetPoint) {
+bool RViewportData::moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers) {
+    Q_UNUSED(modifiers)
+
     bool ret = false;
 
     RVector offset = targetPoint - referencePoint;

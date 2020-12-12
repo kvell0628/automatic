@@ -19,7 +19,7 @@
 
 /**
  * Command line tool.
- * Marges multiple drawing files (DWG, DXF) into one.
+ * Merges multiple drawing files (DWG, DXF) into one.
  */
 
 include("scripts/Tools/arguments.js");
@@ -113,7 +113,7 @@ function main() {
     //file.close();
 
     // target document:
-    var docDest = new RDocument(new RMemoryStorage(), new RSpatialIndexNavel());
+    var docDest = new RDocument(new RMemoryStorage(), new RSpatialIndexSimple());
     docDest.setUnit(handler.outputUnit);
     var diDest = new RDocumentInterface(docDest);
 
@@ -124,7 +124,7 @@ function main() {
             var insert = item.inserts[k];
 
             qDebug("insert: ", item.src, insert.x);
-            var doc = new RDocument(new RMemoryStorage(), new RSpatialIndexNavel());
+            var doc = new RDocument(new RMemoryStorage(), new RSpatialIndexSimple());
             var di = new RDocumentInterface(doc);
 
             var src;

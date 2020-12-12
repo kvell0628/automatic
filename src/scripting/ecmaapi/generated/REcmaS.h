@@ -52,6 +52,9 @@
         getCpuCores
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getIdealThreadCount
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getBuildCpuArchitecture
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -78,6 +81,18 @@
         ;static  QScriptValue
         getLinetypeList
         (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        sortAlphanumerical
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        compareChunkify
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        compareAlphanumerical
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        lessThanAlphanumerical
+        (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue toString
     (QScriptContext *context, QScriptEngine *engine)
     ;static  QScriptValue destroy(QScriptContext *context, QScriptEngine *engine)
@@ -89,6 +104,8 @@
     ;static  void fromScriptValueEnumEntityType(const QScriptValue& value, RS::EntityType& out)
     ;static  QScriptValue toScriptValueEnumProjectionRenderingHint(QScriptEngine* engine, const RS::ProjectionRenderingHint& value)
     ;static  void fromScriptValueEnumProjectionRenderingHint(const QScriptValue& value, RS::ProjectionRenderingHint& out)
+    ;static  QScriptValue toScriptValueEnumOrthoMode(QScriptEngine* engine, const RS::OrthoMode& value)
+    ;static  void fromScriptValueEnumOrthoMode(const QScriptValue& value, RS::OrthoMode& out)
     ;static  QScriptValue toScriptValueEnumSide(QScriptEngine* engine, const RS::Side& value)
     ;static  void fromScriptValueEnumSide(const QScriptValue& value, RS::Side& out)
     ;static  QScriptValue toScriptValueEnumEnding(QScriptEngine* engine, const RS::Ending& value)
@@ -127,6 +144,8 @@
     ;static  void fromScriptValueEnumJoinType(const QScriptValue& value, RS::JoinType& out)
     ;static  QScriptValue toScriptValueEnumEndType(QScriptEngine* engine, const RS::EndType& value)
     ;static  void fromScriptValueEnumEndType(const QScriptValue& value, RS::EndType& out)
+    ;static  QScriptValue toScriptValueEnumEasing(QScriptEngine* engine, const RS::Easing& value)
+    ;static  void fromScriptValueEnumEasing(const QScriptValue& value, RS::Easing& out)
     ;};
     #endif
     

@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Block.js");
+include("scripts/Block/Block.js");
 include("../BlockDialog.js");
 
 /**
@@ -48,7 +48,9 @@ CreateBlock.prototype.setState = function(state) {
     this.setCrosshairCursor();
     this.getDocumentInterface().setClickMode(RAction.PickCoordinate);
 
-    this.setLeftMouseTip(qsTr("Reference Point"));
+    var trRefPoint = qsTr("Reference Point");
+    this.setCommandPrompt(trRefPoint);
+    this.setLeftMouseTip(trRefPoint);
     this.setRightMouseTip(EAction.trCancel);
 
     EAction.showSnapTools();
@@ -96,11 +98,14 @@ CreateBlock.createBlock = function(di, block, referencePoint, entityIds, title, 
         createReference = true;
     }
 
-    var i, entity;
+    var i, entity, op;
     var doc = di.getDocument();
     var storage = doc.getStorage();
 
-    var op = new RAddObjectsOperation();
+    doc.startTransactionGroup();
+
+    op = new RAddObjectsOperation();
+    op.setTransactionGroup(doc.getTransactionGroup());
     op.setText(title);
     op.addObject(block);
 
@@ -123,12 +128,17 @@ CreateBlock.createBlock = function(di, block, referencePoint, entityIds, title, 
         blockId = storage.getMaxObjectId();
     }
 
+    // map old block reference IDs to block reference entities:
+    var blockReferenceMap = {};
+    // list of attribute entities:
+    var attributeEntities = [];
+
+    // deselect original entities:
+    di.deselectEntities(entityIds);
+
     // add selection to new block:
     for (i=0; i<entityIds.length; i++) {
         var id = entityIds[i];
-
-        // deselect original entity:
-        di.deselectEntity(id);
 
         entity = doc.queryEntity(id);
         if (isNull(entity)) {
@@ -142,6 +152,15 @@ CreateBlock.createBlock = function(di, block, referencePoint, entityIds, title, 
         entity.move(referencePoint.getNegated());
 
         op.addObject(entity, false, copy);
+
+        if (copy) {
+            if (isBlockReferenceEntity(entity)) {
+                blockReferenceMap[id] = entity;
+            }
+            else if (isAttributeEntity(entity)) {
+                attributeEntities.push(entity);
+            }
+        }
     }
 
     // create block reference from selection:
@@ -155,6 +174,34 @@ CreateBlock.createBlock = function(di, block, referencePoint, entityIds, title, 
     }
 
     di.applyOperation(op);
+
+    if (copy) {
+        op = new RAddObjectsOperation();
+        op.setTransactionGroup(doc.getTransactionGroup());
+        op.setText(title);
+
+        // fix attribute links to block references:
+        for (i=0; i<attributeEntities.length; i++) {
+            var attributeEntity = attributeEntities[i];
+            // find parent entity of attribute:
+            var blockReferenceEntity = blockReferenceMap[attributeEntity.getParentId()];
+            if (!isNull(blockReferenceEntity)) {
+
+                // update parent ID:
+                storage.setEntityParentId(attributeEntity.data(), blockReferenceEntity.getId());
+                op.addObject(attributeEntity, false);
+            }
+        }
+
+        di.applyOperation(op);
+
+//        for (var oldId in blockReferenceMap) {
+//            entity = blockReferenceMap[oldId];
+//            var newId = entity.getId();
+//            qDebug("old:", oldId);
+//            qDebug("new:", newId);
+//        }
+    }
 
     if (isNull(blockReference)) {
         return RObject.INVALID_ID;

@@ -112,7 +112,7 @@
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translation>Według warstwy</translation>
     </message>
@@ -215,7 +215,7 @@
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation>Aktywna warstwa</translation>
     </message>
@@ -242,7 +242,7 @@
         <translation type="obsolete">Blok</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+93"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+95"/>
         <location line="+1"/>
         <location line="+1"/>
         <location filename="../src/core/RViewportEntity.cpp" line="+73"/>
@@ -265,7 +265,7 @@
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="-2"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -349,13 +349,18 @@
         <translation>Odstępy wierszy</translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation>Atrybuty</translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translation>Rodzaj</translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="-11"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="-14"/>
         <source>Block</source>
         <translation>Blok</translation>
     </message>
@@ -371,7 +376,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <location filename="../src/core/RLayer.cpp" line="+99"/>
+        <location filename="../src/core/RLayer.cpp" line="+102"/>
         <source>Linetype</source>
         <translation>Rodzaj linii</translation>
     </message>
@@ -437,7 +442,7 @@
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>Dostosowany</translation>
     </message>
@@ -450,6 +455,21 @@
         <location line="+1"/>
         <source>Protected</source>
         <translation>Zabezpieczony</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/core/REntity.cpp" line="+2"/>
@@ -545,6 +565,16 @@
         <translation>Pionowo</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Backward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Upside Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
         <source>Rotation</source>
         <translation>Obrót</translation>
@@ -575,6 +605,7 @@
     <message>
         <location filename="../src/core/RBlock.cpp" line="-6"/>
         <location filename="../src/core/RLayer.cpp" line="-8"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="-24"/>
         <source>Name</source>
         <translation>Nazwa</translation>
@@ -660,7 +691,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
         <translation>Wykryto rekursywne zależności bloku:</translation>
     </message>
@@ -673,7 +704,7 @@
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translatorcomment>--google--</translatorcomment>
         <translation>Wymaga zaznaczenia</translation>
@@ -793,7 +824,7 @@
         <translation type="vanished">Obramowanie (wielka)</translation>
     </message>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>Nazwa</translation>
     </message>
@@ -816,7 +847,7 @@
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
         <translation>Według warstwy</translation>
     </message>

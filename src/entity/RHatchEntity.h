@@ -41,6 +41,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -52,6 +53,7 @@ public:
     static RPropertyTypeId PropertyDrawOrder;
 
     static RPropertyTypeId PropertySolid;
+    static RPropertyTypeId PropertyTransparency;
 
     static RPropertyTypeId PropertyPatternName;
     static RPropertyTypeId PropertyEntityPattern;
@@ -89,14 +91,18 @@ public:
         return data.getCustomPattern();
     }
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    void setCustomPattern(const RPattern& p) {
+        data.setCustomPattern(p);
+    }
+
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
     bool setBoundaryVector(RObject::XYZ xyz, const QVariant& value, bool condition);
     RVector setComponent(const RVector& p, double v, RObject::XYZ xyz);
 
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual void exportEntity(RExporter& e, bool preview=false, bool forceSelected=false) const;
 
@@ -168,6 +174,14 @@ public:
         data.setPatternName(n);
     }
 
+    int getTransparency() const {
+        return data.getTransparency();
+    }
+
+    void setTransparency(int t) {
+        data.setTransparency(t);
+    }
+
     void clearCustomPattern() {
         data.clearCustomPattern();
     }
@@ -187,6 +201,8 @@ public:
     virtual QList<QSharedPointer<RShape> > getExploded() const {
         return data.getExploded();
     }
+
+    virtual void setViewportContext(const RViewportData& origin);
 
 protected:
     virtual void print(QDebug dbg) const;

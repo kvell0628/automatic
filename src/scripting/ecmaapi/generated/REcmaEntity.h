@@ -72,6 +72,9 @@
         isDimension
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isTextBased
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getData
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -85,6 +88,12 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         setSelected
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isSelectedWorkingSet
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setSelectedWorkingSet
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isUpdatesEnabled
@@ -234,6 +243,9 @@
         getIntersectionPointsWithShape
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        clickReferencePoint
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         moveReferencePoint
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -246,7 +258,13 @@
         scale
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        scaleNonUniform
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         scaleVisualProperties
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setViewportContext
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         mirror
@@ -270,9 +288,6 @@
         exportEntity
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
-        isSelectedForPropertyEditing
-        (QScriptContext* context, QScriptEngine* engine) 
-        ;static  QScriptValue
         setAutoUpdatesBlocked
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -286,6 +301,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isEditable
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isInWorkingSet
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getComplexity

@@ -190,6 +190,8 @@
             
             REcmaHelper::registerFunction(&engine, proto, simplify, "simplify");
             
+            REcmaHelper::registerFunction(&engine, proto, getBezierSegments, "getBezierSegments");
+            
         engine.setDefaultPrototype(
             qMetaTypeId<RSplineEntityPointer>(), *proto);
       
@@ -216,6 +218,10 @@
             
             ctor.setProperty("PropertyProtected",
                 qScriptValueFromValue(&engine, RSplineEntity::PropertyProtected),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyWorkingSet",
+                qScriptValueFromValue(&engine, RSplineEntity::PropertyWorkingSet),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyType",
@@ -1085,6 +1091,105 @@
     a1
         ,
     a2);
+        // return type: QPair < QVariant , RPropertyAttributes >
+                // Pair of ...:
+                //result = REcmaHelper::pairToScriptValue(engine, cppResult);
+                QVariantList vl;
+                QVariant v;
+                
+                    // first type of pair is variant:
+                    if (QString(cppResult.first.typeName())=="RLineweight::Lineweight") {
+                        v.setValue((int)cppResult.first.value<RLineweight::Lineweight>());
+                    }
+                    else {
+                        v.setValue(cppResult.first);
+                    }
+                  
+
+                vl.append(v);
+                v.setValue(cppResult.second);
+                vl.append(v);
+                result = qScriptValueFromValue(engine, vl);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RSplineEntity: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QPair < QVariant , RPropertyAttributes >'
+    QPair < QVariant , RPropertyAttributes > cppResult =
+        
+               self->getProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
         // return type: QPair < QVariant , RPropertyAttributes >
                 // Pair of ...:
                 //result = REcmaHelper::pairToScriptValue(engine, cppResult);
@@ -4786,6 +4891,99 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaSharedPointerSplineEntity::simplify", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerSplineEntity::getBezierSegments
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerSplineEntity::getBezierSegments", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerSplineEntity::getBezierSegments";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RSplineEntity* self = 
+                        getSelf("getBezierSegments", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QList < RSpline >'
+    QList < RSpline > cppResult =
+        
+               self->getBezierSegments();
+        // return type: QList < RSpline >
+                // List of ...:
+                result = REcmaHelper::listToScriptValue(engine, cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RBox */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RBox*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RBox*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RSplineEntity: Argument 0 is not of type RBox.",
+                               context);                    
+                    }
+                    RBox 
+                    a0 = 
+                    *ap0;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QList < RSpline >'
+    QList < RSpline > cppResult =
+        
+               self->getBezierSegments(a0);
+        // return type: QList < RSpline >
+                // List of ...:
+                result = REcmaHelper::listToScriptValue(engine, cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RSplineEntity.getBezierSegments().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerSplineEntity::getBezierSegments", context, engine);
             return result;
         }
          QScriptValue REcmaSharedPointerSplineEntity::toString

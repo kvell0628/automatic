@@ -32,11 +32,6 @@
     <message>
         <location filename="../src/gui/RColorCombo.cpp" line="+126"/>
         <source>Custom</source>
-        <translatorcomment>--exact match--
---file: qt_fr.ts--
-Aucun objets de dimension sélectionné avec une position de texte personnalisé.
-Aucun objets de dimension sélectionné avec une position de texte personnalisé
-Personnalisé</translatorcomment>
         <translation>Personnalisé</translation>
     </message>
 </context>
@@ -91,7 +86,7 @@ Personnalisé</translatorcomment>
 <context>
     <name>RMathLineEdit</name>
     <message>
-        <location filename="../src/gui/RMathLineEdit.cpp" line="+156"/>
+        <location filename="../src/gui/RMathLineEdit.cpp" line="+172"/>
         <source>Invalid</source>
         <translation>Invalide</translation>
     </message>

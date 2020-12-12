@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../Help.js");
+include("scripts/Help/Help.js");
 
 ShowReadme.readmeFile = "readme.txt";
 
@@ -43,10 +43,11 @@ ShowReadme.prototype.beginEvent = function() {
     var file = new QFile(ShowReadme.readmeFile);
     var flags = new QIODevice.OpenMode(QIODevice.ReadOnly | QIODevice.Text);
     if (!file.open(flags)) {
-        text.toPlainText() = qsTr("File '%1' doesn't exist.").arg(
+        text.toPlainText() = qsTr("File \"%1\" doesn't exist.").arg(
                 ShowReadme.readmeFile);
     } else {
         var textStream = new QTextStream(file);
+        textStream.setCodec("UTF-8");
         var allLines = textStream.readAll();
         file.close();
         text.plainText = allLines;

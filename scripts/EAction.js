@@ -55,6 +55,12 @@ function EAction(guiAction) {
     // set to true to prefer dialog over options tool bar:
     this.useDialog = false;
     this.dialogUiFile = undefined;
+
+    this.waitingForContextMenu = false;
+
+    this.optOutRelativeZeroResume = false;
+
+    this.resuming = false;
 }
 
 EAction.prototype = new RActionAdapter();
@@ -63,6 +69,7 @@ EAction.includeBasePath = includeBasePath;
 // some commonly used translated strings:
 EAction.trBack = qsTr("Back");
 EAction.trCancel = qsTr("Cancel");
+EAction.trDone = qsTr("Done");
 
 EAction.crossCursor = undefined;
 EAction.noRelativeZeroResume = false;
@@ -158,6 +165,8 @@ EAction.prototype.finishEvent = function() {
     if (!isNull(di)) {
         di.repaintViews();
     }
+
+    this.setCommandPrompt();
 };
 
 /**
@@ -260,17 +269,19 @@ EAction.prototype.resumeEvent = function() {
         this.setState(this.state);
     }
 
-    // restore relative zero position when returning from another command:
-    var di = this.getDocumentInterface();
-    if (!isNull(di) && isValidVector(this.relativeZeroPos)) {
-        if (EAction.noRelativeZeroResume===true) {
-            EAction.noRelativeZeroResume = false;
+    if (!this.optOutRelativeZeroResume) {
+        // restore relative zero position when returning from another command:
+        var di = this.getDocumentInterface();
+        if (!isNull(di) && isValidVector(this.relativeZeroPos)) {
+            if (EAction.noRelativeZeroResume===true) {
+                EAction.noRelativeZeroResume = false;
+            }
+            else {
+                di.setRelativeZero(this.relativeZeroPos);
+            }
         }
-        else {
-            di.setRelativeZero(this.relativeZeroPos);
-        }
+        this.relativeZeroPos = undefined;
     }
-    this.relativeZeroPos = undefined;
 };
 
 /**
@@ -347,6 +358,8 @@ EAction.prototype.showUiOptions = function(resume, restoreFromSettings) {
         return;
     }
 
+    this.resuming = true;
+
     this.optionWidgetActions = [];
     for (var i = 0; i < this.uiFile.length; ++i) {
         var uiFile = this.uiFile[i];
@@ -399,6 +412,8 @@ EAction.prototype.showUiOptions = function(resume, restoreFromSettings) {
 
     // hide options tool bar widgets which are shown in a dialog instead:
     this.hideOptionsToolBarWidgets();
+
+    this.resuming = false;
 };
 
 /**
@@ -561,10 +576,12 @@ EAction.prototype.hideOptionsToolBarWidgets = function(widgets, noSyncWidgets) {
 };
 
 /**
- * Called when user presses enter. Default implementation calls showDialog.
+ * Called when user presses enter. Default implementation calls showDialog if configured.
  */
 EAction.prototype.enterEvent = function() {
-    this.showDialog();
+    if (RSettings.getBoolValue("Transform/EnterShowsDialog", false)===true) {
+        this.showDialog();
+    }
 };
 
 /**
@@ -598,7 +615,12 @@ EAction.prototype.showDialog = function() {
     this.dialog = WidgetFactory.createDialog(this.includeBasePath, this.dialogUiFile, EAction.getMainWindow());
     this.initUiOptions(false, this.dialog);
     WidgetFactory.restoreState(this.dialog, this.settingsGroup, this);
-    this.dialog.windowTitle = this.getToolTitle();
+    var title = this.getToolTitle();
+    if (title.indexOf("\t")!==-1) {
+        // remove shortcuts Windows:
+        title = title.replace(/\t.*/g, "");
+    }
+    this.dialog.windowTitle = title;
     this.dialog.windowIcon = new QIcon();
 
     // give focus to control with custom property 'DefaultFocus':
@@ -739,7 +761,7 @@ EAction.prototype.setCrosshairCursor = function() {
             mask = new QBitmap(EAction.includeBasePath + "/CrosshairCursorMask@2x.png", "PNG");
             //bitmap.setDevicePixelRatio(2);
             //mask.setDevicePixelRatio(2);
-            EAction.crossCursor = new QCursor(bitmap, mask, 15, 15);
+            EAction.crossCursor = new QCursor(bitmap, mask, 30, 30);
         }
         else {
             bitmap = new QBitmap(EAction.includeBasePath + "/CrosshairCursor.png", "PNG");
@@ -764,14 +786,14 @@ EAction.prototype.setCursor = function(cursor, name) {
     if (!isNull(di)) {
         di.setCursor(cursor);
     }
-    if (!isNull(name)) {
-        var views = this.getGraphicsViews();
-        for (var i=0; i<views.length; i++) {
-            if (isFunction(views[i].setProperty)) {
-                views[i].setProperty("CursorName", name);
-            }
-        }
-    }
+//    if (!isNull(name)) {
+//        var views = this.getGraphicsViews();
+//        for (var i=0; i<views.length; i++) {
+//            if (isFunction(views[i].setProperty)) {
+//                views[i].setProperty("CursorName", name);
+//            }
+//        }
+//    }
 };
 
 /**
@@ -1075,17 +1097,35 @@ EAction.getToolBar = function(title, objectName, toolBarArea, category, before) 
 
     if (isNull(tb)) {
         tb = new QToolBar(title);
+
+        // style tool buttons in options toolbar:
         if (RSettings.isQt(5)) {
             if (!RSettings.hasCustomStyleSheet()) {
-                // Mac OS X: remove border around tool buttons:
-                tb.setStyleSheet(
-                    "QToolButton {" +
-                    "  border: 1px solid transparent;" +
-                    "} " +
-                    "QToolButton:checked { " +
-                    "  border:1px solid #7f7f7f; " +
-                    "  background: qlineargradient(x1:0 y1:0, x2:0 y2:1 stop:0 #c0c0c0, stop:0.1 #8a8a8a stop:0.2 #a3a3a3 stop:1 transparent); " +
-                    "}");
+                if (RSettings.hasDarkGuiBackground()) {
+                    tb.setStyleSheet(
+                          "QToolButton {"
+                             // make sure unchecked button renders with same size as checked
+                             // prevents things from moving around when checking / unchecking
+                        + "  border: 1px solid transparent;"
+                        + "} "
+                        + "QToolButton:checked { "
+                        + "  border-top: 1px solid #161616;"
+                        + "  border-left: 1px solid #161616;"
+                        + "  border-bottom: 1px solid #777777;"
+                        + "  border-right: 1px solid #777777;"
+                        + "  background-color: #222222;"
+                        + "}");
+                }
+                else {
+                    tb.setStyleSheet(
+                        "QToolButton {" +
+                        "  border: 1px solid transparent;" +
+                        "} " +
+                        "QToolButton:checked { " +
+                        "  border:1px solid #7f7f7f; " +
+                        "  background: qlineargradient(x1:0 y1:0, x2:0 y2:1 stop:0 #c0c0c0, stop:0.1 #8a8a8a stop:0.2 #a3a3a3 stop:1 transparent); " +
+                        "}");
+                }
             }
         }
         tb.objectName = objectName;
@@ -1896,7 +1936,12 @@ EAction.setProgressEnd = function() {
 EAction.assertEditable = function(entity, quiet) {
     if (!entity.isEditable()) {
         if (!quiet) {
-            EAction.handleUserWarning(qsTr("Entity is on a locked layer."));
+            if (!entity.isInWorkingSet()) {
+                EAction.handleUserWarning(qsTr("Entity is not in working set."));
+            }
+            else {
+                EAction.handleUserWarning(qsTr("Entity is on a locked layer."));
+            }
         }
         return false;
     }
@@ -2029,7 +2074,7 @@ EAction.getEntityIdsUnderCursor = function(di, event, range, selectable) {
  * \return Entity ID under the mouse cursor. User may choose between multiple candidates if
  * result is ambiguous and Alt key is pressed.
  *
- * \param event RRInputEvent
+ * \param event RInputEvent
  * \param preview for previewing purposes
  * \param selectable Only return selectable (editable) entities
  */
@@ -2057,16 +2102,8 @@ EAction.getEntityId = function(di, action, event, preview, selectable) {
         selectable = false;
     }
 
-    var mod;
-    if (isFunction(event.getModifiers)) {
-        mod = event.getModifiers();
-    }
-    else {
-        mod = event.modifiers();
-    }
-
-    var altPressed = (mod & Qt.AltModifier)!==0;
-    if (!altPressed || preview) {
+    var altPressed = isAltPressed(event);
+    if (!altPressed || preview || RSettings.getBoolValue("GraphicsView/DisableAltPicking", false)===true) {
         if (!isNull(action.idFromContextMenu)) {
             // user already chose an entity from the context menu:
             return action.idFromContextMenu;
@@ -2094,7 +2131,6 @@ EAction.getEntityId = function(di, action, event, preview, selectable) {
     var ret = RObject.INVALID_ID;
     var doc = di.getDocument();
     var menu = new QMenu(EAction.getGraphicsView());
-    var a, r;
     menu.objectName = "EntityContextMenu";
 
     // reacts to hovering and clicking of context menu items:
@@ -2116,6 +2152,7 @@ EAction.getEntityId = function(di, action, event, preview, selectable) {
     // invalid entity id is used to to cancel:
     entityIds.push(RObject.INVALID_ID);
 
+    var a, reactor;
     for (var i=0; i<entityIds.length && i<20; i++) {
         var id = entityIds[i];
         var str;
@@ -2147,21 +2184,38 @@ EAction.getEntityId = function(di, action, event, preview, selectable) {
             a.icon = icon;
         }
 
-        r = new Reactor(id);
-        a.triggered.connect(r, "trigger");
-        a.hovered.connect(r, "hover");
+        reactor = new Reactor(id);
+        a.triggered.connect(reactor, "trigger");
+        a.hovered.connect(reactor, "hover");
     }
 
     // show context menu:
     if (!menu.isEmpty()) {
         var prev = QCoreApplication.testAttribute(Qt.AA_DontShowIconsInMenus);
         QCoreApplication.setAttribute(Qt.AA_DontShowIconsInMenus, false);
+        this.waitingForContextMenu = true;
         menu.exec(new QPoint(QCursor.pos().x(), QCursor.pos().y()+10));
+        this.waitingForContextMenu = false;
         QCoreApplication.setAttribute(Qt.AA_DontShowIconsInMenus, prev);
         di.clearPreview();
     }
 
     return ret;
+};
+
+EAction.prototype.isEntitySnappable = function(e) {
+    if (!isEntity(e)) {
+        return false;
+    }
+
+    var layerId = e.getLayerId();
+    var data = e.getData();
+    var doc = data.getDocument();
+    if (isNull(doc)) {
+        return false;
+    }
+
+    return doc.isLayerSnappable(layerId);
 };
 
 /**
@@ -2181,6 +2235,10 @@ EAction.warnNotLineArcPolyline = function() {
 
 EAction.warnNotLine = function() {
     EAction.handleUserWarning(qsTr("Entity is not a line."));
+};
+
+EAction.warnNotArc = function() {
+    EAction.handleUserWarning(qsTr("Entity is not an arc."));
 };
 
 EAction.warnNotArcCircle = function() {
@@ -2207,10 +2265,18 @@ EAction.warnNotLineArcCircleEllipseSpline = function() {
     EAction.handleUserWarning(qsTr("Entity is not a line, arc, circle, ellipse or spline."));
 };
 
+EAction.warnNotLineArcCircleSplinePolyline = function() {
+    EAction.handleUserWarning(qsTr("Entity is not a line, arc, circle, spline or polyline."));
+};
+
 EAction.warnNotLineArcCircleEllipseSplinePolyline = function() {
     EAction.handleUserWarning(qsTr("Entity is not a line, arc, circle, ellipse, spline or polyline."));
 };
 
 EAction.warnNotPolyline = function() {
     EAction.handleUserWarning(qsTr("Entity is not a polyline."));
+};
+
+EAction.warnNotSplineWithFitPoints = function() {
+    EAction.handleUserWarning(qsTr("Entity is not a spline with fit points."));
 };

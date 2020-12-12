@@ -86,7 +86,7 @@ ConvertUnit.convert = function(di, fromUnit, toUnit) {
         return [1, qsTr("Nothing to be done.")];
     }
     if (fromUnit === RS.None || toUnit === RS.None) {
-        return [1, qsTr("Unit '%1' selected - Nothing to be done").arg(RUnit.unitToName(RS.None))];
+        return [1, qsTr("Unit \"%1\" selected. Nothing to be done").arg(RUnit.unitToName(RS.None))];
     }
 
     var factor = RUnit.convert(1.0, fromUnit, toUnit);
@@ -94,6 +94,12 @@ ConvertUnit.convert = function(di, fromUnit, toUnit) {
     doc.startTransactionGroup();
 
     var docVars = doc.queryDocumentVariables();
+    // make sure we don't end up with a metric document with imperial dimension format:
+    if (doc.getLinearFormat()===RS.Engineering || doc.getLinearFormat()===RS.ArchitecturalStacked || doc.getLinearFormat()===RS.Architectural) {
+        if (!RUnit.isMetric(doc.getUnit()) && RUnit.isMetric(toUnit)) {
+            docVars.setKnownVariable(RS.DIMLUNIT, RS.Decimal);
+        }
+    }
     docVars.setUnit(toUnit);
     docVars.setKnownVariable(RS.DIMSCALE, doc.getKnownVariable(RS.DIMSCALE, 1.0) * factor);
 
@@ -128,6 +134,10 @@ ConvertUnit.convert = function(di, fromUnit, toUnit) {
         if (isBlockReferenceEntity(entity)) {
             var p = entity.getPosition();
             entity.setPosition(p.operator_multiply(factor));
+            var cs = entity.getColumnSpacing();
+            entity.setColumnSpacing(cs*factor);
+            var rs = entity.getRowSpacing();
+            entity.setRowSpacing(rs*factor);
         } else if (isViewportEntity(entity)) {
             var s = entity.getScale();
             entity.scale(factor);

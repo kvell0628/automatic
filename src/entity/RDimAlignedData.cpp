@@ -46,8 +46,14 @@ RDimAlignedData::RDimAlignedData(const RDimensionData& dimData,
 
 RBox RDimAlignedData::getBoundingBox(bool ignoreEmpty) const {
     boundingBox = RDimensionData::getBoundingBox(ignoreEmpty);
-    boundingBox.growToInclude(extensionPoint1);
-    boundingBox.growToInclude(extensionPoint2);
+
+    // 20200306: this breaks area selection of dimensions
+    // if extension points are far away from dimension shapes:
+    //if (!hasDimensionBlockReference()) {
+    //    boundingBox.growToInclude(extensionPoint1);
+    //    boundingBox.growToInclude(extensionPoint2);
+    //}
+
     return boundingBox;
 }
 
@@ -60,6 +66,14 @@ QList<RRefPoint> RDimAlignedData::getReferencePoints(RS::ProjectionRenderingHint
     QList<RRefPoint> ret;
 
     ret.append(getTextPosition());
+
+    if (arrow1Pos.isValid()) {
+        ret.append(RRefPoint(arrow1Pos, RRefPoint::Arrow));
+    }
+    if (arrow2Pos.isValid()) {
+        ret.append(RRefPoint(arrow2Pos, RRefPoint::Arrow));
+    }
+
     ret.append(extensionPoint1);
     ret.append(extensionPoint2);
     ret.append(refDefinitionPoint1);
@@ -68,10 +82,10 @@ QList<RRefPoint> RDimAlignedData::getReferencePoints(RS::ProjectionRenderingHint
     return ret;
 }
 
-bool RDimAlignedData::moveReferencePoint(const RVector& referencePoint,
-        const RVector& targetPoint) {
+bool RDimAlignedData::moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers) {
+    Q_UNUSED(modifiers)
 
-    bool ret = RDimLinearData::moveReferencePoint(referencePoint, targetPoint);
+    bool ret = RDimLinearData::moveReferencePoint(referencePoint, targetPoint, modifiers);
 
     if (referencePoint.equalsFuzzy(refDefinitionPoint1)) {
         definitionPoint = targetPoint;
@@ -149,7 +163,6 @@ QList<QSharedPointer<RShape> > RDimAlignedData::getShapes(const RBox& queryBox, 
     double extLength = extensionLine.getDistanceTo(definitionPoint, false);
 
     RVector v1, v2, e1;
-    RLine line;
 
     // from entity to inner point of extension line:
     v1.setPolar(dimexo, extAngle);
@@ -167,12 +180,14 @@ QList<QSharedPointer<RShape> > RDimAlignedData::getShapes(const RBox& queryBox, 
     }
 
     // extension line 1:
-    line = RLine(extensionPoint1 + v1, extensionPoint1 + e1*extLength + v2);
-    ret.append(QSharedPointer<RLine>(new RLine(line)));
-
+    RLine extLine1 = RLine(extensionPoint1 + v1, extensionPoint1 + e1*extLength + v2);
     // extension line 2:
-    line = RLine(extensionPoint2 + v1, extensionPoint2 + e1*extLength + v2);
-    ret.append(QSharedPointer<RLine>(new RLine(line)));
+    RLine extLine2 = RLine(extensionPoint2 + v1, extensionPoint2 + e1*extLength + v2);
+
+    adjustExtensionLineFixLength(extLine1, extLine2);
+
+    ret.append(QSharedPointer<RLine>(new RLine(extLine1)));
+    ret.append(QSharedPointer<RLine>(new RLine(extLine2)));
 
     // dimension line:
     ret.append(getDimensionLineShapes(
@@ -191,4 +206,8 @@ QString RDimAlignedData::getAutoLabel() const {
     double distance = getMeasuredValue();
     distance *= linearFactor;
     return formatLabel(distance);
+}
+
+double RDimAlignedData::getAngle() const {
+    return extensionPoint1.getAngleTo(extensionPoint2);
 }

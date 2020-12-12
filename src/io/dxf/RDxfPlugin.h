@@ -25,7 +25,9 @@ public:
     virtual void uninit(bool) {}
     virtual void postInit(InitStatus) {}
     virtual void initScriptExtensions(QScriptEngine&) {}
+    virtual void initTranslations() {}
     virtual RPluginInfo getPluginInfo();
+    virtual bool checkLicense() { return true; }
 };
 
 #endif

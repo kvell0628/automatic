@@ -23,6 +23,7 @@
 RPropertyTypeId RTraceEntity::PropertyCustom;
 RPropertyTypeId RTraceEntity::PropertyHandle;
 RPropertyTypeId RTraceEntity::PropertyProtected;
+RPropertyTypeId RTraceEntity::PropertyWorkingSet;
 RPropertyTypeId RTraceEntity::PropertyType;
 RPropertyTypeId RTraceEntity::PropertyBlock;
 RPropertyTypeId RTraceEntity::PropertyLayer;
@@ -61,6 +62,7 @@ void RTraceEntity::init() {
     RTraceEntity::PropertyCustom.generateId(typeid(RTraceEntity), RObject::PropertyCustom);
     RTraceEntity::PropertyHandle.generateId(typeid(RTraceEntity), RObject::PropertyHandle);
     RTraceEntity::PropertyProtected.generateId(typeid(RTraceEntity), RObject::PropertyProtected);
+    RTraceEntity::PropertyWorkingSet.generateId(typeid(RTraceEntity), RObject::PropertyWorkingSet);
     RTraceEntity::PropertyType.generateId(typeid(RTraceEntity), REntity::PropertyType);
     RTraceEntity::PropertyBlock.generateId(typeid(RTraceEntity), REntity::PropertyBlock);
     RTraceEntity::PropertyLayer.generateId(typeid(RTraceEntity), REntity::PropertyLayer);
@@ -158,7 +160,7 @@ bool RTraceEntity::setProperty(RPropertyTypeId propertyTypeId,
 
 QPair<QVariant, RPropertyAttributes> RTraceEntity::getProperty(
         RPropertyTypeId& propertyTypeId, bool humanReadable,
-        bool noAttributes) {
+        bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyPoint1X) {
         return qMakePair(QVariant(data.getVertexAt(0).x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyPoint1Y) {
@@ -198,13 +200,13 @@ QPair<QVariant, RPropertyAttributes> RTraceEntity::getProperty(
         return qMakePair(QVariant(data.getLength()), RPropertyAttributes(RPropertyAttributes::Sum));
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 
 void RTraceEntity::exportEntity(RExporter& e, bool preview, bool forceSelected) const {
-    Q_UNUSED(preview);
-    Q_UNUSED(forceSelected);
+    Q_UNUSED(preview)
+    Q_UNUSED(forceSelected)
 
     // note that order of fourth and third vertex is swapped:
     RPolyline pl;

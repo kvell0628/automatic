@@ -58,6 +58,9 @@
         queryAllObjects
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        querySelectedLayers
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         queryAllVisibleEntities
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -68,6 +71,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryAllLayers
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        queryAllLayerStates
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryAllBlocks
@@ -142,6 +148,12 @@
         queryLayer
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        queryLayerStateDirect
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        queryLayerState
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         queryLayoutDirect
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -190,10 +202,16 @@
         getBlockName
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getBlockNameFromLayout
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getBlockNames
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getBlockId
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getBlockIdAuto
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getViewName

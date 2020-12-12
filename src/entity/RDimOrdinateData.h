@@ -51,6 +51,8 @@ public:
     virtual bool isValid() const;
     virtual bool isSane() const;
 
+    virtual RBox getBoundingBox(bool ignoreEmpty) const;
+
     void setLeaderEndPoint(const RVector& p) {
         leaderEndPoint = p;
     }
@@ -89,7 +91,7 @@ public:
 
     virtual QList<RRefPoint> getReferencePoints(RS::ProjectionRenderingHint hint = RS::RenderTop) const;
 
-    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier);
 
     virtual bool move(const RVector& offset);
     virtual bool rotate(double rotation, const RVector& center);

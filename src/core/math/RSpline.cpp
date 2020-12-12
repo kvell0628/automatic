@@ -34,20 +34,47 @@ RSplineProxy* RSpline::splineProxy = NULL;
  * Creates a spline object without controlPoints.
  */
 RSpline::RSpline() :
-    degree(3), periodic(false), dirty(true), updateInProgress(false) {
+    degree(3), periodic(false), dirty(true), updateInProgress(false), length(RNANDOUBLE) {
+}
+
+RSpline::RSpline(const RSpline& other) {
+    *this = other;
 }
 
 /**
  * Creates a spline object with the given control points and degree.
  */
 RSpline::RSpline(const QList<RVector>& controlPoints, int degree) :
-    controlPoints(controlPoints), degree(degree), periodic(false), dirty(true), updateInProgress(false) {
+    controlPoints(controlPoints), degree(degree), periodic(false), dirty(true), updateInProgress(false), length(RNANDOUBLE) {
 
     //updateInternal();
 }
 
-RSpline::~RSpline() {
+//RSpline::~RSpline() {
     //invalidate();
+//}
+
+RSpline& RSpline::operator =(const RSpline& other) {
+    controlPoints = other.controlPoints;
+    knotVector = other.knotVector;
+    weights = other.weights;
+    fitPoints = other.fitPoints;
+    degree = other.degree;
+    tangentStart = other.tangentStart;
+    tangentEnd = other.tangentEnd;
+    periodic = other.periodic;
+    dirty = other.dirty;
+    updateInProgress = other.updateInProgress;
+#ifndef R_NO_OPENNURBS
+    if (other.curve.IsValid()) {
+        curve = other.curve;
+    }
+#endif
+    boundingBox = other.boundingBox;
+    exploded = other.exploded;
+    length = other.length;
+
+    return *this;
 }
 
 void RSpline::copySpline(const RSpline& other) {
@@ -60,6 +87,7 @@ void RSpline::copySpline(const RSpline& other) {
     this->tangentStart = other.tangentStart;
     this->tangentEnd = other.tangentEnd;
     this->boundingBox = other.boundingBox;
+    this->length = other.length;
     bool d = other.dirty;
 
     // do NOT copy curve member (copying of ON_NurbsCurve is broken, segfaults).
@@ -106,7 +134,7 @@ QList<RSpline> RSpline::createSplinesFromArc(const RArc& arc) {
     QList<RSpline> curves;
 
     double piOverTwo = M_PI_2;
-    double segmentationAngle = piOverTwo/4;
+    double segmentationAngle = piOverTwo/8;
     //double segmentationAngle = M_PI/8;
     double sgn = (startAngle < endAngle) ? +1 : -1;
 
@@ -352,7 +380,7 @@ void RSpline::insertFitPointAt(double t, const RVector& p) {
     int index = -1;
     for (int i=0; i<fitPoints.length(); i++) {
         double tc = getTAtPoint(fitPoints[i]);
-        if (i==0 && isClosed()) {
+        if (i==0 && (isClosed() || getStartPoint().equalsFuzzy(getEndPoint()))) {
             // closed spline: two t's for first fit point:
             tc = 0.0;
         }
@@ -365,14 +393,13 @@ void RSpline::insertFitPointAt(double t, const RVector& p) {
         }
     }
 
-
     // point not on spline:
     if (index<0 || index>=fitPoints.length()) {
         if (isClosed()) {
             index = 0;
         }
         else {
-            qWarning() << "no point on spline found. t: " << t;
+            qWarning() << "no point on spline found. t: " << t << ", index: " << index;
             return;
         }
     }
@@ -405,6 +432,14 @@ void RSpline::removeFitPointAt(const RVector& point) {
  */
 void RSpline::removeLastFitPoint() {
     fitPoints.removeLast();
+    update();
+}
+
+/**
+ * Removes the first fit point.
+ */
+void RSpline::removeFirstFitPoint() {
+    fitPoints.removeFirst();
     update();
 }
 
@@ -939,7 +974,7 @@ QList<QSharedPointer<RShape> > RSpline::getExplodedWithSegmentLength(double segm
     QList<RSpline> bezierSegments = getBezierSegments();
     for (int i=0; i<bezierSegments.length(); i++) {
         double len = bezierSegments[i].getLength();
-        int seg = ceil(len / segmentLength);
+        int seg = static_cast<int>(ceil(len / segmentLength));
         ret.append(bezierSegments[i].getExploded(seg));
     }
     return ret;
@@ -975,19 +1010,23 @@ double RSpline::getLength() const {
     if (!isValid()) {
         return 0.0;
     }
+    if (!dirty && !RMath::isNaN(length)) {
+        return length;
+    }
 
     if (hasProxy()) {
-        return splineProxy->getDistanceAtT(*this, getTMax());
+        length = splineProxy->getDistanceAtT(*this, getTMax());
     }
     else {
-        double length = 0.0;
+        length = 0.0;
         QList<QSharedPointer<RShape> > shapes = getExploded();
         for (int i=0; i<shapes.size(); i++) {
             QSharedPointer<RShape> shape = shapes[i];
             length += shape->getLength();
         }
-        return length;
     }
+
+    return length;
 
     // seems to only work in the context of another product which uses OpenNURBS:
     // curve.GetLength(&length);
@@ -1052,7 +1091,7 @@ QList<RVector> RSpline::getCenterPoints() const {
 QList<RVector> RSpline::getPointsWithDistanceToEnd(double distance, int from) const {
     QList<RVector> ret;
 
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         double t;
         if (from&RS::FromStart) {
             t = splineProxy->getTAtDistance(*this, distance);
@@ -1084,8 +1123,13 @@ QList<RVector> RSpline::getPointsWithDistanceToEnd(double distance, int from) co
     return ret;
 }
 
+QList<RVector> RSpline::getPointCloud(double segmentLength) const {
+    RPolyline pl = approximateWithArcs(0.01);
+    return pl.getPointCloud(segmentLength);
+}
+
 RVector RSpline::getVectorTo(const RVector& point, bool limited, double strictRange) const {
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         return splineProxy->getVectorTo(*this, point, limited, strictRange);
     }
     else {
@@ -1244,6 +1288,17 @@ bool RSpline::reverse() {
     return true;
 }
 
+bool RSpline::stretch(const RPolyline& area, const RVector& offset) {
+    if (!fitPoints.isEmpty()) {
+        for (int i=0; i<fitPoints.size(); i++) {
+            fitPoints[i].stretch(area, offset);
+        }
+        update();
+        return true;
+    }
+    return false;
+}
+
 QSharedPointer<RShape> RSpline::getTransformed(const QTransform& transform) const {
     QSharedPointer<RSpline> ret = QSharedPointer<RSpline>(clone());
 
@@ -1282,8 +1337,9 @@ bool RSpline::isValid() const {
         return false;
     }
     if (hasFitPoints()) {
-        if (fitPoints.count() < 3) {
-            //qDebug() << "RSpline::isValid: spline not valid: less than 3 fit points";
+        // spline with two fit points is line:
+        if (fitPoints.count() < 2) {
+            //qDebug() << "RSpline::isValid: spline not valid: less than 2 fit points";
             return false;
         }
         return true;
@@ -1335,21 +1391,23 @@ double RSpline::getTMax() const {
 }
 
 double RSpline::getTAtPoint(const RVector& point) const {
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
+        // TODO: fails for splines with clamped control points in the middle (multiple control points at the same location):
         return splineProxy->getTAtPoint(*this, point);
     }
+
     return 0.0;
 }
 
 double RSpline::getTAtDistance(double distance) const {
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         return splineProxy->getTAtDistance(*this, distance);
     }
     return 0.0;
 }
 
 double RSpline::getDistanceAtT(double t) const {
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         return splineProxy->getDistanceAtT(*this, t);
     }
     return 0.0;
@@ -1386,7 +1444,7 @@ QList<RVector> RSpline::getDiscontinuities() const {
 }
 
 RSpline RSpline::simplify(double tolerance) {
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         return splineProxy->simplify(*this, tolerance);
     }
     return *this;
@@ -1395,8 +1453,10 @@ RSpline RSpline::simplify(double tolerance) {
 void RSpline::invalidate() const {
 #ifndef R_NO_OPENNURBS
     curve.Destroy();
+    //curve.Initialize();
 #endif
     exploded.clear();
+    length = RNANDOUBLE;
 }
 
 void RSpline::updateInternal() const {
@@ -1415,6 +1475,7 @@ void RSpline::updateInternal() const {
     }
 
     exploded.clear();
+    length = RNANDOUBLE;
 
     // if fit points are known, update from fit points, otherwise from
     // control points:
@@ -1581,13 +1642,14 @@ void RSpline::updateFromControlPoints() const {
  * Degree is always corrected to 3rd degree.
  */
 void RSpline::updateFromFitPoints() const {
-    if (fitPoints.size()<degree) {
+    // spline with two fit points is line:
+    if (fitPoints.size()<2) {
         invalidate();
         return;
     }
 
     // call into plugin
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         RSpline spline = splineProxy->updateFromFitPoints(*this);
 //        qDebug() << "tan start before:" << this->tangentStart;
 //        qDebug() << "tan start:" << spline.tangentStart;
@@ -1621,8 +1683,10 @@ void RSpline::updateBoundingBox() const {
  * \return List of bezier spline segments which together represent this curve.
  */
 QList<RSpline> RSpline::getBezierSegments(const RBox& queryBox) const {
+    int ctrlCount = countControlPoints();
+
     // spline is a single bezier segment:
-    if (countControlPoints()==getDegree()+1) {
+    if (ctrlCount==getDegree()+1) {
         return QList<RSpline>() << *this;
     }
 
@@ -1630,31 +1694,33 @@ QList<RSpline> RSpline::getBezierSegments(const RBox& queryBox) const {
 
     QList<RSpline> ret;
 #ifndef R_NO_OPENNURBS
-    ON_NurbsCurve* dup = dynamic_cast<ON_NurbsCurve*>(curve.DuplicateCurve());
-    if (dup==NULL) {
-        return ret;
+    if (ctrlCount>0) {
+        ON_NurbsCurve* dup = dynamic_cast<ON_NurbsCurve*>(curve.DuplicateCurve());
+        if (dup==NULL) {
+            return ret;
+        }
+
+        dup->MakePiecewiseBezier();
+        for (int i=0; i<=dup->CVCount() - dup->Order(); ++i) {
+            ON_BezierCurve bc;
+            if (!dup->ConvertSpanToBezier(i, bc)) {
+                continue;
+            }
+
+            QList<RVector> ctrlPts;
+            for (int cpi=0; cpi<bc.CVCount(); cpi++) {
+                ON_3dPoint onp;
+                bc.GetCV(cpi, onp);
+                ctrlPts.append(RVector(onp.x, onp.y, onp.z));
+            }
+            RSpline bezierSegment(ctrlPts, degree);
+
+            if (!queryBox.isValid() || queryBox.intersects(bezierSegment.getBoundingBox())) {
+                ret.append(bezierSegment);
+            }
+        }
+        delete dup;
     }
-
-    dup->MakePiecewiseBezier();
-    for (int i=0; i<=dup->CVCount() - dup->Order(); ++i) {
-        ON_BezierCurve bc;
-        if (!dup->ConvertSpanToBezier(i, bc)) {
-            continue;
-        }
-
-        QList<RVector> ctrlPts;
-        for (int cpi=0; cpi<bc.CVCount(); cpi++) {
-            ON_3dPoint onp;
-            bc.GetCV(cpi, onp);
-            ctrlPts.append(RVector(onp.x, onp.y, onp.z));
-        }
-        RSpline bezierSegment(ctrlPts, degree);
-
-        if (!queryBox.isValid() || queryBox.intersects(bezierSegment.getBoundingBox())) {
-            ret.append(bezierSegment);
-        }
-    }
-    delete dup;
  #endif
 
     return ret;
@@ -1730,7 +1796,7 @@ QList<RSpline> RSpline::splitAtPoints(const QList<RVector>& points) const {
 }
 
 QList<RSpline> RSpline::splitAtParams(const QList<double>& params) const {
-    if (splineProxy!=NULL) {
+    if (hasProxy()) {
         return splineProxy->split(*this, params);
     }
     return QList<RSpline>();
@@ -1788,9 +1854,6 @@ QList<QSharedPointer<RShape> > RSpline::splitAt(const QList<RVector>& points) co
     }
 
     QList<QSharedPointer<RShape> > ret;
-
-    RVector startPoint = getStartPoint();
-    RVector endPoint = getEndPoint();
 
     QMap<double, RVector> sortable;
     for (int i=0; i<points.length(); i++) {

@@ -141,7 +141,7 @@ HatchFromSelection.verifyBoundaryEntity = function(doc, entity) {
         var ids = doc.queryBlockEntities(blockReferenceData.getReferencedBlockId());
         var ret = true;
         for (var i=0; i<ids.length; i++) {
-            var bEntity = blockReferenceData.queryEntity(ids[i]);
+            var bEntity = blockReferenceData.queryEntity(ids[i], true);
             if (bEntity.isNull()) {
                 continue;
             }
@@ -255,7 +255,7 @@ HatchFromSelection.traverse = function(hatchData, docOrBlockRef, entity, candida
                 continue;
             }
 
-            var bEntity = blockReferenceData.queryEntity(ids[i]);
+            var bEntity = blockReferenceData.queryEntity(ids[i], true);
             if (bEntity.isNull()) {
                 continue;
             }
@@ -270,7 +270,11 @@ HatchFromSelection.traverse = function(hatchData, docOrBlockRef, entity, candida
         return ret;
     }
 
-    var shape = entity.getData().castToShape().clone();
+    var shape = entity.getData().castToShape();
+    if (isNull(shape)) {
+        return false;
+    }
+    shape = shape.clone();
     if (isFunction(shape.getLength)) {
         if (shape.getLength()<RS.PointTolerance) {
             // ignore zero length entity:
@@ -303,7 +307,7 @@ HatchFromSelection.traverse = function(hatchData, docOrBlockRef, entity, candida
             }
             else {
                 // query entity from block reference:
-                entity = docOrBlockRef.queryEntity(entityId);
+                entity = docOrBlockRef.queryEntity(entityId, true);
             }
 
             if (isBlockReferenceEntity(entity)) {
@@ -320,6 +324,11 @@ HatchFromSelection.traverse = function(hatchData, docOrBlockRef, entity, candida
                     docOrBlockRef.traversed[entityId] = true;
                     continue;
                 }
+            }
+
+            if (!isFunction(entity.getStartPoint)) {
+                // ignore entities without start / end points (existing hatches, etc..):
+                continue;
             }
 
             var sp = entity.getStartPoint();

@@ -93,6 +93,11 @@ public:
     static QScriptValue ecmaQObjectGetChildren(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaQDomNodeAppendChild(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaQDomNodeRemoveChild(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQTextCharFormatSetFontFamilies(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQPrinterSetPdfVersion(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaGetAvailablePrinterNames(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaGetDefaultPrinterName(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaCreatePrinter(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaBacktrace(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaAttachDebugger(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaDetachDebugger(QScriptContext* context, QScriptEngine* engine);
@@ -103,6 +108,8 @@ public:
     static QScriptValue ecmaQLocaleScript(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaQLocaleScriptToString(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaQLineEditValidator(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQItemSelectionModelCountSelectedRows(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQItemSelectionModelSelectedRow(QScriptContext* context, QScriptEngine* engine);
     //static QScriptValue ecmaQWebPageSetLinkDelegationPolicy(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaMSleep(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaParseXml(QScriptContext* context, QScriptEngine* engine);
@@ -123,6 +130,10 @@ public:
     static QScriptValue ecmaQFileClose(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaQFileReadAll(QScriptContext* context, QScriptEngine* engine);
     static QScriptValue ecmaQFileFileName(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQFileWrite(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQImagePixelColor(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQImageSetPixelColor(QScriptContext* context, QScriptEngine* engine);
+    static QScriptValue ecmaQImageSetColorTable(QScriptContext* context, QScriptEngine* engine);
 
     //static QScriptValue ecmaGetShapeIntersections(QScriptContext* context, QScriptEngine* engine);
 

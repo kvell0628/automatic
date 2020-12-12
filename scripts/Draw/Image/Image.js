@@ -24,7 +24,7 @@
  * \brief This module contains the ECMAScript implementation of the image
  * drawing tool.
  */
-include("../Draw.js");
+include("scripts/Draw/Draw.js");
 
 /**
  * \class Image
@@ -192,14 +192,15 @@ Image.prototype.setState = function(state) {
     this.getDocumentInterface().setClickMode(RAction.PickCoordinate);
 
     var appWin = RMainWindowQt.getMainWindow();
-    this.setLeftMouseTip(qsTr("Position"));
+    var tr = qsTr("Position");
+    this.setLeftMouseTip(tr);
+    this.setCommandPrompt(tr);
     this.setRightMouseTip(EAction.trCancel);
     EAction.showSnapTools();
 };
 
 Image.prototype.pickCoordinate = function(event, preview) {
     this.pos = event.getModelPosition();
-    this.getDocumentInterface().setRelativeZero(this.pos);
 
     var op = this.getOperation();
     if (!isNull(op)) {
@@ -207,6 +208,7 @@ Image.prototype.pickCoordinate = function(event, preview) {
             this.updatePreview();
         }
         else {
+            this.getDocumentInterface().setRelativeZero(this.pos);
             this.applyOperation();
         }
     }

@@ -37,6 +37,7 @@ DimensionSettings.dimx = [
             ["DIMGAP", RS.DIMGAP, 0.25],
             ["DIMASZ", RS.DIMASZ, 1.0],
             ["DIMSCALE", RS.DIMSCALE, undefined],
+            ["DIMDLI", RS.DIMDLI, 2.0],
         ];
 
 /**
@@ -54,7 +55,7 @@ DimensionSettings.updateUnit = function(unit) {
     // (re-)init unit labels:
     var unitSymbol = "";
     unitSymbol = RUnit.unitToName(DimensionSettings.unit);
-    for (var i=1; i<=5; i++) {
+    for (var i=1; i<=6; i++) {
         var w = widgets["DimUnit" + i];
         if (isNull(w)) {
             continue;
@@ -91,6 +92,7 @@ DimensionSettings.initPreferences = function(pageWidget, calledByPrefDialog, doc
     var wastz = widgets["AngularShowTrailingZeros"];
     var wap = widgets["AngularPrecision"];
     var wdf = widgets["DimensionFont"];
+    var wdtc = widgets["DimensionTextColor"];
     var wdp = widgets["DecimalPoint"];
     var wfg = widgets["FontGroup"];
     var wkp = widgets["KeepProportions"];
@@ -216,18 +218,27 @@ DimensionSettings.initPreferences = function(pageWidget, calledByPrefDialog, doc
     }
 
     if (isNull(document)) {
+        // defaults for new drawings:
         // update unit labels, preview:
         //DimensionSettings.updateUnit(unit);
         //DimensionSettings.updateLinearPrecision(widgets);
         //DimensionSettings.updateAngularPrecision(widgets);
 
         if (hasPlugin("DWG")) {
+            // font:
             if (!isNull(wdf)) {
                 wdf.setProperty("Loaded", true);
                 wdf.editable = false;
                 initFontComboBox(wdf);
                 var dimFont = RSettings.getStringValue(settingsName + "/DimensionFont", "Standard");
                 activateFont(wdf, dimFont.isEmpty() ? "Standard" : dimFont);
+            }
+
+            // text color:
+            if (!isNull(wdtc)) {
+                wdtc.setProperty("Loaded", true);
+                var dimTextColor = RSettings.getColorValue(settingsName + "/DimensionTextColor", new RColor(RColor.ByBlock));
+                wdtc.setColor(dimTextColor);
             }
         }
         else {
@@ -355,6 +366,7 @@ DimensionSettings.initPreferences = function(pageWidget, calledByPrefDialog, doc
     DimensionSettings.updateUnit(unit);
 
     if (hasPlugin("DWG")) {
+        // font:
         if (!isNull(wdf)) {
             wdf.setProperty("Loaded", true);
             wdf.editable = false;
@@ -362,6 +374,15 @@ DimensionSettings.initPreferences = function(pageWidget, calledByPrefDialog, doc
             initFontComboBox(wdf);
             var dimFont = document.getDimensionFont();
             activateFont(wdf, dimFont.isEmpty() ? "Standard" : dimFont);
+        }
+
+        // text color:
+        if (!isNull(wdtc)) {
+            wdtc.setProperty("Loaded", true);
+            var dimTextColor = document.getKnownVariable(RS.DIMCLRT, new RColor(RColor.ByBlock));
+            if (isValidColor(dimTextColor)) {
+                wdtc.setColor(dimTextColor);
+            }
         }
     }
     else {
@@ -402,9 +423,9 @@ DimensionSettings.showLinearFormatWarning = function() {
     var appWin = EAction.getMainWindow();
     QMessageBox.warning(appWin,
                         qsTr("Unit / Format"),
-                        qsTr("The drawing unit must be 'Inch' to display dimension labels in "
-                             + "formats 'Architectural' or 'Engineering'. "
-                             + "Format changed to 'Decimal'."));
+                        qsTr("The drawing unit must be \"Inch\" to display dimension labels in "
+                             + "formats \"Architectural\" or \"Engineering\". "
+                             + "Format changed to \"Decimal\"."));
 };
 
 /**
@@ -667,6 +688,7 @@ DimensionSettings.savePreferences = function(pageWidget, calledByPrefDialog, doc
     document.setKnownVariable(RS.DIMDEC, widgets["LinearPrecision"].currentIndex, transaction);
     document.setKnownVariable(RS.DIMAUNIT, widgets["AngularFormat"].currentIndex, transaction);
     document.setKnownVariable(RS.DIMADEC, widgets["AngularPrecision"].currentIndex, transaction);
+    document.setKnownVariable(RS.DIMCLRT, widgets["DimensionTextColor"].getColor(), transaction);
     document.setDimensionFont(widgets["DimensionFont"].currentText, transaction);
 
     // show leading / trailing zeroes:

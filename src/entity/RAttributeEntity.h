@@ -44,6 +44,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -70,6 +71,8 @@ public:
     static RPropertyTypeId PropertyPlainText;
     static RPropertyTypeId PropertyVAlign;
     static RPropertyTypeId PropertyInvisible;
+    static RPropertyTypeId PropertyBackward;
+    static RPropertyTypeId PropertyUpsideDown;
 
 public:
     RAttributeEntity(RDocument* document, const RAttributeData& data);
@@ -98,13 +101,11 @@ public:
     }
 
 
-    bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
+    virtual bool setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
         RTransaction* transaction=NULL);
-    QPair<QVariant, RPropertyAttributes> getProperty(
+    virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
-
-    virtual bool isVisible() const;
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     void exportEntity(RExporter& e, bool preview, bool forceSelected=false) const;
 

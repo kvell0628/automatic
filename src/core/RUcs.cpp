@@ -68,8 +68,8 @@ bool RUcs::setProperty(RPropertyTypeId propertyTypeId, const QVariant& value, RT
 }
 
 QPair<QVariant, RPropertyAttributes> RUcs::getProperty(
-        RPropertyTypeId& propertyTypeId, bool /*humanReadable*/,
-        bool /*noAttributes*/) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable,
+        bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertyName) {
         return qMakePair(QVariant(name), RPropertyAttributes());
@@ -111,7 +111,8 @@ QPair<QVariant, RPropertyAttributes> RUcs::getProperty(
         return qMakePair(QVariant(yAxisDirection.z), RPropertyAttributes());
     }
 
-    return qMakePair(QVariant(), RPropertyAttributes());
+    //return qMakePair(QVariant(), RPropertyAttributes());
+    return RObject::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 

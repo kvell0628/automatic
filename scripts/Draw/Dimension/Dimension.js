@@ -23,7 +23,7 @@
  *
  * \brief This module contains ECMAScript implementations of various dimensioning tools.
  */
-include("../Draw.js");
+include("scripts/Draw/Draw.js");
 
 /**
  * \class Dimension
@@ -54,7 +54,7 @@ Dimension.prototype.initUiOptions = function(resume, optionsToolBar) {
 
     // for some dimensions (e.g. leader), no standard dimensions toolbar
     // is shown:
-    if (!this.uiFile.contains("../Dimension.ui")) {
+    if (this.uiFile.join(",").indexOf("/Dimension.ui")===-1) {
         return;
     }
 
@@ -117,6 +117,24 @@ Dimension.prototype.initUiOptions = function(resume, optionsToolBar) {
     }
 };
 
+Dimension.prototype.showUiOptions = function(resume, restoreFromSettings) {
+    EAction.prototype.showUiOptions.call(this, resume, restoreFromSettings);
+
+    if (!resume) {
+        var scale = this.parseScale(this.getScaleString());
+        if (!RMath.fuzzyCompare(scale, 1) && RSettings.getBoolValue("DimensionScaleDialog/DontShowDialog", false)!==true) {
+            // warning if scale is not 1:
+            var appWin = RMainWindowQt.getMainWindow();
+
+            var dialog = WidgetFactory.createDialog(Dimension.includeBasePath, "DimensionScaleDialog.ui", appWin);
+            dialog.exec();
+            WidgetFactory.saveState(dialog);
+            dialog.destroy();
+            EAction.activateMainWindow();
+        }
+    }
+};
+
 Dimension.prototype.initScaleCombo = function() {
     var optionsToolBar = EAction.getOptionsToolBar();
     var scaleCombo = optionsToolBar.findChild("Scale");
@@ -153,7 +171,7 @@ Dimension.getCadToolBarPanel = function() {
         action.objectName = actionName;
         action.setRequiresDocument(true);
         action.setIcon(Dimension.includeBasePath + "/Dimension.svg");
-        action.setStatusTip(qsTr("Show dimension tools"));
+        //action.setStatusTip(qsTr("Show dimension tools"));
         action.setDefaultShortcut(new QKeySequence("w,d"));
         action.setNoState();
         action.setDefaultCommands(["dimensionmenu"]);

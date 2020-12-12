@@ -22,6 +22,7 @@ HEADERS += \
     $$PWD/REcmaCircle.h \
     $$PWD/REcmaCircleData.h \
     $$PWD/REcmaCircleEntity.h \
+    $$PWD/REcmaClickReferencePointOperation.h \
     $$PWD/REcmaClipboardOperation.h \
     $$PWD/REcmaCloseCurrentEvent.h \
     $$PWD/REcmaColor.h \
@@ -39,8 +40,14 @@ HEADERS += \
     $$PWD/REcmaDeleteSelectionOperation.h \
     $$PWD/REcmaDimAlignedData.h \
     $$PWD/REcmaDimAlignedEntity.h \
+    $$PWD/REcmaDimAngular2LData.h \
+    $$PWD/REcmaDimAngular2LEntity.h \
+    $$PWD/REcmaDimAngular3PData.h \
+    $$PWD/REcmaDimAngular3PEntity.h \
     $$PWD/REcmaDimAngularData.h \
     $$PWD/REcmaDimAngularEntity.h \
+    $$PWD/REcmaDimArcLengthData.h \
+    $$PWD/REcmaDimArcLengthEntity.h \
     $$PWD/REcmaDimDiametricData.h \
     $$PWD/REcmaDimDiametricEntity.h \
     $$PWD/REcmaDimLinearData.h \
@@ -118,6 +125,7 @@ HEADERS += \
     $$PWD/REcmaLayer.h \
     $$PWD/REcmaLayerListener.h \
     $$PWD/REcmaLayerListenerAdapter.h \
+    $$PWD/REcmaLayerState.h \
     $$PWD/REcmaLayout.h \
     $$PWD/REcmaLeaderData.h \
     $$PWD/REcmaLeaderEntity.h \
@@ -138,6 +146,7 @@ HEADERS += \
     $$PWD/REcmaMainWindow.h \
     $$PWD/REcmaMainWindowQt.h \
     $$PWD/REcmaMath.h \
+    $$PWD/REcmaMathComboBox.h \
     $$PWD/REcmaMathLineEdit.h \
     $$PWD/REcmaMatrix.h \
     $$PWD/REcmaMdiArea.h \
@@ -156,10 +165,13 @@ HEADERS += \
     $$PWD/REcmaNewDocumentListenerAdapter.h \
     $$PWD/REcmaObject.h \
     $$PWD/REcmaOperation.h \
+    $$PWD/REcmaOperationUtils.h \
     $$PWD/REcmaOrthoGrid.h \
     $$PWD/REcmaPainterPath.h \
     $$PWD/REcmaPainterPathDevice.h \
     $$PWD/REcmaPainterPathSource.h \
+    $$PWD/REcmaPaletteListener.h \
+    $$PWD/REcmaPaletteListenerAdapter.h \
     $$PWD/REcmaPasteOperation.h \
     $$PWD/REcmaPattern.h \
     $$PWD/REcmaPatternLine.h \
@@ -219,7 +231,10 @@ HEADERS += \
     $$PWD/REcmaSharedPointerCircle.h \
     $$PWD/REcmaSharedPointerCircleEntity.h \
     $$PWD/REcmaSharedPointerDimAlignedEntity.h \
+    $$PWD/REcmaSharedPointerDimAngular2LEntity.h \
+    $$PWD/REcmaSharedPointerDimAngular3PEntity.h \
     $$PWD/REcmaSharedPointerDimAngularEntity.h \
+    $$PWD/REcmaSharedPointerDimArcLengthEntity.h \
     $$PWD/REcmaSharedPointerDimDiametricEntity.h \
     $$PWD/REcmaSharedPointerDimLinearEntity.h \
     $$PWD/REcmaSharedPointerDimOrdinateEntity.h \
@@ -237,6 +252,7 @@ HEADERS += \
     $$PWD/REcmaSharedPointerHatchEntity.h \
     $$PWD/REcmaSharedPointerImageEntity.h \
     $$PWD/REcmaSharedPointerLayer.h \
+    $$PWD/REcmaSharedPointerLayerState.h \
     $$PWD/REcmaSharedPointerLayout.h \
     $$PWD/REcmaSharedPointerLeaderEntity.h \
     $$PWD/REcmaSharedPointerLine.h \
@@ -259,6 +275,7 @@ HEADERS += \
     $$PWD/REcmaSharedPointerTextData.h \
     $$PWD/REcmaSharedPointerTextEntity.h \
     $$PWD/REcmaSharedPointerTextLabel.h \
+    $$PWD/REcmaSharedPointerToleranceEntity.h \
     $$PWD/REcmaSharedPointerTraceEntity.h \
     $$PWD/REcmaSharedPointerTriangle.h \
     $$PWD/REcmaSharedPointerUcs.h \
@@ -331,6 +348,9 @@ HEADERS += \
     $$PWD/REcmaTextLayout.h \
     $$PWD/REcmaTextRenderer.h \
     $$PWD/REcmaThread.h \
+    $$PWD/REcmaToleranceData.h \
+    $$PWD/REcmaToleranceEntity.h \
+    $$PWD/REcmaToolButton.h \
     $$PWD/REcmaToolMatrixItemDelegate.h \
     $$PWD/REcmaTraceData.h \
     $$PWD/REcmaTraceEntity.h \
@@ -338,6 +358,8 @@ HEADERS += \
     $$PWD/REcmaTransactionEvent.h \
     $$PWD/REcmaTransactionListener.h \
     $$PWD/REcmaTransactionListenerAdapter.h \
+    $$PWD/REcmaTransform.h \
+    $$PWD/REcmaTransformOp.h \
     $$PWD/REcmaTransformation.h \
     $$PWD/REcmaTranslation.h \
     $$PWD/REcmaTreeWidget.h \
@@ -356,8 +378,7 @@ HEADERS += \
     $$PWD/REcmaWidget.h \
     $$PWD/REcmaXLine.h \
     $$PWD/REcmaXLineData.h \
-    $$PWD/REcmaXLineEntity.h \
-    $$PWD/REcmaZip.h
+    $$PWD/REcmaXLineEntity.h
 SOURCES += \
     $$PWD/REcmaAction.cpp \
     $$PWD/REcmaActionAdapter.cpp \
@@ -382,6 +403,7 @@ SOURCES += \
     $$PWD/REcmaCircle.cpp \
     $$PWD/REcmaCircleData.cpp \
     $$PWD/REcmaCircleEntity.cpp \
+    $$PWD/REcmaClickReferencePointOperation.cpp \
     $$PWD/REcmaClipboardOperation.cpp \
     $$PWD/REcmaCloseCurrentEvent.cpp \
     $$PWD/REcmaColor.cpp \
@@ -399,8 +421,14 @@ SOURCES += \
     $$PWD/REcmaDeleteSelectionOperation.cpp \
     $$PWD/REcmaDimAlignedData.cpp \
     $$PWD/REcmaDimAlignedEntity.cpp \
+    $$PWD/REcmaDimAngular2LData.cpp \
+    $$PWD/REcmaDimAngular2LEntity.cpp \
+    $$PWD/REcmaDimAngular3PData.cpp \
+    $$PWD/REcmaDimAngular3PEntity.cpp \
     $$PWD/REcmaDimAngularData.cpp \
     $$PWD/REcmaDimAngularEntity.cpp \
+    $$PWD/REcmaDimArcLengthData.cpp \
+    $$PWD/REcmaDimArcLengthEntity.cpp \
     $$PWD/REcmaDimDiametricData.cpp \
     $$PWD/REcmaDimDiametricEntity.cpp \
     $$PWD/REcmaDimLinearData.cpp \
@@ -478,6 +506,7 @@ SOURCES += \
     $$PWD/REcmaLayer.cpp \
     $$PWD/REcmaLayerListener.cpp \
     $$PWD/REcmaLayerListenerAdapter.cpp \
+    $$PWD/REcmaLayerState.cpp \
     $$PWD/REcmaLayout.cpp \
     $$PWD/REcmaLeaderData.cpp \
     $$PWD/REcmaLeaderEntity.cpp \
@@ -498,6 +527,7 @@ SOURCES += \
     $$PWD/REcmaMainWindow.cpp \
     $$PWD/REcmaMainWindowQt.cpp \
     $$PWD/REcmaMath.cpp \
+    $$PWD/REcmaMathComboBox.cpp \
     $$PWD/REcmaMathLineEdit.cpp \
     $$PWD/REcmaMatrix.cpp \
     $$PWD/REcmaMdiArea.cpp \
@@ -516,10 +546,13 @@ SOURCES += \
     $$PWD/REcmaNewDocumentListenerAdapter.cpp \
     $$PWD/REcmaObject.cpp \
     $$PWD/REcmaOperation.cpp \
+    $$PWD/REcmaOperationUtils.cpp \
     $$PWD/REcmaOrthoGrid.cpp \
     $$PWD/REcmaPainterPath.cpp \
     $$PWD/REcmaPainterPathDevice.cpp \
     $$PWD/REcmaPainterPathSource.cpp \
+    $$PWD/REcmaPaletteListener.cpp \
+    $$PWD/REcmaPaletteListenerAdapter.cpp \
     $$PWD/REcmaPasteOperation.cpp \
     $$PWD/REcmaPattern.cpp \
     $$PWD/REcmaPatternLine.cpp \
@@ -579,7 +612,10 @@ SOURCES += \
     $$PWD/REcmaSharedPointerCircle.cpp \
     $$PWD/REcmaSharedPointerCircleEntity.cpp \
     $$PWD/REcmaSharedPointerDimAlignedEntity.cpp \
+    $$PWD/REcmaSharedPointerDimAngular2LEntity.cpp \
+    $$PWD/REcmaSharedPointerDimAngular3PEntity.cpp \
     $$PWD/REcmaSharedPointerDimAngularEntity.cpp \
+    $$PWD/REcmaSharedPointerDimArcLengthEntity.cpp \
     $$PWD/REcmaSharedPointerDimDiametricEntity.cpp \
     $$PWD/REcmaSharedPointerDimLinearEntity.cpp \
     $$PWD/REcmaSharedPointerDimOrdinateEntity.cpp \
@@ -597,6 +633,7 @@ SOURCES += \
     $$PWD/REcmaSharedPointerHatchEntity.cpp \
     $$PWD/REcmaSharedPointerImageEntity.cpp \
     $$PWD/REcmaSharedPointerLayer.cpp \
+    $$PWD/REcmaSharedPointerLayerState.cpp \
     $$PWD/REcmaSharedPointerLayout.cpp \
     $$PWD/REcmaSharedPointerLeaderEntity.cpp \
     $$PWD/REcmaSharedPointerLine.cpp \
@@ -619,6 +656,7 @@ SOURCES += \
     $$PWD/REcmaSharedPointerTextData.cpp \
     $$PWD/REcmaSharedPointerTextEntity.cpp \
     $$PWD/REcmaSharedPointerTextLabel.cpp \
+    $$PWD/REcmaSharedPointerToleranceEntity.cpp \
     $$PWD/REcmaSharedPointerTraceEntity.cpp \
     $$PWD/REcmaSharedPointerTriangle.cpp \
     $$PWD/REcmaSharedPointerUcs.cpp \
@@ -691,6 +729,9 @@ SOURCES += \
     $$PWD/REcmaTextLayout.cpp \
     $$PWD/REcmaTextRenderer.cpp \
     $$PWD/REcmaThread.cpp \
+    $$PWD/REcmaToleranceData.cpp \
+    $$PWD/REcmaToleranceEntity.cpp \
+    $$PWD/REcmaToolButton.cpp \
     $$PWD/REcmaToolMatrixItemDelegate.cpp \
     $$PWD/REcmaTraceData.cpp \
     $$PWD/REcmaTraceEntity.cpp \
@@ -698,6 +739,8 @@ SOURCES += \
     $$PWD/REcmaTransactionEvent.cpp \
     $$PWD/REcmaTransactionListener.cpp \
     $$PWD/REcmaTransactionListenerAdapter.cpp \
+    $$PWD/REcmaTransform.cpp \
+    $$PWD/REcmaTransformOp.cpp \
     $$PWD/REcmaTransformation.cpp \
     $$PWD/REcmaTranslation.cpp \
     $$PWD/REcmaTreeWidget.cpp \
@@ -716,8 +759,7 @@ SOURCES += \
     $$PWD/REcmaWidget.cpp \
     $$PWD/REcmaXLine.cpp \
     $$PWD/REcmaXLineData.cpp \
-    $$PWD/REcmaXLineEntity.cpp \
-    $$PWD/REcmaZip.cpp
+    $$PWD/REcmaXLineEntity.cpp
 
 contains(QT_VERSION, ^5\.[1-5]\..*) || contains(QT_VERSION, ^4\..*\..*) {
     !r_mobile {

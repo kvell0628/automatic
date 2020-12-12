@@ -111,6 +111,10 @@ xmlns:rs="http://www.ribbonsoft.com">
         name="referencePoint" isConst="true" />
         <arg type="RVector &amp;" typeName="RVector"
         name="targetPoint" isConst="true" />
+        <arg type="Qt::KeyboardModifiers"
+        typeName="Qt::KeyboardModifiers" name="modifiers"
+        hasDefault="true" default="Qt :: NoModifier"
+        isConst="false" />
       </variant>
     </method>
     <method name="move" cppName="move" specifier="public"
@@ -238,6 +242,18 @@ xmlns:rs="http://www.ribbonsoft.com">
         isConst="true" />
       </variant>
     </method>
+    <method name="getTransparency" cppName="getTransparency"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="int" isPureVirtual="false" />
+    </method>
+    <method name="setTransparency" cppName="setTransparency"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="int" typeName="int" name="t" isConst="false" />
+      </variant>
+    </method>
     <method name="clearCustomPattern" cppName="clearCustomPattern"
     specifier="public" isStatic="false" isVirtual="false"
     isScriptOverwritable="true">
@@ -259,6 +275,8 @@ xmlns:rs="http://www.ribbonsoft.com">
         <arg type="QSharedPointer &lt; RShape &gt;"
         typeName="QSharedPointer &lt; RShape &gt;" name="shape"
         isConst="false" />
+        <arg type="bool" typeName="bool" name="addAutoLoops"
+        hasDefault="true" default="true" isConst="false" />
       </variant>
     </method>
     <method name="getBoundaryPath" cppName="getBoundaryPath"
@@ -329,6 +347,24 @@ xmlns:rs="http://www.ribbonsoft.com">
     isScriptOverwritable="true">
       <variant returnType="void" isPureVirtual="false">
         <arg type="RPattern &amp;" typeName="RPattern" name="p"
+        isConst="true" />
+      </variant>
+    </method>
+    <method name="getColor" cppName="getColor" specifier="public"
+    isStatic="false" isVirtual="true" isScriptOverwritable="true">
+      <variant returnType="RColor" isPureVirtual="false" />
+      <variant returnType="RColor" isPureVirtual="false">
+        <arg type="RColor &amp;" typeName="RColor"
+        name="unresolvedColor" isConst="true" />
+        <arg type="QStack &lt; REntity * &gt; &amp;"
+        typeName="QStack &lt; REntity * &gt;" name="blockRefStack"
+        isConst="true" />
+      </variant>
+      <variant returnType="RColor" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="resolve"
+        isConst="false" />
+        <arg type="QStack &lt; REntity * &gt; &amp;"
+        typeName="QStack &lt; REntity * &gt;" name="blockRefStack"
         isConst="true" />
       </variant>
     </method>

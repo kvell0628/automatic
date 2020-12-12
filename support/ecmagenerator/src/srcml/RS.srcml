@@ -23,6 +23,7 @@
 
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"core_global.h"</cpp:file></cpp:include>
 
+<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QEasingCurve&gt;</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QPair&gt;</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QString&gt;</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QStringList&gt;</cpp:file></cpp:include>
@@ -44,6 +45,54 @@
 <cpp:else>#<cpp:directive>else</cpp:directive></cpp:else>
 <cpp:define>#  <cpp:directive>define</cpp:directive> <name>ROS_POSIX</name></cpp:define>
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>
+
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_LINEAR</name> <name>QEasingCurve</name>::Linear</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INQUAD</name> <name>QEasingCurve</name>::InQuad</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTQUAD</name> <name>QEasingCurve</name>::OutQuad</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTQUAD</name> <name>QEasingCurve</name>::InOutQuad</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINQUAD</name> <name>QEasingCurve</name>::OutInQuad</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INCUBIC</name> <name>QEasingCurve</name>::InCubic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTCUBIC</name> <name>QEasingCurve</name>::OutCubic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTCUBIC</name> <name>QEasingCurve</name>::InOutCubic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINCUBIC</name> <name>QEasingCurve</name>::OutInCubic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INQUART</name> <name>QEasingCurve</name>::InQuart</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTQUART</name> <name>QEasingCurve</name>::OutQuart</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTQUART</name> <name>QEasingCurve</name>::InOutQuart</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINQUART</name> <name>QEasingCurve</name>::OutInQuart</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INQUINT</name> <name>QEasingCurve</name>::InQuint</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTQUINT</name> <name>QEasingCurve</name>::OutQuint</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTQUINT</name> <name>QEasingCurve</name>::InOutQuint</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINQUINT</name> <name>QEasingCurve</name>::OutInQuint</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INSINE</name> <name>QEasingCurve</name>::InSine</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTSINE</name> <name>QEasingCurve</name>::OutSine</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTSINE</name> <name>QEasingCurve</name>::InOutSine</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINSINE</name> <name>QEasingCurve</name>::OutInSine</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INEXPO</name> <name>QEasingCurve</name>::InExpo</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTEXPO</name> <name>QEasingCurve</name>::OutExpo</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTEXPO</name> <name>QEasingCurve</name>::InOutExpo</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINEXPO</name> <name>QEasingCurve</name>::OutInExpo</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INCIRC</name> <name>QEasingCurve</name>::InCirc</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTCIRC</name> <name>QEasingCurve</name>::OutCirc</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTCIRC</name> <name>QEasingCurve</name>::InOutCirc</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINCIRC</name> <name>QEasingCurve</name>::OutInCirc</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INELASTIC</name> <name>QEasingCurve</name>::InElastic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTELASTIC</name> <name>QEasingCurve</name>::OutElastic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTELASTIC</name> <name>QEasingCurve</name>::InOutElastic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINELASTIC</name> <name>QEasingCurve</name>::OutInElastic</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INBACK</name> <name>QEasingCurve</name>::InBack</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTBACK</name> <name>QEasingCurve</name>::OutBack</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTBACK</name> <name>QEasingCurve</name>::InOutBack</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINBACK</name> <name>QEasingCurve</name>::OutInBack</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INBOUNCE</name> <name>QEasingCurve</name>::InBounce</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTBOUNCE</name> <name>QEasingCurve</name>::OutBounce</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_INOUTBOUNCE</name> <name>QEasingCurve</name>::InOutBounce</cpp:define>
+<cpp:define>#<cpp:directive>define</cpp:directive> <name>REASING_OUTINBOUNCE</name> <name>QEasingCurve</name>::OutInBounce</cpp:define>
+<comment type="line">//#define REASING_INCURVE QEasingCurve::InCurve</comment>
+<comment type="line">//#define REASING_OUTCURVE QEasingCurve::OutCurve</comment>
+<comment type="line">//#define REASING_SINECURVE QEasingCurve::SineCurve</comment>
+<comment type="line">//#define REASING_COSINECURVE QEasingCurve::CosineCurve</comment>
+<comment type="line">//#define REASING_BEZIERSPLINE QEasingCurve::BezierSpline</comment>
+<comment type="line">//#define REASING_TCBSPLINE QEasingCurve::TCBSpline</comment>
 
 <comment type="block">/**
  * Class namespace for various global enums.
@@ -80,6 +129,7 @@
 
         <expr><name>ObjectBlock</name></expr>,
         <expr><name>ObjectLayer</name></expr>,
+        <expr><name>ObjectLayerState</name></expr>,
         <expr><name>ObjectLinetype</name></expr>,
         <expr><name>ObjectView</name></expr>,
         <expr><name>ObjectLayout</name></expr>,
@@ -113,12 +163,16 @@
         <expr><name>EntityDimRadial</name></expr>,    <comment type="block">/**&lt; Radial Dimension */</comment>
         <expr><name>EntityDimDiametric</name></expr>, <comment type="block">/**&lt; Diametric Dimension */</comment>
         <expr><name>EntityDimAngular</name></expr>,   <comment type="block">/**&lt; Angular Dimension */</comment>
+        <expr><name>EntityDimAngular2L</name></expr>, <comment type="block">/**&lt; Angular Dimension from 2 lines */</comment>
+        <expr><name>EntityDimAngular3P</name></expr>, <comment type="block">/**&lt; Angular Dimension from 3 points */</comment>
+        <expr><name>EntityDimArcLength</name></expr>, <comment type="block">/**&lt; Arc Length Dimension */</comment>
         <expr><name>EntityDimOrdinate</name></expr>,  <comment type="block">/**&lt; Ordinate Dimension */</comment>
         <expr><name>EntityHatch</name></expr>,        <comment type="block">/**&lt; Hatch */</comment>
         <expr><name>EntityImage</name></expr>,        <comment type="block">/**&lt; Image */</comment>
         <expr><name>EntityLeader</name></expr>,       <comment type="block">/**&lt; Leader */</comment>
         <expr><name>EntitySpline</name></expr>,       <comment type="block">/**&lt; Spline */</comment>
         <expr><name>EntityViewport</name></expr>,     <comment type="block">/**&lt; Viewport */</comment>
+        <expr><name>EntityTolerance</name></expr>,    <comment type="block">/**&lt; Tolerance */</comment>
         <expr><name>EntityUser</name></expr>          <comment type="block">/**&lt; User defined entity. Use this to identify
                                  entities that are added in a separate library
                                  and resort to C++ RTTI for RTTI. */</comment>
@@ -134,6 +188,15 @@
         <expr><name>RenderSide</name></expr>,
         <expr><name>RenderFront</name></expr>,
         <expr><name>RenderThreeD</name></expr>
+    }</block>;</enum>
+
+    <comment type="block">/**
+     * Orthogonal mode, used for snap restrictions.
+     */</comment>
+    <enum>enum <name>OrthoMode</name> <block>{
+        <expr><name>OrthoVertical</name></expr>,
+        <expr><name>OrthoHorizonal</name></expr>,
+        <expr><name>Orthogonal</name></expr>
     }</block>;</enum>
 
     <comment type="block">/**
@@ -209,6 +272,7 @@
      * Projection type for isometric projections.
      */</comment>
     <enum>enum <name>IsoProjectionType</name> <block>{
+        <expr><name>NoProjection</name> =  0x00000000</expr>,      <comment type="line">//!&lt; No projection (2d x/y)</comment>
         <expr><name>Top</name> =           0x00000001</expr>,      <comment type="line">//!&lt; Top projection (x/y)</comment>
         <expr><name>Bottom</name> =        0x00000002</expr>,      <comment type="line">//!&lt; Bottom projection (x/y)</comment>
         <expr><name>Left</name> =          0x00000004</expr>,      <comment type="line">//!&lt; Front left projection (x/z)</comment>
@@ -538,11 +602,63 @@
         <expr><name>EndOpenSingle</name></expr>
     }</block>;</enum>
 
+    <enum>enum <name>Easing</name> <block>{
+        <expr><name>Linear</name> = <name>REASING_LINEAR</name></expr>,
+        <expr><name>InQuad</name> = <name>REASING_INQUAD</name></expr>,
+        <expr><name>OutQuad</name> = <name>REASING_OUTQUAD</name></expr>,
+        <expr><name>InOutQuad</name> = <name>REASING_INOUTQUAD</name></expr>,
+        <expr><name>OutInQuad</name> = <name>REASING_OUTINQUAD</name></expr>,
+        <expr><name>InCubic</name> = <name>REASING_INCUBIC</name></expr>,
+        <expr><name>OutCubic</name> = <name>REASING_OUTCUBIC</name></expr>,
+        <expr><name>InOutCubic</name> = <name>REASING_INOUTCUBIC</name></expr>,
+        <expr><name>OutInCubic</name> = <name>REASING_OUTINCUBIC</name></expr>,
+        <expr><name>InQuart</name> = <name>REASING_INQUART</name></expr>,
+        <expr><name>OutQuart</name> = <name>REASING_OUTQUART</name></expr>,
+        <expr><name>InOutQuart</name> = <name>REASING_INOUTQUART</name></expr>,
+        <expr><name>OutInQuart</name> = <name>REASING_OUTINQUART</name></expr>,
+        <expr><name>InQuint</name> = <name>REASING_INQUINT</name></expr>,
+        <expr><name>OutQuint</name> = <name>REASING_OUTQUINT</name></expr>,
+        <expr><name>InOutQuint</name> = <name>REASING_INOUTQUINT</name></expr>,
+        <expr><name>OutInQuint</name> = <name>REASING_OUTINQUINT</name></expr>,
+        <expr><name>InSine</name> = <name>REASING_INSINE</name></expr>,
+        <expr><name>OutSine</name> = <name>REASING_OUTSINE</name></expr>,
+        <expr><name>InOutSine</name> = <name>REASING_INOUTSINE</name></expr>,
+        <expr><name>OutInSine</name> = <name>REASING_OUTINSINE</name></expr>,
+        <expr><name>InExpo</name> = <name>REASING_INEXPO</name></expr>,
+        <expr><name>OutExpo</name> = <name>REASING_OUTEXPO</name></expr>,
+        <expr><name>InOutExpo</name> = <name>REASING_INOUTEXPO</name></expr>,
+        <expr><name>OutInExpo</name> = <name>REASING_OUTINEXPO</name></expr>,
+        <expr><name>InCirc</name> = <name>REASING_INCIRC</name></expr>,
+        <expr><name>OutCirc</name> = <name>REASING_OUTCIRC</name></expr>,
+        <expr><name>InOutCirc</name> = <name>REASING_INOUTCIRC</name></expr>,
+        <expr><name>OutInCirc</name> = <name>REASING_OUTINCIRC</name></expr>,
+        <expr><name>InElastic</name> = <name>REASING_INELASTIC</name></expr>,
+        <expr><name>OutElastic</name> = <name>REASING_OUTELASTIC</name></expr>,
+        <expr><name>InOutElastic</name> = <name>REASING_INOUTELASTIC</name></expr>,
+        <expr><name>OutInElastic</name> = <name>REASING_OUTINELASTIC</name></expr>,
+        <expr><name>InBack</name> = <name>REASING_INBACK</name></expr>,
+        <expr><name>OutBack</name> = <name>REASING_OUTBACK</name></expr>,
+        <expr><name>InOutBack</name> = <name>REASING_INOUTBACK</name></expr>,
+        <expr><name>OutInBack</name> = <name>REASING_OUTINBACK</name></expr>,
+        <expr><name>InBounce</name> = <name>REASING_INBOUNCE</name></expr>,
+        <expr><name>OutBounce</name> = <name>REASING_OUTBOUNCE</name></expr>,
+        <expr><name>InOutBounce</name> = <name>REASING_INOUTBOUNCE</name></expr>,
+        <expr><name>OutInBounce</name> = <name>REASING_OUTINBOUNCE</name></expr>,
+        <comment type="line">//InCurve = REASING_INCURVE,</comment>
+        <comment type="line">//OutCurve = REASING_OUTCURVE,</comment>
+        <comment type="line">//SineCurve = REASING_SINECURVE,</comment>
+        <comment type="line">//CosineCurve = REASING_COSINECURVE,</comment>
+        <comment type="line">//BezierSpline = REASING_BEZIERSPLINE,</comment>
+        <comment type="line">//TCBSpline = REASING_TCBSPLINE</comment>
+    }</block>;</enum>
+
 </public><public>public:
-    <function_decl><type><name>static</name> <name>bool</name></type> <name>compare</name><parameter_list>(<param><decl><type><name>const</name> <name>QVariant</name>&amp;</type> <name>v1</name></decl></param>, <param><decl><type><name>const</name> <name>QVariant</name>&amp;</type> <name>v2</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>static</name> <name>bool</name></type> <name>compare</name><parameter_list>(<param><decl><type><name>const</name> <name>QVariant</name>&amp;</type> <name>v1</name></decl></param>, <param><decl><type><name>const</name> <name>QVariant</name>&amp;</type> <name>v2</name></decl></param>, <param><decl><type><name>bool</name></type> <name>noTolerance</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>static</name> <name>bool</name></type> <name>compare</name><parameter_list>(<param><decl><type><name>const</name> <name>QPair<argument_list>&lt;<argument><name>QVariant</name></argument>, <argument><name>RPropertyAttributes</name></argument>&gt;</argument_list></name>&amp;</type> <name>p1</name></decl></param>,
-                        <param><decl><type><name>const</name> <name>QPair<argument_list>&lt;<argument><name>QVariant</name></argument>, <argument><name>RPropertyAttributes</name></argument>&gt;</argument_list></name>&amp;</type> <name>p2</name></decl></param>)</parameter_list>;</function_decl>
+                        <param><decl><type><name>const</name> <name>QPair<argument_list>&lt;<argument><name>QVariant</name></argument>, <argument><name>RPropertyAttributes</name></argument>&gt;</argument_list></name>&amp;</type> <name>p2</name></decl></param>,
+                        <param><decl><type><name>bool</name></type> <name>noTolerance</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>static</name> <name>int</name></type> <name>getCpuCores</name><parameter_list>()</parameter_list>;</function_decl>
+    <function_decl><type><name>static</name> <name>int</name></type> <name>getIdealThreadCount</name><parameter_list>()</parameter_list>;</function_decl>
     <function_decl><type><name>static</name> <name>QString</name></type> <name>getBuildCpuArchitecture</name><parameter_list>()</parameter_list>;</function_decl>
 
     <function_decl><type><name>static</name> <name>QString</name></type> <name>getHostId</name><parameter_list>()</parameter_list>;</function_decl>
@@ -574,6 +690,11 @@
         <return>return <expr><call><name>T</name><argument_list>()</argument_list></call></expr>;</return>
     }</block></function></template>
 
+    <function_decl><type><name>static</name> <name>QStringList</name></type> <name>sortAlphanumerical</name><parameter_list>(<param><decl><type><name>const</name> <name>QStringList</name>&amp;</type> <name>list</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>static</name> <name>QStringList</name></type> <name>compareChunkify</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>s</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>static</name> <name>int</name></type> <name>compareAlphanumerical</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>s1</name></decl></param>, <param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>s2</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>static</name> <name>bool</name></type> <name>lessThanAlphanumerical</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>s1</name></decl></param>, <param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>s2</name></decl></param>)</parameter_list>;</function_decl>
+
     <decl_stmt><decl><type><name>static</name> <name>const</name> <name>double</name></type> <name>PointTolerance</name></decl>;</decl_stmt>
     <decl_stmt><decl><type><name>static</name> <name>const</name> <name>double</name></type> <name>AngleTolerance</name></decl>;</decl_stmt>
 </public>}</block>;</class>
@@ -590,6 +711,8 @@
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::HAlign*</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::IsoProjectionType</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::IsoProjectionType*</argument>)</argument_list></macro>
+<macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::OrthoMode</argument>)</argument_list></macro>
+<macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::OrthoMode*</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::KnownVariable</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::KnownVariable*</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::LinearFormat</argument>)</argument_list></macro>
@@ -613,6 +736,8 @@
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::Orientation</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::JoinType</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::EndType</argument>)</argument_list></macro>
+<macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::Easing</argument>)</argument_list></macro>
+<macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RS::Easing*</argument>)</argument_list></macro>
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>QList&lt;RS::EntityType&gt;</argument>)</argument_list></macro>
 
 <cpp:endif>#<cpp:directive>endif</cpp:directive></cpp:endif>

@@ -24,7 +24,6 @@
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"gui_global.h"</cpp:file></cpp:include>
 
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QMetaType&gt;</cpp:file></cpp:include>
-<cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QLabel&gt;</cpp:file></cpp:include>
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>&lt;QLineEdit&gt;</cpp:file></cpp:include>
 
 <cpp:include>#<cpp:directive>include</cpp:directive> <cpp:file>"RMath.h"</cpp:file></cpp:include>
@@ -76,6 +75,9 @@
 
     <function_decl><type><name>void</name></type> <name>setToolTip</name><parameter_list>(<param><decl><type><name>const</name> <name>QString</name>&amp;</type> <name>toolTip</name></decl></param>)</parameter_list>;</function_decl>
 
+    <function_decl><type><name>QColor</name></type> <name>getNormalTextColor</name><parameter_list>()</parameter_list> <specifier>const</specifier>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>setTextColor</name><parameter_list>(<param><decl><type><name>bool</name></type> <name>error</name></decl></param>)</parameter_list>;</function_decl>
+
     <comment type="block">/*
     double getDefaultValue() {
         return defaultValue;
@@ -114,7 +116,6 @@
     <decl_stmt><decl><type><name>bool</name></type> <name>noEmit</name></decl>;</decl_stmt>
     <decl_stmt><decl><type><name>bool</name></type> <name>noResultInToolTip</name></decl>;</decl_stmt>
     <comment type="line">//double defaultValue;</comment>
-<comment type="line">//    QLabel* resultTip;</comment>
 </private>}</block>;</class>
 
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RMathLineEdit*</argument>)</argument_list></macro>

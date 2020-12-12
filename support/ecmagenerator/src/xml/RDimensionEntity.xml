@@ -25,7 +25,7 @@ xmlns:rs="http://www.ribbonsoft.com">
       isPureVirtual="false" />
     </method>
     <method name="setProperty" cppName="setProperty"
-    specifier="public" isStatic="false" isVirtual="false"
+    specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
       <variant returnType="bool" isPureVirtual="false">
         <arg type="RPropertyTypeId" typeName="RPropertyTypeId"
@@ -38,7 +38,7 @@ xmlns:rs="http://www.ribbonsoft.com">
       </variant>
     </method>
     <method name="getProperty" cppName="getProperty"
-    specifier="public" isStatic="false" isVirtual="false"
+    specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
       <variant returnType="QPair &lt; QVariant , RPropertyAttributes &gt;"
       isPureVirtual="false">
@@ -48,6 +48,8 @@ xmlns:rs="http://www.ribbonsoft.com">
         <arg type="bool" typeName="bool" name="humanReadable"
         hasDefault="true" default="false" isConst="false" />
         <arg type="bool" typeName="bool" name="noAttributes"
+        hasDefault="true" default="false" isConst="false" />
+        <arg type="bool" typeName="bool" name="showOnRequest"
         hasDefault="true" default="false" isConst="false" />
       </variant>
     </method>
@@ -202,6 +204,58 @@ xmlns:rs="http://www.ribbonsoft.com">
     isStatic="false" isVirtual="false" isScriptOverwritable="true">
       <variant returnType="bool" isPureVirtual="false" />
     </method>
+    <method name="isArrow1Flipped" cppName="isArrow1Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setArrow1Flipped" cppName="setArrow1Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="isArrow2Flipped" cppName="isArrow2Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setArrow2Flipped" cppName="setArrow2Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="isExtLineFix" cppName="isExtLineFix"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setExtLineFix" cppName="setExtLineFix"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="getExtLineFixLength"
+    cppName="getExtLineFixLength" specifier="public"
+    isStatic="false" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="double" isPureVirtual="false" />
+    </method>
+    <method name="setExtLineFixLength"
+    cppName="setExtLineFixLength" specifier="public"
+    isStatic="false" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="double" typeName="double" name="v"
+        isConst="false" />
+      </variant>
+    </method>
     <method name="getDimensionBlockNames"
     cppName="getDimensionBlockNames" specifier="public"
     isStatic="true" isVirtual="false" isScriptOverwritable="true">
@@ -223,6 +277,8 @@ xmlns:rs="http://www.ribbonsoft.com">
     <property name="PropertyHandle" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyProtected" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyWorkingSet" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyType" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
@@ -270,6 +326,14 @@ xmlns:rs="http://www.ribbonsoft.com">
     isConst="false" isStatic="true" />
     <property name="PropertyFontName" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
+    <property name="PropertyArrow1Flipped" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyArrow2Flipped" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyExtLineFix" type="RPropertyTypeId"
+    isConst="false" isStatic="true" />
+    <property name="PropertyExtLineFixLength"
+    type="RPropertyTypeId" isConst="false" isStatic="true" />
     <property name="PropertyAutoLabel" type="RPropertyTypeId"
     isConst="false" isStatic="true" />
     <property name="PropertyMeasuredValue" type="RPropertyTypeId"

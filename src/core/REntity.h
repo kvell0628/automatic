@@ -42,6 +42,7 @@ class RDocument;
 class REntity;
 class RBlockReferenceEntity;
 class RExporter;
+class RViewportData;
 
 #ifndef RDEFAULT_QSET_INT
 #define RDEFAULT_QSET_INT QSet<int>()
@@ -71,6 +72,7 @@ public:
     static RPropertyTypeId PropertyCustom;
     static RPropertyTypeId PropertyHandle;
     static RPropertyTypeId PropertyProtected;
+    static RPropertyTypeId PropertyWorkingSet;
     static RPropertyTypeId PropertyType;
     static RPropertyTypeId PropertyBlock;
     static RPropertyTypeId PropertyLayer;
@@ -116,6 +118,7 @@ public:
 
     static bool isComplex(const RS::EntityType type);
     static bool isDimension(const RS::EntityType type);
+    static bool isTextBased(const RS::EntityType type);
 
     /**
      * \return Reference to the data object of the entity.
@@ -155,11 +158,22 @@ public:
     /**
      * \copydoc REntityData::isSelected
      */
-    bool isSelected() const {
+    virtual bool isSelected() const {
         return getData().isSelected();
     }
 
     virtual void setSelected(bool on);
+
+    /**
+     * \copydoc REntityData::isSelectedWorkingSet
+     */
+    virtual bool isSelectedWorkingSet() const {
+        return getData().isSelectedWorkingSet();
+    }
+
+    virtual void setSelectedWorkingSet(bool on) {
+        getData().setSelectedWorkingSet(on);
+    }
 
     virtual bool isUpdatesEnabled() const {
         return getData().isUpdatesEnabled();
@@ -278,9 +292,6 @@ public:
      * \copydoc REntityData::setLinetypeScale
      */
     void setLinetypeScale(double linetypeScale) {
-        if (linetypeScale<0.0) {
-            qDebug() << "setLinetypeScale to -1";
-        }
         getData().setLinetypeScale(linetypeScale);
     }
 
@@ -324,6 +335,7 @@ public:
         return getData().getColor();
     }
 
+    RColor getColor(const RColor& unresolvedColor, const QStack<REntity*>& blockRefStack);
     RColor getColor(bool resolve, const QStack<REntity*>& blockRefStack);
 
     RColor getDisplayColor() {
@@ -511,11 +523,17 @@ public:
     }
 
     /**
+     * \copydoc REntityData::clickReferencePoint
+     */
+    virtual bool clickReferencePoint(const RVector& referencePoint) {
+        return getData().clickReferencePoint(referencePoint);
+    }
+
+    /**
      * \copydoc REntityData::moveReferencePoint
      */
-    virtual bool moveReferencePoint(
-        const RVector& referencePoint, const RVector& targetPoint) {
-        return getData().moveReferencePoint(referencePoint, targetPoint);
+    virtual bool moveReferencePoint(const RVector& referencePoint, const RVector& targetPoint, Qt::KeyboardModifiers modifiers = Qt::NoModifier) {
+        return getData().moveReferencePoint(referencePoint, targetPoint, modifiers);
     }
 
     /**
@@ -535,23 +553,29 @@ public:
     /**
      * \copydoc REntityData::scale
      */
-    virtual bool scale(const RVector& scaleFactors,
-        const RVector& center = RDEFAULT_RVECTOR) {
-
+    virtual bool scale(const RVector& scaleFactors, const RVector& center = RDEFAULT_RVECTOR) {
         return getData().scale(scaleFactors, center);
     }
 
     /**
+     * \copydoc REntityData::scaleNonUniform
+     */
+    virtual QSharedPointer<REntity> scaleNonUniform(const RVector& scaleFactors, const RVector& center = RDEFAULT_RVECTOR);
+
+    /**
      * \copydoc REntityData::scale
      */
-    virtual bool scale(double scaleFactor,
-        const RVector& center = RDEFAULT_RVECTOR) {
-
+    virtual bool scale(double scaleFactor, const RVector& center = RDEFAULT_RVECTOR) {
         return getData().scale(scaleFactor, center);
     }
 
     virtual void scaleVisualProperties(double scaleFactor) {
         getData().scaleVisualProperties(scaleFactor);
+    }
+
+    virtual void setViewportContext(const RViewportData&) {
+        // MSVC does not compile this:
+        //Q_UNUSED(vp);
     }
 
     /**
@@ -617,24 +641,20 @@ public:
      */
     virtual void exportEntity(RExporter& e, bool preview = false, bool forceSelected=false) const = 0;
 
-    // from RObject:
-    virtual bool isSelectedForPropertyEditing() {
-        return isSelected();
-    }
-
     virtual void setAutoUpdatesBlocked(bool on) {
         getData().setAutoUpdatesBlocked(on);
     }
 
     virtual QPair<QVariant, RPropertyAttributes> getProperty(
             RPropertyTypeId& propertyTypeId,
-            bool humanReadable = false, bool noAttributes = false);
+            bool humanReadable = false, bool noAttributes = false, bool showOnRequest = false);
 
     virtual bool setProperty(RPropertyTypeId propertyTypeId,
             const QVariant& value, RTransaction* transaction=NULL);
 
-    virtual bool isVisible() const;
+    virtual bool isVisible(RBlock::Id blockId = RBlock::INVALID_ID) const;
     virtual bool isEditable(bool allowInvisible = false) const;
+    virtual bool isInWorkingSet() const;
 
     virtual int getComplexity() const {
         return 1;
@@ -643,6 +663,7 @@ public:
 protected:
     /**
      * \copydoc REntityData::setParentId
+     * Use RStorage::setEntityParentId instead.
      */
     void setParentId(REntity::Id parentId) {
         getData().setParentId(parentId);

@@ -15,6 +15,8 @@
             
                 #include "RExporter.h"
             
+                #include "RViewportData.h"
+            
             
         // includes for base ecma wrapper classes
         
@@ -92,6 +94,10 @@
             REcmaHelper::registerFunction(&engine, proto, isSelected, "isSelected");
             
             REcmaHelper::registerFunction(&engine, proto, setSelected, "setSelected");
+            
+            REcmaHelper::registerFunction(&engine, proto, isSelectedWorkingSet, "isSelectedWorkingSet");
+            
+            REcmaHelper::registerFunction(&engine, proto, setSelectedWorkingSet, "setSelectedWorkingSet");
             
             REcmaHelper::registerFunction(&engine, proto, isUpdatesEnabled, "isUpdatesEnabled");
             
@@ -191,6 +197,8 @@
             
             REcmaHelper::registerFunction(&engine, proto, getIntersectionPointsWithShape, "getIntersectionPointsWithShape");
             
+            REcmaHelper::registerFunction(&engine, proto, clickReferencePoint, "clickReferencePoint");
+            
             REcmaHelper::registerFunction(&engine, proto, moveReferencePoint, "moveReferencePoint");
             
             REcmaHelper::registerFunction(&engine, proto, move, "move");
@@ -199,7 +207,11 @@
             
             REcmaHelper::registerFunction(&engine, proto, scale, "scale");
             
+            REcmaHelper::registerFunction(&engine, proto, scaleNonUniform, "scaleNonUniform");
+            
             REcmaHelper::registerFunction(&engine, proto, scaleVisualProperties, "scaleVisualProperties");
+            
+            REcmaHelper::registerFunction(&engine, proto, setViewportContext, "setViewportContext");
             
             REcmaHelper::registerFunction(&engine, proto, mirror, "mirror");
             
@@ -215,8 +227,6 @@
             
             REcmaHelper::registerFunction(&engine, proto, exportEntity, "exportEntity");
             
-            REcmaHelper::registerFunction(&engine, proto, isSelectedForPropertyEditing, "isSelectedForPropertyEditing");
-            
             REcmaHelper::registerFunction(&engine, proto, setAutoUpdatesBlocked, "setAutoUpdatesBlocked");
             
             REcmaHelper::registerFunction(&engine, proto, getProperty, "getProperty");
@@ -226,6 +236,8 @@
             REcmaHelper::registerFunction(&engine, proto, isVisible, "isVisible");
             
             REcmaHelper::registerFunction(&engine, proto, isEditable, "isEditable");
+            
+            REcmaHelper::registerFunction(&engine, proto, isInWorkingSet, "isInWorkingSet");
             
             REcmaHelper::registerFunction(&engine, proto, getComplexity, "getComplexity");
             
@@ -246,6 +258,8 @@
             
             REcmaHelper::registerFunction(&engine, &ctor, isDimension, "isDimension");
             
+            REcmaHelper::registerFunction(&engine, &ctor, isTextBased, "isTextBased");
+            
 
     // static properties:
     
@@ -259,6 +273,10 @@
             
             ctor.setProperty("PropertyProtected",
                 qScriptValueFromValue(&engine, REntity::PropertyProtected),
+                QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
+            
+            ctor.setProperty("PropertyWorkingSet",
+                qScriptValueFromValue(&engine, REntity::PropertyWorkingSet),
                 QScriptValue::SkipInEnumeration | QScriptValue::ReadOnly);
             
             ctor.setProperty("PropertyType",
@@ -766,6 +784,56 @@
             return result;
         }
          QScriptValue
+        REcmaSharedPointerEntity::isTextBased
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::isTextBased", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::isTextBased";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isNumber()
+        ) /* type: RS::EntityType */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    RS::EntityType
+                    a0 =
+                    (RS::EntityType)
+                    (int)
+                    context->argument( 0 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        REntity::
+       isTextBased(a0);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.isTextBased().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::isTextBased", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaSharedPointerEntity::getData
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -1037,6 +1105,110 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaSharedPointerEntity::setSelected", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerEntity::isSelectedWorkingSet
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::isSelectedWorkingSet", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::isSelectedWorkingSet";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    REntity* self = 
+                        getSelf("isSelectedWorkingSet", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isSelectedWorkingSet();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.isSelectedWorkingSet().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::isSelectedWorkingSet", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerEntity::setSelectedWorkingSet
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::setSelectedWorkingSet", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::setSelectedWorkingSet";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    REntity* self = 
+                        getSelf("setSelectedWorkingSet", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    bool
+                    a0 =
+                    (bool)
+                    
+                    context->argument( 0 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setSelectedWorkingSet(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.setSelectedWorkingSet().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::setSelectedWorkingSet", context, engine);
             return result;
         }
          QScriptValue
@@ -2415,6 +2587,73 @@
     RColor cppResult =
         
                self->getColor();
+        // return type: RColor
+                // not standard type nor reference
+                result = qScriptValueFromValue(engine, cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    2 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RColor */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: QStack < REntity * > */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RColor*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RColor*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RColor.",
+                               context);                    
+                    }
+                    RColor 
+                    a0 = 
+                    *ap0;
+                
+                    // argument is reference
+                    QStack < REntity * >*
+                    ap1 =
+                    qscriptvalue_cast<
+                    QStack < REntity * >*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if( ap1 == NULL ){
+                           return REcmaHelper::throwError("REntity: Argument 1 is not of type QStack < REntity * >*.",
+                               context);                    
+                    }
+                    QStack < REntity * >& a1 = *ap1;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'RColor'
+    RColor cppResult =
+        
+               self->getColor(a0
+        ,
+    a1);
         // return type: RColor
                 // not standard type nor reference
                 result = qScriptValueFromValue(engine, cppResult);
@@ -6155,6 +6394,78 @@
             return result;
         }
          QScriptValue
+        REcmaSharedPointerEntity::clickReferencePoint
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::clickReferencePoint", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::clickReferencePoint";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    REntity* self = 
+                        getSelf("clickReferencePoint", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->clickReferencePoint(a0);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.clickReferencePoint().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::clickReferencePoint", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaSharedPointerEntity::moveReferencePoint
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -6236,6 +6547,88 @@
                self->moveReferencePoint(a0
         ,
     a1);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    3 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(2).isNumber()
+        ) /* type: Qt::KeyboardModifiers */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 1 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a1 = 
+                    *ap1;
+                
+                    // argument isStandardType
+                    Qt::KeyboardModifiers
+                    a2 =
+                    (Qt::KeyboardModifiers)
+                    (int)
+                    context->argument( 2 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->moveReferencePoint(a0
+        ,
+    a1
+        ,
+    a2);
         // return type: bool
                 // standard Type
                 result = QScriptValue(cppResult);
@@ -6671,6 +7064,147 @@
             return result;
         }
          QScriptValue
+        REcmaSharedPointerEntity::scaleNonUniform
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::scaleNonUniform", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::scaleNonUniform";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    REntity* self = 
+                        getSelf("scaleNonUniform", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QSharedPointer < REntity >'
+    QSharedPointer < REntity > cppResult =
+        
+               self->scaleNonUniform(a0);
+        // return type: QSharedPointer < REntity >
+                // Shared pointer to entity, cast to best match:
+                result = REcmaHelper::toScriptValue(engine, cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    2 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RVector */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 1 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a1 = 
+                    *ap1;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QSharedPointer < REntity >'
+    QSharedPointer < REntity > cppResult =
+        
+               self->scaleNonUniform(a0
+        ,
+    a1);
+        // return type: QSharedPointer < REntity >
+                // Shared pointer to entity, cast to best match:
+                result = REcmaHelper::toScriptValue(engine, cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.scaleNonUniform().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::scaleNonUniform", context, engine);
+            return result;
+        }
+         QScriptValue
         REcmaSharedPointerEntity::scaleVisualProperties
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -6723,6 +7257,73 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaSharedPointerEntity::scaleVisualProperties", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerEntity::setViewportContext
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::setViewportContext", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::setViewportContext";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    REntity* self = 
+                        getSelf("setViewportContext", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RViewportData */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RViewportData*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RViewportData*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RViewportData.",
+                               context);                    
+                    }
+                    RViewportData 
+                    a0 = 
+                    *ap0;
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->setViewportContext(a0);
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.setViewportContext().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::setViewportContext", context, engine);
             return result;
         }
          QScriptValue
@@ -7333,55 +7934,6 @@
             return result;
         }
          QScriptValue
-        REcmaSharedPointerEntity::isSelectedForPropertyEditing
-        (QScriptContext* context, QScriptEngine* engine) 
-        
-        {
-            //REcmaHelper::functionStart("REcmaSharedPointerEntity::isSelectedForPropertyEditing", context, engine);
-            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::isSelectedForPropertyEditing";
-            //QCoreApplication::processEvents();
-
-            QScriptValue result = engine->undefinedValue();
-            
-                    // public function: can be called from ECMA wrapper of ECMA shell:
-                    REntity* self = 
-                        getSelf("isSelectedForPropertyEditing", context);
-                  
-
-                //Q_ASSERT(self!=NULL);
-                if (self==NULL) {
-                    return REcmaHelper::throwError("self is NULL", context);
-                }
-                
-    
-    if( context->argumentCount() ==
-    0
-    ){
-    // prepare arguments:
-    
-    // end of arguments
-
-    // call C++ function:
-    // return type 'bool'
-    bool cppResult =
-        
-               self->isSelectedForPropertyEditing();
-        // return type: bool
-                // standard Type
-                result = QScriptValue(cppResult);
-            
-    } else
-
-
-        
-            {
-               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.isSelectedForPropertyEditing().",
-                   context);
-            }
-            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::isSelectedForPropertyEditing", context, engine);
-            return result;
-        }
-         QScriptValue
         REcmaSharedPointerEntity::setAutoUpdatesBlocked
         (QScriptContext* context, QScriptEngine* engine) 
         
@@ -7676,6 +8228,105 @@
 
 
         
+    
+    if( context->argumentCount() ==
+    4 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RPropertyTypeId */
+     && (
+            context->argument(1).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(2).isBool()
+        ) /* type: bool */
+     && (
+            context->argument(3).isBool()
+        ) /* type: bool */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RPropertyTypeId*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RPropertyTypeId*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("REntity: Argument 0 is not of type RPropertyTypeId.",
+                               context);                    
+                    }
+                    RPropertyTypeId 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isStandardType
+                    bool
+                    a1 =
+                    (bool)
+                    
+                    context->argument( 1 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a2 =
+                    (bool)
+                    
+                    context->argument( 2 ).
+                    toBool();
+                
+                    // argument isStandardType
+                    bool
+                    a3 =
+                    (bool)
+                    
+                    context->argument( 3 ).
+                    toBool();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'QPair < QVariant , RPropertyAttributes >'
+    QPair < QVariant , RPropertyAttributes > cppResult =
+        
+               self->getProperty(a0
+        ,
+    a1
+        ,
+    a2
+        ,
+    a3);
+        // return type: QPair < QVariant , RPropertyAttributes >
+                // Pair of ...:
+                //result = REcmaHelper::pairToScriptValue(engine, cppResult);
+                QVariantList vl;
+                QVariant v;
+                
+                    // first type of pair is variant:
+                    if (QString(cppResult.first.typeName())=="RLineweight::Lineweight") {
+                        v.setValue((int)cppResult.first.value<RLineweight::Lineweight>());
+                    }
+                    else {
+                        v.setValue(cppResult.first);
+                    }
+                  
+
+                vl.append(v);
+                v.setValue(cppResult.second);
+                vl.append(v);
+                result = qScriptValueFromValue(engine, vl);
+            
+    } else
+
+
+        
             {
                return REcmaHelper::throwError("Wrong number/types of arguments for REntity.getProperty().",
                    context);
@@ -7907,6 +8558,38 @@
 
 
         
+    
+    if( context->argumentCount() ==
+    1 && (
+            context->argument(0).isNumber()
+        ) /* type: RBlock::Id */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isStandardType
+                    RBlock::Id
+                    a0 =
+                    (RBlock::Id)
+                    (int)
+                    context->argument( 0 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isVisible(a0);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
             {
                return REcmaHelper::throwError("Wrong number/types of arguments for REntity.isVisible().",
                    context);
@@ -7993,6 +8676,55 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaSharedPointerEntity::isEditable", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaSharedPointerEntity::isInWorkingSet
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaSharedPointerEntity::isInWorkingSet", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaSharedPointerEntity::isInWorkingSet";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    REntity* self = 
+                        getSelf("isInWorkingSet", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->isInWorkingSet();
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for REntity.isInWorkingSet().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaSharedPointerEntity::isInWorkingSet", context, engine);
             return result;
         }
          QScriptValue

@@ -81,16 +81,25 @@
         queryAllObjects
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        querySelectedLayers
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         queryAllVisibleEntities
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryAllEntities
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        queryWorkingSetEntities
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         queryAllUcs
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryAllLayers
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        queryAllLayerStates
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryAllBlocks
@@ -138,6 +147,12 @@
         queryInfiniteEntities
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        queryIntersectedEntitiesXYFast
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        queryIntersectedShapesXYFast
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         queryIntersectedEntitiesXY
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -177,6 +192,9 @@
         queryEntityDirect
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        queryVisibleEntityDirect
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         queryUcs
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -184,6 +202,12 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryLayerDirect
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        queryLayerState
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        queryLayerStateDirect
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         queryLayout
@@ -210,7 +234,7 @@
         clearSelection
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
-        selectAllEntites
+        selectAllEntities
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         selectEntity
@@ -226,6 +250,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isSelected
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isSelectedWorkingSet
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isLayerLocked
@@ -246,6 +273,12 @@
         isLayerFrozen
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        isLayerPlottable
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isLayerSnappable
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         isParentLayerFrozen
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
@@ -256,6 +289,9 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isEntityLayerFrozen
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isEntityVisible
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         isParentLayerSnappable
@@ -414,16 +450,28 @@
         getBlockName
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getBlockNameFromLayout
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getBlockNames
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         sortBlocks
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        sortLayers
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getLayerName
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getLayerNames
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getLayerStateName
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getLayerStateNames
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getLayoutName
@@ -433,6 +481,12 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         hasLayer
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        hasLayerStates
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        hasLayerState
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         hasBlock
@@ -453,7 +507,13 @@
         getLayer0Id
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
+        getLayerStateId
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
         getBlockId
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getBlockIdAuto
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getModelSpaceBlockId
@@ -589,6 +649,24 @@
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         copyVariablesFrom
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        addAutoVariable
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        getAutoVariables
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        substituteAutoVariables
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        eval
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        isEditingWorkingSet
+        (QScriptContext* context, QScriptEngine* engine) 
+        ;static  QScriptValue
+        setIgnoreWorkingSet
         (QScriptContext* context, QScriptEngine* engine) 
         ;static  QScriptValue
         getClipboard

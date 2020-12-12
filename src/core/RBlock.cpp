@@ -121,7 +121,7 @@ bool RBlock::setProperty(RPropertyTypeId propertyTypeId, const QVariant& value, 
     return ret;
 }
 
-QPair<QVariant, RPropertyAttributes> RBlock::getProperty(RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+QPair<QVariant, RPropertyAttributes> RBlock::getProperty(RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyName) {
         return qMakePair(QVariant(name), RPropertyAttributes());
     }
@@ -149,7 +149,7 @@ QPair<QVariant, RPropertyAttributes> RBlock::getProperty(RPropertyTypeId& proper
         return qMakePair(QVariant(layoutId), RPropertyAttributes());
     }
 
-    return RObject::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return RObject::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RBlock::setCustomProperty(const QString& title, const QString& key, const QVariant& value) {
@@ -162,10 +162,6 @@ void RBlock::setCustomProperty(const QString& title, const QString& key, const Q
     }
 
     RObject::setCustomProperty(title, key, value);
-}
-
-bool RBlock::isSelectedForPropertyEditing() {
-    return false;
 }
 
 void RBlock::print(QDebug dbg) const {

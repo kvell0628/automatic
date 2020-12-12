@@ -46,6 +46,11 @@ xmlns:rs="http://www.ribbonsoft.com">
         hasDefault="true" default="false" isConst="false" />
       </variant>
     </method>
+    <method name="getPointOnEntity" cppName="getPointOnEntity"
+    specifier="public" isStatic="false" isVirtual="true"
+    isScriptOverwritable="true">
+      <variant returnType="RVector" isPureVirtual="false" />
+    </method>
     <method name="isValid" cppName="isValid" specifier="public"
     isStatic="false" isVirtual="true" isScriptOverwritable="true">
       <variant returnType="bool" isPureVirtual="false" />
@@ -162,6 +167,75 @@ xmlns:rs="http://www.ribbonsoft.com">
         isConst="false" />
       </variant>
     </method>
+    <method name="isArrow1Flipped" cppName="isArrow1Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setArrow1Flipped" cppName="setArrow1Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="isArrow2Flipped" cppName="isArrow2Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setArrow2Flipped" cppName="setArrow2Flipped"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="isExtLineFix" cppName="isExtLineFix"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
+    <method name="setExtLineFix" cppName="setExtLineFix"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="bool" typeName="bool" name="on"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="getExtLineFixLength"
+    cppName="getExtLineFixLength" specifier="public"
+    isStatic="false" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="double" isPureVirtual="false" />
+    </method>
+    <method name="setExtLineFixLength"
+    cppName="setExtLineFixLength" specifier="public"
+    isStatic="false" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="double" typeName="double" name="v"
+        isConst="false" />
+      </variant>
+    </method>
+    <method name="adjustExtensionLineFixLength"
+    cppName="adjustExtensionLineFixLength" specifier="public"
+    isStatic="false" isVirtual="false" isScriptOverwritable="true">
+      <variant returnType="void" isPureVirtual="false">
+        <arg type="RLine &amp;" typeName="RLine" name="extLine1"
+        isConst="false" />
+        <arg type="RLine &amp;" typeName="RLine" name="extLine2"
+        isConst="false" />
+        <arg type="bool" typeName="bool" name="addDimExe"
+        hasDefault="true" default="true" isConst="false" />
+      </variant>
+    </method>
+    <method name="hasSpaceForArrows" cppName="hasSpaceForArrows"
+    specifier="public" isStatic="false" isVirtual="false"
+    isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false" />
+    </method>
     <method name="getDistanceTo" cppName="getDistanceTo"
     specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
@@ -197,6 +271,14 @@ xmlns:rs="http://www.ribbonsoft.com">
         isConst="false" />
       </variant>
     </method>
+    <method name="clickReferencePoint"
+    cppName="clickReferencePoint" specifier="public"
+    isStatic="false" isVirtual="true" isScriptOverwritable="true">
+      <variant returnType="bool" isPureVirtual="false">
+        <arg type="RVector &amp;" typeName="RVector"
+        name="referencePoint" isConst="true" />
+      </variant>
+    </method>
     <method name="moveReferencePoint" cppName="moveReferencePoint"
     specifier="public" isStatic="false" isVirtual="true"
     isScriptOverwritable="true">
@@ -205,6 +287,10 @@ xmlns:rs="http://www.ribbonsoft.com">
         name="referencePoint" isConst="true" />
         <arg type="RVector &amp;" typeName="RVector"
         name="targetPoint" isConst="true" />
+        <arg type="Qt::KeyboardModifiers"
+        typeName="Qt::KeyboardModifiers" name="modifiers"
+        hasDefault="true" default="Qt :: NoModifier"
+        isConst="false" />
       </variant>
     </method>
     <method name="move" cppName="move" specifier="public"

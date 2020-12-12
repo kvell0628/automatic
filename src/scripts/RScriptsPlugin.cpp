@@ -8,12 +8,19 @@
 #include "RVersion.h"
 
 bool RScriptsPlugin::init() {
+#ifdef QT_DEBUG
     qDebug() << "RScriptsPlugin::init";
+#endif
+
     return true;
 }
 
 void RScriptsPlugin::initScriptExtensions(QScriptEngine& engine) {
     Q_UNUSED(engine)
+}
+
+void RScriptsPlugin::initTranslations() {
+    RSettings::loadTranslations("scripts", QStringList() << ":ts");
 }
 
 RPluginInfo RScriptsPlugin::getPluginInfo() {
@@ -24,6 +31,9 @@ RPluginInfo RScriptsPlugin::getPluginInfo() {
     ret.set("Description", "QCAD Scripts.");
     ret.set("License", "GPLv3");
     ret.set("URL", "http://qcad.org");
+
+    ret.set("OverridePriority", "0");
+    ret.set("NameOverride", "QCAD");
     return ret;
 }
 

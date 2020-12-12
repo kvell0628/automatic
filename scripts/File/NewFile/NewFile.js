@@ -17,7 +17,7 @@
  * along with QCAD.
  */
 
-include("../File.js");
+include("scripts/File/File.js");
 include("../Save/Save.js");
 include("scripts/Widgets/ViewportWidget/ViewportWidget.js");
 include("../AutoSave/AutoSave.js");
@@ -118,11 +118,14 @@ NewFile.prototype.beginEvent = function() {
  * \param uiFile UI file to use for view port (defaults to ViewportWidgetQt.ui).
  * \param graphicsSceneClass Class to use for graphics scene (defaults to "RGraphicsSceneQt")
  */
-NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneClass) {
+NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneClass, silent) {
     var isOpen = !isNull(fileName);
 
     if (isNull(nameFilter)) {
         nameFilter = "";
+    }
+    if (isNull(silent)) {
+        silent = false;
     }
 
     if (isOpen && !isUrl(fileName)) {
@@ -143,7 +146,7 @@ NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneCla
 
     // create document:
     var storage = new RMemoryStorage();
-    var spatialIndex = new RSpatialIndexNavel();
+    var spatialIndex = createSpatialIndex();
     var document = new RDocument(storage, spatialIndex);
     var documentInterface = new RDocumentInterface(document);
 
@@ -159,13 +162,17 @@ NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneCla
             errorCode = documentInterface.importFile(fileName, nameFilter);
         }
         if (errorCode !== RDocumentInterface.IoErrorNoError) {
-            var dialog = new QMessageBox(
-                QMessageBox.Warning,
-                qsTr("Import Error"),
-                "",
-                QMessageBox.OK
-            );
-            var path = fileName.elidedText(dialog.font, 500);
+            var dialog = undefined;
+            var path = fileName;
+            if (!silent) {
+                dialog = new QMessageBox(
+                    QMessageBox.Warning,
+                    qsTr("Import Error"),
+                    "",
+                    QMessageBox.OK
+                );
+                path = fileName.elidedText(dialog.font, 500);
+            }
             var text = qsTr("Cannot open file") + "\n\n'%1'.\n\n".arg(path);
             switch (errorCode) {
             case RDocumentInterface.IoErrorNoImporterFound:
@@ -186,11 +193,15 @@ NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneCla
                 text += qsTr("File is empty.");
                 break;
             }
-            dialog.text = text;
             appWin.handleUserWarning(text);
-            dialog.exec();
-            dialog.destroy();
-            EAction.activateMainWindow();
+
+            if (!isNull(dialog)) {
+                dialog.text = text;
+                dialog.exec();
+                dialog.destroy();
+                EAction.activateMainWindow();
+            }
+
             RSettings.removeRecentFile(fileName);
             return undefined;
         }
@@ -245,9 +256,7 @@ NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneCla
 
     var viewports = ViewportWidget.getViewports(mdiChild, documentInterface);
     mdiChild.viewports = viewports;
-    //qDebug("initViewports");
     ViewportWidget.initializeViewports(viewports, uiFile, graphicsSceneClass);
-    //qDebug("initViewports: done");
     NewFile.updateTitle(mdiChild);
 
     NewFile.setupDefaultAction(documentInterface);
@@ -265,13 +274,13 @@ NewFile.createMdiChild = function(fileName, nameFilter, uiFile, graphicsSceneCla
     // Qt 5 / Unity bug workaround:
     // breaks Ubuntu Unity menu on start:
     if (RS.getSystemId()!=="linux" || !RSettings.isQt(5) || appWin.property("starting")!==true) {
-        appWin.enabled = false;
+        appWin.disable();
     }
     for (var i=0; i<5; i++) {
         QCoreApplication.processEvents();
     }
     if (!appWin.enabled) {
-        appWin.enabled = true;
+        appWin.enable();
     }
 
     //qDebug("subWindowActivated");
@@ -482,10 +491,12 @@ NewFile.setupDefaultAction = function(documentInterface) {
  */
 NewFile.getDefaultActionClass = function() {
     var defaultActionClass = "DefaultAction";
+
     var defaultActionFile = RSettings.getStringValue("NewFile/DefaultAction", "");
     if (defaultActionFile.length===0) {
         return defaultActionClass;
     }
+
     var defaultActionFileInfo = new QFileInfo(defaultActionFile);
     if (!defaultActionFileInfo.exists()) {
         defaultActionFileInfo = new QFileInfo(":/" + defaultActionFile);
@@ -494,6 +505,10 @@ NewFile.getDefaultActionClass = function() {
         include(defaultActionFile);
         defaultActionClass = new QFileInfo(defaultActionFile).baseName();
     }
+    else {
+        qWarning("custom default action class not found:", defaultActionFile);
+    }
+
     return defaultActionClass;
 };
 
@@ -515,6 +530,9 @@ NewFile.getDefaultAction = function(useGuiAction) {
     var defaultAction = undefined;
     if (typeof(global[defaultActionClass])!=="undefined") {
         defaultAction = new global[defaultActionClass](defaultGuiAction);
+        if (isFunction(global[defaultActionClass].init)) {
+            global[defaultActionClass].init();
+        }
     }
     return defaultAction;
 };

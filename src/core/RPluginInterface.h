@@ -81,6 +81,13 @@ public:
     virtual void initScriptExtensions(QScriptEngine& engine) = 0;
 
     /**
+     * Called when the user chosen language changed.
+     *
+     * \nonscriptable
+     */
+    virtual void initTranslations() = 0;
+
+    /**
      * \return An RPluginInfo object with at least the following keys:
      * - 'Version' - Version string
      * - 'Name' - Plugin name
@@ -91,6 +98,11 @@ public:
      * This is typically used by an about dialog or debugging / developer tools.
      */
     virtual RPluginInfo getPluginInfo() = 0;
+
+    /**
+     * \return True if the plugin license is valid.
+     */
+    virtual bool checkLicense() = 0;
 };
 
 QT_BEGIN_NAMESPACE

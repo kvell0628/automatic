@@ -44,7 +44,6 @@ public:
          double endAngle, bool reversed = false);
     RArc(const RVector& center, double radius, double startAngle,
             double endAngle, bool reversed = false);
-    virtual ~RArc();
 
     virtual RShape::Type getShapeType() const {
         return Arc;
@@ -85,8 +84,10 @@ public:
     virtual QList<RVector> getEndPoints() const;
     virtual QList<RVector> getMiddlePoints() const;
     virtual QList<RVector> getCenterPoints() const;
+    virtual QList<RVector> getArcReferencePoints() const;
     virtual QList<RVector> getPointsWithDistanceToEnd(
         double distance, int from = RS::FromAny) const;
+    virtual QList<RVector> getPointCloud(double segmentLength) const;
 
     virtual RVector getVectorTo(const RVector& point,
             bool limited = true, double strictRange = RMAXDOUBLE) const;
@@ -153,8 +154,8 @@ public:
     }
     virtual double getDistanceFromStart(const RVector& p) const;
 
-    RPolyline approximateWithLines(double segmentLength) const;
-    RPolyline approximateWithLinesTan(double segmentLength) const;
+    RPolyline approximateWithLines(double segmentLength, double angle = 0.0) const;
+    RPolyline approximateWithLinesTan(double segmentLength, double angle = 0.0) const;
 
     QList<RLine> getTangents(const RVector& point) const;
 

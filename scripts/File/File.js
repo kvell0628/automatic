@@ -24,7 +24,7 @@
  * \brief This module contains ECMAScript implementations of the
  * tools in the file menu.
  */
-include("../EAction.js");
+include("scripts/EAction.js");
 
 /**
  * \class File
@@ -67,7 +67,7 @@ File.getCadToolBarPanel = function() {
         action.objectName = actionName;
         action.setRequiresDocument(false);
         action.setIcon(File.includeBasePath + "/File.svg");
-        action.setStatusTip(qsTr("Show file tools"));
+        //action.setStatusTip(qsTr("Show file tools"));
         action.setNoState();
         action.setDefaultCommands(["filemenu"]);
         action.setGroupSortOrder(10);
@@ -141,7 +141,7 @@ File.getInitialSaveAsPath = function(filePath, extension) {
  *
  * \param parentWidget Parent widget or null
  * \param caption Dialog caption
- * \param path Initial path of the dialog
+ * \param path Initial path with file name of the dialog
  * \param fileName Initial file name to suggest to user
  * \param filterStrings Array of filter strings in the format 'My File Type (*.mft *.mftype)'
  *
@@ -166,22 +166,20 @@ File.getSaveFileName = function(parentWidget, caption, path, filterStrings) {
     fileDialog.fileMode = QFileDialog.AnyFile;
     fileDialog.acceptMode = QFileDialog.AcceptSave;
 
+    filterStrings = translateFilterStrings(filterStrings);
     fileDialog.setNameFilters(filterStrings);
     
-    //if (!isNull(fileName)) {
-        //var fileInfo = new QFileInfo(fileName);
-        fileDialog.selectFile(fiDir.completeBaseName());
+    fileDialog.selectFile(fiDir.completeBaseName());
 
-        if (fiDir.suffix().length!==0) {
-            // preselect first name filter that matches current extension:
-            for (var i=0; i<filterStrings.length; ++i) {
-                if (filterStrings[i].contains("*." + fiDir.suffix().toLowerCase())) {
-                    fileDialog.selectNameFilter(filterStrings[i]);
-                    break;
-                }
+    if (fiDir.suffix().length!==0) {
+        // preselect first name filter that matches current extension:
+        for (var i=0; i<filterStrings.length; ++i) {
+            if (filterStrings[i].contains("*." + fiDir.suffix().toLowerCase())) {
+                fileDialog.selectNameFilter(filterStrings[i]);
+                break;
             }
         }
-    //}
+    }
 
     fileDialog.setLabelText(QFileDialog.FileType, qsTr("Format:"));
 
@@ -221,7 +219,7 @@ File.getSaveFileName = function(parentWidget, caption, path, filterStrings) {
             var buttons = new QMessageBox.StandardButtons(QMessageBox.Yes, QMessageBox.No);
             var ret = QMessageBox.warning(parentWidget, 
                 qsTr("Overwrite File?"), 
-                qsTr("The file '%1' already exists. Do you wish to overwrite it?").arg(fileToSave),
+                qsTr("The file \"%1\" already exists. Do you wish to overwrite it?").arg(fileToSave),
                 buttons);
             if (ret!=QMessageBox.Yes) {
                 done = false;
@@ -240,6 +238,7 @@ File.getSaveFileName = function(parentWidget, caption, path, filterStrings) {
 File.getOpenFileName = function(parentWidget, caption, dir, filterStrings) {
     if (isNull(filterStrings)) {
         filterStrings = RFileImporterRegistry.getFilterStrings();
+        filterStrings = translateFilterStrings(filterStrings);
     }
     filterStrings = new Array(qsTr("All Files") + " (*)").concat(filterStrings);
 

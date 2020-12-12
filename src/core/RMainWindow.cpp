@@ -35,6 +35,7 @@
 #include "RLayerListener.h"
 #include "RMainWindow.h"
 #include "RNewDocumentListener.h"
+#include "RPaletteListener.h"
 #include "RPenListener.h"
 #include "RPreferencesListener.h"
 #include "RPropertyListener.h"
@@ -202,7 +203,8 @@ void RMainWindow::notifyListeners(bool withNull) {
     notifyTransactionListeners(document);
     notifyPropertyListeners(document);
     notifySelectionListeners(di);
-    notifyLayerListeners(di);
+    QList<RLayer::Id> layerIds;
+    notifyLayerListeners(di, layerIds);
     notifyPenListeners(di);
     notifyBlockListeners(di);
     notifyViewListeners(di);
@@ -646,17 +648,17 @@ void RMainWindow::removeLayerListener(RLayerListener* l) {
 /**
  * Notifies all layer listeners that at least one layer object has changed.
  */
-void RMainWindow::notifyLayerListeners(RDocumentInterface* documentInterface) {
+void RMainWindow::notifyLayerListeners(RDocumentInterface* documentInterface, QList<RLayer::Id>& layerIds) {
     QList<RLayerListener*>::iterator it;
     for (it = layerListeners.begin(); it != layerListeners.end(); ++it) {
-        (*it)->updateLayers(documentInterface);
+        (*it)->updateLayers(documentInterface, layerIds);
     }
 }
 
-void RMainWindow::notifyLayerListenersCurrentLayer(RDocumentInterface* documentInterface) {
+void RMainWindow::notifyLayerListenersCurrentLayer(RDocumentInterface* documentInterface, RLayer::Id previousLayerId) {
     QList<RLayerListener*>::iterator it;
     for (it = layerListeners.begin(); it != layerListeners.end(); ++it) {
-        (*it)->setCurrentLayer(documentInterface);
+        (*it)->setCurrentLayer(documentInterface, previousLayerId);
     }
 }
 
@@ -726,6 +728,28 @@ void RMainWindow::notifyPenListeners(RDocumentInterface* documentInterface) {
     QList<RPenListener*>::iterator it;
     for (it = penListeners.begin(); it != penListeners.end(); ++it) {
         (*it)->updatePen(documentInterface);
+    }
+}
+
+/**
+ * Adds a listener for palette change events.
+ */
+void RMainWindow::addPaletteListener(RPaletteListener* l) {
+    paletteListeners.push_back(l);
+}
+
+void RMainWindow::removePaletteListener(RPaletteListener* l) {
+    paletteListeners.removeAll(l);
+}
+
+/**
+ * Notifies all palette listeners that the current palette has changed.
+ */
+void RMainWindow::notifyPaletteListeners() {
+    QList<RPaletteListener*>::iterator it;
+    for (it = paletteListeners.begin(); it != paletteListeners.end(); ++it) {
+        qDebug() << "notifyPaletteListener";
+        (*it)->updatePalette();
     }
 }
 

@@ -52,13 +52,16 @@
     <constructor_decl><name>RPropertyEditor</name><parameter_list>()</parameter_list>;</constructor_decl>
     <destructor_decl><specifier>virtual</specifier> <name>~RPropertyEditor</name><parameter_list>()</parameter_list>;</destructor_decl>
 
+    <function_decl><type><name>static</name> <name>RPropertyEditor</name>*</type> <name>getInstance</name><parameter_list>()</parameter_list>;</function_decl>
+
     <comment type="line">// from RPropertyListener interface:</comment>
-    <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateFromDocument</name><parameter_list>(<param><decl><type><name>RDocument</name>*</type> <name>document</name></decl></param>, <param><decl><type><name>bool</name></type> <name>onlyChanges</name></decl></param>, <param><decl><type><name><name>RS</name>::<name>EntityType</name></name></type> <name>filter</name> =<init> <expr><name><name>RS</name>::<name>EntityUnknown</name></name></expr></init></decl></param>, <param><decl><type><name>bool</name></type> <name>manual</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateFromDocument</name><parameter_list>(<param><decl><type><name>RDocument</name>*</type> <name>document</name></decl></param>, <param><decl><type><name>bool</name></type> <name>onlyChanges</name></decl></param>, <param><decl><type><name><name>RS</name>::<name>EntityType</name></name></type> <name>filter</name> =<init> <expr><name><name>RS</name>::<name>EntityUnknown</name></name></expr></init></decl></param>, <param><decl><type><name>bool</name></type> <name>manual</name> =<init> <expr><name>false</name></expr></init></decl></param>, <param><decl><type><name>bool</name></type> <name>showOnRequest</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateFromObject</name><parameter_list>(<param><decl><type><name>RObject</name>*</type> <name>object</name></decl></param>, <param><decl><type><name>RDocument</name>*</type> <name>document</name> =<init> <expr><name>NULL</name></expr></init></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>virtual</name> <name>void</name></type> <name>clearEditor</name><parameter_list>()</parameter_list>;</function_decl>
 
+    <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateLayers</name><parameter_list>(<param><decl><type><name>RDocumentInterface</name>*</type> <name>documentInterface</name></decl></param>, <param><decl><type><name>QList<argument_list>&lt;<argument><name><name>RLayer</name>::<name>Id</name></name></argument>&gt;</argument_list></name>&amp;</type> <name>layerIds</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateLayers</name><parameter_list>(<param><decl><type><name>RDocumentInterface</name>*</type> <name>documentInterface</name></decl></param>)</parameter_list>;</function_decl>
-    <function_decl><type><name>virtual</name> <name>void</name></type> <name>setCurrentLayer</name><parameter_list>(<param><decl><type><name>RDocumentInterface</name>*</type> <name>documentInterface</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>virtual</name> <name>void</name></type> <name>setCurrentLayer</name><parameter_list>(<param><decl><type><name>RDocumentInterface</name>*</type> <name>documentInterface</name></decl></param>, <param><decl><type><name><name>RLayer</name>::<name>Id</name></name></type> <name>previousLayerId</name></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>virtual</name> <name>void</name></type> <name>clearLayers</name><parameter_list>()</parameter_list>;</function_decl>
 
     <function_decl><type><name>void</name></type> <name>propertyChanged</name><parameter_list>(<param><decl><type><name>RPropertyTypeId</name></type> <name>propertyTypeId</name></decl></param>, <param><decl><type><name>QVariant</name></type> <name>propertyValue</name></decl></param>,
@@ -87,7 +90,7 @@
     <function_decl><type><name>static</name> <name>bool</name></type> <name>checkType</name><parameter_list>(<param><decl><type><name><name>RS</name>::<name>EntityType</name></name></type> <name>type</name></decl></param>, <param><decl><type><name><name>RS</name>::<name>EntityType</name></name></type> <name>filter</name></decl></param>)</parameter_list>;</function_decl>
 
 </public><protected>protected:
-    <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateEditor</name><parameter_list>(<param><decl><type><name>RObject</name>&amp;</type> <name>object</name></decl></param>, <param><decl><type><name>bool</name></type> <name>doUpdateGui</name></decl></param>, <param><decl><type><name>RDocument</name>*</type> <name>document</name> =<init> <expr><name>NULL</name></expr></init></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>virtual</name> <name>void</name></type> <name>updateEditor</name><parameter_list>(<param><decl><type><name>RObject</name>&amp;</type> <name>object</name></decl></param>, <param><decl><type><name>bool</name></type> <name>doUpdateGui</name></decl></param>, <param><decl><type><name>RDocument</name>*</type> <name>document</name> =<init> <expr><name>NULL</name></expr></init></decl></param>, <param><decl><type><name>bool</name></type> <name>showOnRequest</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
 
     <comment type="block">/**
      * Updates the user interface of this property editor. This is the
@@ -98,7 +101,7 @@
         <macro><name>Q_UNUSED</name><argument_list>(<argument>onlyChanges</argument>)</argument_list></macro>
     }</block></function>
 
-    <function_decl><type><name>void</name></type> <name>updateProperty</name><parameter_list>(<param><decl><type><name>const</name> <name>RPropertyTypeId</name>&amp;</type> <name>propertyTypeId</name></decl></param>, <param><decl><type><name>RObject</name>&amp;</type> <name>object</name></decl></param>, <param><decl><type><name>RDocument</name>*</type> <name>document</name></decl></param>)</parameter_list>;</function_decl>
+    <function_decl><type><name>void</name></type> <name>updateProperty</name><parameter_list>(<param><decl><type><name>const</name> <name>RPropertyTypeId</name>&amp;</type> <name>propertyTypeId</name></decl></param>, <param><decl><type><name>RObject</name>&amp;</type> <name>object</name></decl></param>, <param><decl><type><name>RDocument</name>*</type> <name>document</name></decl></param>, <param><decl><type><name>bool</name></type> <name>showOnRequest</name> =<init> <expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
     <function_decl><type><name>void</name></type> <name>removeAllButThese</name><parameter_list>(<param><decl><type><name>const</name> <name>QMultiMap<argument_list>&lt;<argument><name>QString</name></argument>, <argument><name>QString</name></argument>&gt;</argument_list></name>&amp;</type> <name>propertyTitles</name></decl></param>, <param><decl><type><name>bool</name></type> <name>customOnly</name>=<init><expr><name>false</name></expr></init></decl></param>)</parameter_list>;</function_decl>
 
 </protected><protected>protected:
@@ -115,6 +118,8 @@
     <decl_stmt><decl><type><name>bool</name></type> <name>updatesDisabled</name></decl>;</decl_stmt>
 
     <decl_stmt><decl><type><name><name>RS</name>::<name>EntityType</name></name></type> <name>entityTypeFilter</name></decl>;</decl_stmt>
+
+    <decl_stmt><decl><type><name>static</name> <name>RPropertyEditor</name>*</type> <name>instance</name></decl>;</decl_stmt>
 </protected>}</block>;</class>
 
 <macro><name>Q_DECLARE_METATYPE</name><argument_list>(<argument>RPropertyEditor*</argument>)</argument_list></macro>

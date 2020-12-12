@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with QCAD.
  */
+#include "RArcEntity.h"
 #include "REllipseEntity.h"
 #include "RExporter.h"
 #include "RPoint.h"
@@ -23,6 +24,7 @@
 RPropertyTypeId REllipseEntity::PropertyCustom;
 RPropertyTypeId REllipseEntity::PropertyHandle;
 RPropertyTypeId REllipseEntity::PropertyProtected;
+RPropertyTypeId REllipseEntity::PropertyWorkingSet;
 RPropertyTypeId REllipseEntity::PropertyType;
 RPropertyTypeId REllipseEntity::PropertyBlock;
 RPropertyTypeId REllipseEntity::PropertyLayer;
@@ -66,6 +68,7 @@ void REllipseEntity::init() {
     REllipseEntity::PropertyCustom.generateId(typeid(REllipseEntity), RObject::PropertyCustom);
     REllipseEntity::PropertyHandle.generateId(typeid(REllipseEntity), RObject::PropertyHandle);
     REllipseEntity::PropertyProtected.generateId(typeid(REllipseEntity), RObject::PropertyProtected);
+    REllipseEntity::PropertyWorkingSet.generateId(typeid(REllipseEntity), RObject::PropertyWorkingSet);
     REllipseEntity::PropertyType.generateId(typeid(REllipseEntity), REntity::PropertyType);
     REllipseEntity::PropertyBlock.generateId(typeid(REllipseEntity), REntity::PropertyBlock);
     REllipseEntity::PropertyLayer.generateId(typeid(REllipseEntity), REntity::PropertyLayer);
@@ -76,18 +79,18 @@ void REllipseEntity::init() {
     REllipseEntity::PropertyDisplayedColor.generateId(typeid(REllipseEntity), REntity::PropertyDisplayedColor);
     REllipseEntity::PropertyDrawOrder.generateId(typeid(REllipseEntity), REntity::PropertyDrawOrder);
 
-    REllipseEntity::PropertyCenterX.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "X"));
-    REllipseEntity::PropertyCenterY.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    REllipseEntity::PropertyCenterZ.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Z"));
-    REllipseEntity::PropertyMajorPointX.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Major Point"), QT_TRANSLATE_NOOP("REntity", "X"));
-    REllipseEntity::PropertyMajorPointY.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Major Point"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    REllipseEntity::PropertyMajorPointZ.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Major Point"), QT_TRANSLATE_NOOP("REntity", "Z"));
-    REllipseEntity::PropertyRatio.generateId(typeid(REllipseEntity), "",QT_TRANSLATE_NOOP("REntity",  "Ratio"));
-    REllipseEntity::PropertyStartParam.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "Start Parameter"));
-    REllipseEntity::PropertyEndParam.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "End Parameter"));
-    REllipseEntity::PropertyStartAngle.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "Start Angle"), true);
-    REllipseEntity::PropertyEndAngle.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "End Angle"), true);
-    REllipseEntity::PropertyReversed.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "Reversed"));
+    REllipseEntity::PropertyCenterX.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyCenterY.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyCenterZ.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Center"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyMajorPointX.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Major Point"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyMajorPointY.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Major Point"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyMajorPointZ.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Major Point"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyRatio.generateId(typeid(REllipseEntity), "",QT_TRANSLATE_NOOP("REntity",  "Ratio"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyStartParam.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "Start Parameter"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyEndParam.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "End Parameter"), false, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyStartAngle.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "Start Angle"), true, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyEndAngle.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "End Angle"), true, RPropertyAttributes::Geometry);
+    REllipseEntity::PropertyReversed.generateId(typeid(REllipseEntity), "", QT_TRANSLATE_NOOP("REntity", "Reversed"), false, RPropertyAttributes::Geometry);
 
     REllipseEntity::PropertyStartPointX.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Start Point"), QT_TRANSLATE_NOOP("REntity", "X"));
     REllipseEntity::PropertyStartPointY.generateId(typeid(REllipseEntity), QT_TRANSLATE_NOOP("REntity", "Start Point"), QT_TRANSLATE_NOOP("REntity", "Y"));
@@ -128,7 +131,7 @@ bool REllipseEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> REllipseEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyCenterX) {
         return qMakePair(QVariant(data.center.x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyCenterY) {
@@ -174,7 +177,7 @@ QPair<QVariant, RPropertyAttributes> REllipseEntity::getProperty(
         }
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void REllipseEntity::setShape(const REllipse& e) {
@@ -187,11 +190,15 @@ void REllipseEntity::setShape(const REllipse& e) {
 }
 
 void REllipseEntity::exportEntity(RExporter& e, bool preview, bool forceSelected) const {
-    Q_UNUSED(preview);
-    Q_UNUSED(forceSelected);
+    Q_UNUSED(preview)
+    Q_UNUSED(forceSelected)
 
     e.setBrush(Qt::NoBrush);
     e.exportEllipse(data);
+}
+
+QSharedPointer<REntity> REllipseEntity::scaleNonUniform(const RVector& scaleFactors, const RVector& center) {
+    return RArcEntity::scaleNonUniform(*this, scaleFactors, center);
 }
 
 void REllipseEntity::print(QDebug dbg) const {

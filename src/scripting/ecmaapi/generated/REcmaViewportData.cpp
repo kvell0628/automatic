@@ -75,6 +75,8 @@
             
             REcmaHelper::registerFunction(&engine, proto, getBoundingBox, "getBoundingBox");
             
+            REcmaHelper::registerFunction(&engine, proto, to2D, "to2D");
+            
             REcmaHelper::registerFunction(&engine, proto, castToShape, "castToShape");
             
             REcmaHelper::registerFunction(&engine, proto, getViewportId, "getViewportId");
@@ -387,6 +389,50 @@
                    context);
             }
             //REcmaHelper::functionEnd("REcmaViewportData::getBoundingBox", context, engine);
+            return result;
+        }
+         QScriptValue
+        REcmaViewportData::to2D
+        (QScriptContext* context, QScriptEngine* engine) 
+        
+        {
+            //REcmaHelper::functionStart("REcmaViewportData::to2D", context, engine);
+            //qDebug() << "ECMAScript WRAPPER: REcmaViewportData::to2D";
+            //QCoreApplication::processEvents();
+
+            QScriptValue result = engine->undefinedValue();
+            
+                    // public function: can be called from ECMA wrapper of ECMA shell:
+                    RViewportData* self = 
+                        getSelf("to2D", context);
+                  
+
+                //Q_ASSERT(self!=NULL);
+                if (self==NULL) {
+                    return REcmaHelper::throwError("self is NULL", context);
+                }
+                
+    
+    if( context->argumentCount() ==
+    0
+    ){
+    // prepare arguments:
+    
+    // end of arguments
+
+    // call C++ function:
+    // return type 'void'
+    
+               self->to2D();
+    } else
+
+
+        
+            {
+               return REcmaHelper::throwError("Wrong number/types of arguments for RViewportData.to2D().",
+                   context);
+            }
+            //REcmaHelper::functionEnd("REcmaViewportData::to2D", context, engine);
             return result;
         }
          QScriptValue
@@ -1830,6 +1876,88 @@
                self->moveReferencePoint(a0
         ,
     a1);
+        // return type: bool
+                // standard Type
+                result = QScriptValue(cppResult);
+            
+    } else
+
+
+        
+    
+    if( context->argumentCount() ==
+    3 && (
+            context->argument(0).isVariant() || 
+            context->argument(0).isQObject() || 
+            context->argument(0).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(1).isVariant() || 
+            context->argument(1).isQObject() || 
+            context->argument(1).isNull()
+        ) /* type: RVector */
+     && (
+            context->argument(2).isNumber()
+        ) /* type: Qt::KeyboardModifiers */
+    
+    ){
+    // prepare arguments:
+    
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap0 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        0
+                        )
+                    );
+                    if (ap0 == NULL) {
+                           return REcmaHelper::throwError("RViewportData: Argument 0 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a0 = 
+                    *ap0;
+                
+                    // argument isCopyable and has default constructor and isSimpleClass 
+                    RVector*
+                    ap1 =
+                    qscriptvalue_cast<
+                    RVector*
+                        >(
+                        context->argument(
+                        1
+                        )
+                    );
+                    if (ap1 == NULL) {
+                           return REcmaHelper::throwError("RViewportData: Argument 1 is not of type RVector.",
+                               context);                    
+                    }
+                    RVector 
+                    a1 = 
+                    *ap1;
+                
+                    // argument isStandardType
+                    Qt::KeyboardModifiers
+                    a2 =
+                    (Qt::KeyboardModifiers)
+                    (int)
+                    context->argument( 2 ).
+                    toNumber();
+                
+    // end of arguments
+
+    // call C++ function:
+    // return type 'bool'
+    bool cppResult =
+        
+               self->moveReferencePoint(a0
+        ,
+    a1
+        ,
+    a2);
         // return type: bool
                 // standard Type
                 result = QScriptValue(cppResult);

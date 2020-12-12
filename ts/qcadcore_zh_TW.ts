@@ -21,7 +21,7 @@
     <message>
         <location line="+3"/>
         <source>Mile</source>
-        <translation type="unfinished"></translation>
+        <translation>英哩</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -41,12 +41,12 @@
     <message>
         <location line="+3"/>
         <source>Kilometer</source>
-        <translation type="unfinished"></translation>
+        <translation>公里</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Microinch</source>
-        <translation type="unfinished"></translation>
+        <translation>微英寸</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -56,37 +56,37 @@
     <message>
         <location line="+3"/>
         <source>Yard</source>
-        <translation type="unfinished"></translation>
+        <translation>碼</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Angstrom</source>
-        <translation type="unfinished"></translation>
+        <translation>埃</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Nanometer</source>
-        <translation type="unfinished"></translation>
+        <translation>奈米</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Micron</source>
-        <translation type="unfinished"></translation>
+        <translation>微米</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decimeter</source>
-        <translation type="unfinished"></translation>
+        <translation>公寸</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Decameter</source>
-        <translation type="unfinished"></translation>
+        <translation>公寸</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Hectometer</source>
-        <translation type="unfinished"></translation>
+        <translation>公引</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -112,7 +112,7 @@
 <context>
     <name>RColor</name>
     <message>
-        <location filename="../src/core/RColor.cpp" line="+287"/>
+        <location filename="../src/core/RColor.cpp" line="+299"/>
         <source>By Layer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -215,7 +215,7 @@
 <context>
     <name>RDocumentVariables</name>
     <message>
-        <location filename="../src/core/RDocumentVariables.cpp" line="+45"/>
+        <location filename="../src/core/RDocumentVariables.cpp" line="+47"/>
         <source>Current Layer ID</source>
         <translation type="unfinished"></translation>
     </message>
@@ -239,7 +239,8 @@
     <name>REntity</name>
     <message>
         <location filename="../src/core/RBlock.cpp" line="+63"/>
-        <location filename="../src/core/RLayer.cpp" line="+90"/>
+        <location filename="../src/core/RLayer.cpp" line="+93"/>
+        <location filename="../src/core/RLayerState.cpp" line="+46"/>
         <location filename="../src/core/RLayout.cpp" line="+80"/>
         <source>Name</source>
         <translation>名稱</translation>
@@ -250,7 +251,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+92"/>
+        <location filename="../src/core/RBlockReferenceEntity.cpp" line="+94"/>
         <source>Block</source>
         <translation type="unfinished"></translation>
     </message>
@@ -278,7 +279,7 @@
         <location line="+3"/>
         <location line="+3"/>
         <location line="+3"/>
-        <location filename="../src/core/RTextBasedEntity.cpp" line="+72"/>
+        <location filename="../src/core/RTextBasedEntity.cpp" line="+74"/>
         <location filename="../src/core/RViewportEntity.cpp" line="-2"/>
         <location line="+8"/>
         <location line="+2"/>
@@ -362,8 +363,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/REntity.cpp" line="+86"/>
-        <location filename="../src/core/RObject.cpp" line="+62"/>
+        <location line="+3"/>
+        <source>Attributes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/core/REntity.cpp" line="+93"/>
+        <location filename="../src/core/RObject.cpp" line="+69"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
@@ -499,7 +505,7 @@
     </message>
     <message>
         <location filename="../src/core/RObject.cpp" line="-1"/>
-        <location filename="../src/core/RPropertyTypeId.cpp" line="+108"/>
+        <location filename="../src/core/RPropertyTypeId.cpp" line="+151"/>
         <source>Custom</source>
         <translation>自訂</translation>
     </message>
@@ -514,6 +520,21 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Invisible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Working Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/core/RTextBasedEntity.cpp" line="-3"/>
         <source>Simple</source>
         <translation type="unfinished"></translation>
@@ -523,7 +544,7 @@
         <location line="+1"/>
         <location line="+1"/>
         <source>Text Position</source>
-        <translation type="unfinished"></translation>
+        <translation>文字位置</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -585,6 +606,16 @@
         <location line="+1"/>
         <source>Vertical</source>
         <translation>直向</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Backward</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Upside Down</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/core/RViewportEntity.cpp" line="+2"/>
@@ -655,7 +686,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/core/RBlockReferenceData.cpp" line="+627"/>
+        <location filename="../src/core/RBlockReferenceData.cpp" line="+827"/>
         <source>Circular (recursive) block referencing detected:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -668,7 +699,7 @@
 <context>
     <name>RGuiAction</name>
     <message>
-        <location filename="../src/core/RGuiAction.cpp" line="+184"/>
+        <location filename="../src/core/RGuiAction.cpp" line="+186"/>
         <source>Requires selection</source>
         <translation type="unfinished"></translation>
     </message>
@@ -676,7 +707,7 @@
 <context>
     <name>RLinetype</name>
     <message>
-        <location filename="../src/core/RLinetype.cpp" line="+48"/>
+        <location filename="../src/core/RLinetype.cpp" line="+52"/>
         <source>Name</source>
         <translation>名稱</translation>
     </message>
@@ -699,7 +730,7 @@
 <context>
     <name>RLinetypePattern</name>
     <message>
-        <location filename="../src/core/RLinetypePattern.cpp" line="+856"/>
+        <location filename="../src/core/RLinetypePattern.cpp" line="+869"/>
         <source>By Layer</source>
         <translation type="unfinished"></translation>
     </message>

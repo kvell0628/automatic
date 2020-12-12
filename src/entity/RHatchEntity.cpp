@@ -29,6 +29,7 @@
 RPropertyTypeId RHatchEntity::PropertyCustom;
 RPropertyTypeId RHatchEntity::PropertyHandle;
 RPropertyTypeId RHatchEntity::PropertyProtected;
+RPropertyTypeId RHatchEntity::PropertyWorkingSet;
 RPropertyTypeId RHatchEntity::PropertyType;
 RPropertyTypeId RHatchEntity::PropertyBlock;
 RPropertyTypeId RHatchEntity::PropertyLayer;
@@ -40,6 +41,7 @@ RPropertyTypeId RHatchEntity::PropertyDisplayedColor;
 RPropertyTypeId RHatchEntity::PropertyDrawOrder;
 
 RPropertyTypeId RHatchEntity::PropertySolid;
+RPropertyTypeId RHatchEntity::PropertyTransparency;
 
 RPropertyTypeId RHatchEntity::PropertyPatternName;
 RPropertyTypeId RHatchEntity::PropertyEntityPattern;
@@ -69,6 +71,7 @@ void RHatchEntity::init() {
     RHatchEntity::PropertyCustom.generateId(typeid(RHatchEntity), RObject::PropertyCustom);
     RHatchEntity::PropertyHandle.generateId(typeid(RHatchEntity), RObject::PropertyHandle);
     RHatchEntity::PropertyProtected.generateId(typeid(RHatchEntity), RObject::PropertyProtected);
+    RHatchEntity::PropertyWorkingSet.generateId(typeid(RHatchEntity), RObject::PropertyWorkingSet);
     RHatchEntity::PropertyType.generateId(typeid(RHatchEntity), REntity::PropertyType);
     RHatchEntity::PropertyBlock.generateId(typeid(RHatchEntity), REntity::PropertyBlock);
     RHatchEntity::PropertyLayer.generateId(typeid(RHatchEntity), REntity::PropertyLayer);
@@ -80,18 +83,19 @@ void RHatchEntity::init() {
     RHatchEntity::PropertyDrawOrder.generateId(typeid(RHatchEntity), REntity::PropertyDrawOrder);
 
     RHatchEntity::PropertySolid.generateId(typeid(RHatchEntity), "", QT_TRANSLATE_NOOP("REntity", "Solid"));
+    RHatchEntity::PropertyTransparency.generateId(typeid(RHatchEntity), "", QT_TRANSLATE_NOOP("REntity", "Alpha"));
 
     RHatchEntity::PropertyPatternName.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Pattern"), QT_TRANSLATE_NOOP("REntity", "Name"));
     RHatchEntity::PropertyEntityPattern.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Pattern"), QT_TRANSLATE_NOOP("REntity", "From Entity"));
-    RHatchEntity::PropertyAngle.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Pattern"), QT_TRANSLATE_NOOP("REntity", "Angle"));
-    RHatchEntity::PropertyScaleFactor.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Pattern"), QT_TRANSLATE_NOOP("REntity", "Scale"));
+    RHatchEntity::PropertyAngle.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Pattern"), QT_TRANSLATE_NOOP("REntity", "Angle"), false, RPropertyAttributes::Geometry);
+    RHatchEntity::PropertyScaleFactor.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Pattern"), QT_TRANSLATE_NOOP("REntity", "Scale"), false, RPropertyAttributes::Geometry);
 
     RHatchEntity::PropertyOriginX.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Origin"), QT_TRANSLATE_NOOP("REntity", "X"));
     RHatchEntity::PropertyOriginY.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Origin"), QT_TRANSLATE_NOOP("REntity", "Y"));
 
-    RHatchEntity::PropertyVertexNX.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RHatchEntity::PropertyVertexNY.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RHatchEntity::PropertyVertexNZ.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RHatchEntity::PropertyVertexNX.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RHatchEntity::PropertyVertexNY.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RHatchEntity::PropertyVertexNZ.generateId(typeid(RHatchEntity), QT_TRANSLATE_NOOP("REntity", "Vertex"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 }
 
 bool RHatchEntity::setProperty(RPropertyTypeId propertyTypeId, const QVariant& value,
@@ -100,6 +104,7 @@ bool RHatchEntity::setProperty(RPropertyTypeId propertyTypeId, const QVariant& v
     bool ret = REntity::setProperty(propertyTypeId, value, transaction);
 
     ret = ret || RObject::setMember(data.solid, value, PropertySolid == propertyTypeId);
+    ret = ret || RObject::setMember(data.transparency, value, PropertyTransparency == propertyTypeId);
 
     ret = ret || RObject::setMember(data.patternName, value, PropertyPatternName == propertyTypeId);
     ret = ret || RObject::setMember(data.scaleFactor, value, PropertyScaleFactor == propertyTypeId);
@@ -258,7 +263,7 @@ RVector RHatchEntity::setComponent(const RVector& p, double v, RObject::XYZ xyz)
 }
 
 QPair<QVariant, RPropertyAttributes> RHatchEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
 
     if (propertyTypeId == PropertySolid) {
         //return qMakePair(QVariant(data.solid), RPropertyAttributes(RPropertyAttributes::AffectsOtherProperties));
@@ -270,6 +275,10 @@ QPair<QVariant, RPropertyAttributes> RHatchEntity::getProperty(
     if (data.isSolid()) {
         op = RPropertyAttributes::ReadOnly;
         name = "SOLID";
+    }
+
+    if (propertyTypeId == PropertyTransparency) {
+        return qMakePair(QVariant(data.transparency), RPropertyAttributes());
     }
 
     if (propertyTypeId == PropertyPatternName) {
@@ -354,7 +363,7 @@ QPair<QVariant, RPropertyAttributes> RHatchEntity::getProperty(
         return qMakePair(v, RPropertyAttributes(RPropertyAttributes::List));
     }
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 
@@ -380,8 +389,24 @@ void RHatchEntity::print(QDebug dbg) const {
         QList<QSharedPointer<RShape> > loop = data.boundary.at(i);
         for (int k=0; k<loop.size(); ++k) {
             QSharedPointer<RShape> shape = loop.at(k);
-            dbg.nospace() << *shape << "\n";
+            dbg.nospace() << "   " << shape->getStartPoint() << ", " << shape->getEndPoint() << "\n";
         }
     }
     dbg.nospace() << ")";
+}
+
+void RHatchEntity::setViewportContext(const RViewportData& vp) {
+    // apply viewport transforms:
+    RVector offs =  vp.getViewCenter()*vp.getScale() + vp.getViewTarget()*vp.getScale() - data.getOriginPoint()*vp.getScale();
+    offs.rotate(vp.getRotation());
+
+    // make sure custom pattern is not cleared here:
+    data.setOriginPoint(vp.getCenter() - offs, false);
+
+    // rotate custom pattern:
+    if (data.hasCustomPattern()) {
+        RPattern p = data.getCustomPattern();
+        p.rotate(vp.getRotation());
+        data.setCustomPattern(p);
+    }
 }

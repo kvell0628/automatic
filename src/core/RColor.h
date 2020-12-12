@@ -30,7 +30,9 @@
 #include <QIcon>
 #include <QDebug>
 
+#ifndef RDEFAULT_QSIZE_ICON
 #define RDEFAULT_QSIZE_ICON QSize(32,10)
+#endif
 
 /**
  * Color. Fixed RGBA or ByLayer or ByBlock.
@@ -57,7 +59,7 @@ public:
     RColor();
     RColor(int r, int g, int b, int a = 255, RColor::Mode mode = RColor::Fixed);
     RColor(RColor::Mode mode);
-    RColor(const QString& name, RColor::Mode mode = RColor::Fixed);
+    explicit RColor(const QString& name, RColor::Mode mode = RColor::Fixed);
 
     /**
      * \nonscriptable
@@ -98,6 +100,7 @@ public:
     void setCompat(const QColor& col);
 
     static RColor getHighlighted(const RColor& color, const QColor& bgColor, int minDist = 75);
+    static RColor getFaded(const RColor& color, const QColor& bgColor, double factor = 1);
 
     //bool equalsCorrected(const RColor & color) const;
 

@@ -22,6 +22,7 @@
 RPropertyTypeId RDimAlignedEntity::PropertyCustom;
 RPropertyTypeId RDimAlignedEntity::PropertyHandle;
 RPropertyTypeId RDimAlignedEntity::PropertyProtected;
+RPropertyTypeId RDimAlignedEntity::PropertyWorkingSet;
 RPropertyTypeId RDimAlignedEntity::PropertyType;
 RPropertyTypeId RDimAlignedEntity::PropertyBlock;
 RPropertyTypeId RDimAlignedEntity::PropertyLayer;
@@ -45,6 +46,11 @@ RPropertyTypeId RDimAlignedEntity::PropertyDimScale;
 RPropertyTypeId RDimAlignedEntity::PropertyDimBlockName;
 RPropertyTypeId RDimAlignedEntity::PropertyAutoTextPos;
 RPropertyTypeId RDimAlignedEntity::PropertyFontName;
+RPropertyTypeId RDimAlignedEntity::PropertyArrow1Flipped;
+RPropertyTypeId RDimAlignedEntity::PropertyArrow2Flipped;
+
+RPropertyTypeId RDimAlignedEntity::PropertyExtLineFix;
+RPropertyTypeId RDimAlignedEntity::PropertyExtLineFixLength;
 
 RPropertyTypeId RDimAlignedEntity::PropertyDimensionLinePosX;
 RPropertyTypeId RDimAlignedEntity::PropertyDimensionLinePosY;
@@ -58,7 +64,7 @@ RPropertyTypeId RDimAlignedEntity::PropertyExtensionPoint2Z;
 
 
 RDimAlignedEntity::RDimAlignedEntity(RDocument* document, const RDimAlignedData& data) :
-    RDimensionEntity(document), data(document, data) {
+    RDimLinearEntity(document), data(document, data) {
 }
 
 RDimAlignedEntity::~RDimAlignedEntity() {
@@ -68,6 +74,7 @@ void RDimAlignedEntity::init() {
     RDimAlignedEntity::PropertyCustom.generateId(typeid(RDimAlignedEntity), RObject::PropertyCustom);
     RDimAlignedEntity::PropertyHandle.generateId(typeid(RDimAlignedEntity), RObject::PropertyHandle);
     RDimAlignedEntity::PropertyProtected.generateId(typeid(RDimAlignedEntity), RObject::PropertyProtected);
+    RDimAlignedEntity::PropertyWorkingSet.generateId(typeid(RDimAlignedEntity), RObject::PropertyWorkingSet);
     RDimAlignedEntity::PropertyType.generateId(typeid(RDimAlignedEntity), REntity::PropertyType);
     RDimAlignedEntity::PropertyBlock.generateId(typeid(RDimAlignedEntity), REntity::PropertyBlock);
     RDimAlignedEntity::PropertyLayer.generateId(typeid(RDimAlignedEntity), REntity::PropertyLayer);
@@ -91,35 +98,40 @@ void RDimAlignedEntity::init() {
     RDimAlignedEntity::PropertyDimBlockName.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyDimBlockName);
     RDimAlignedEntity::PropertyAutoTextPos.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyAutoTextPos);
     RDimAlignedEntity::PropertyFontName.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyFontName);
+    RDimAlignedEntity::PropertyArrow1Flipped.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyArrow1Flipped);
+    RDimAlignedEntity::PropertyArrow2Flipped.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyArrow2Flipped);
 
-    RDimAlignedEntity::PropertyDimensionLinePosX.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimAlignedEntity::PropertyDimensionLinePosY.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimAlignedEntity::PropertyDimensionLinePosZ.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Dimension Line"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimAlignedEntity::PropertyExtLineFix.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyExtLineFix);
+    RDimAlignedEntity::PropertyExtLineFixLength.generateId(typeid(RDimAlignedEntity), RDimensionEntity::PropertyExtLineFixLength);
 
-    RDimAlignedEntity::PropertyExtensionPoint1X.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimAlignedEntity::PropertyExtensionPoint1Y.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimAlignedEntity::PropertyExtensionPoint1Z.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 1"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimAlignedEntity::PropertyDimensionLinePosX.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyDimensionLinePosX);
+    RDimAlignedEntity::PropertyDimensionLinePosY.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyDimensionLinePosY);
+    RDimAlignedEntity::PropertyDimensionLinePosZ.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyDimensionLinePosZ);
 
-    RDimAlignedEntity::PropertyExtensionPoint2X.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimAlignedEntity::PropertyExtensionPoint2Y.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimAlignedEntity::PropertyExtensionPoint2Z.generateId(typeid(RDimAlignedEntity), QT_TRANSLATE_NOOP("REntity", "Extension Point 2"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimAlignedEntity::PropertyExtensionPoint1X.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyExtensionPoint1X);
+    RDimAlignedEntity::PropertyExtensionPoint1Y.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyExtensionPoint1Y);
+    RDimAlignedEntity::PropertyExtensionPoint1Z.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyExtensionPoint1Z);
+
+    RDimAlignedEntity::PropertyExtensionPoint2X.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyExtensionPoint2X);
+    RDimAlignedEntity::PropertyExtensionPoint2Y.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyExtensionPoint2Y);
+    RDimAlignedEntity::PropertyExtensionPoint2Z.generateId(typeid(RDimAlignedEntity), RDimLinearEntity::PropertyExtensionPoint2Z);
 }
 
 bool RDimAlignedEntity::setProperty(RPropertyTypeId propertyTypeId,
         const QVariant& value, RTransaction* transaction) {
-    bool ret = RDimensionEntity::setProperty(propertyTypeId, value, transaction);
+    bool ret = RDimLinearEntity::setProperty(propertyTypeId, value, transaction);
 
-    ret = ret || RObject::setMember(data.definitionPoint.x, value, PropertyDimensionLinePosX == propertyTypeId);
-    ret = ret || RObject::setMember(data.definitionPoint.y, value, PropertyDimensionLinePosY == propertyTypeId);
-    ret = ret || RObject::setMember(data.definitionPoint.z, value, PropertyDimensionLinePosZ == propertyTypeId);
+//    ret = ret || RObject::setMember(data.definitionPoint.x, value, PropertyDimensionLinePosX == propertyTypeId);
+//    ret = ret || RObject::setMember(data.definitionPoint.y, value, PropertyDimensionLinePosY == propertyTypeId);
+//    ret = ret || RObject::setMember(data.definitionPoint.z, value, PropertyDimensionLinePosZ == propertyTypeId);
 
-    ret = ret || RObject::setMember(data.extensionPoint1.x, value, PropertyExtensionPoint1X == propertyTypeId);
-    ret = ret || RObject::setMember(data.extensionPoint1.y, value, PropertyExtensionPoint1Y == propertyTypeId);
-    ret = ret || RObject::setMember(data.extensionPoint1.z, value, PropertyExtensionPoint1Z == propertyTypeId);
+//    ret = ret || RObject::setMember(data.extensionPoint1.x, value, PropertyExtensionPoint1X == propertyTypeId);
+//    ret = ret || RObject::setMember(data.extensionPoint1.y, value, PropertyExtensionPoint1Y == propertyTypeId);
+//    ret = ret || RObject::setMember(data.extensionPoint1.z, value, PropertyExtensionPoint1Z == propertyTypeId);
 
-    ret = ret || RObject::setMember(data.extensionPoint2.x, value, PropertyExtensionPoint2X == propertyTypeId);
-    ret = ret || RObject::setMember(data.extensionPoint2.y, value, PropertyExtensionPoint2Y == propertyTypeId);
-    ret = ret || RObject::setMember(data.extensionPoint2.z, value, PropertyExtensionPoint2Z == propertyTypeId);
+//    ret = ret || RObject::setMember(data.extensionPoint2.x, value, PropertyExtensionPoint2X == propertyTypeId);
+//    ret = ret || RObject::setMember(data.extensionPoint2.y, value, PropertyExtensionPoint2Y == propertyTypeId);
+//    ret = ret || RObject::setMember(data.extensionPoint2.z, value, PropertyExtensionPoint2Z == propertyTypeId);
 
     if (ret) {
         data.update();
@@ -129,33 +141,34 @@ bool RDimAlignedEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RDimAlignedEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
-    if (propertyTypeId == PropertyDimensionLinePosX) {
-        return qMakePair(QVariant(data.definitionPoint.x), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyDimensionLinePosY) {
-        return qMakePair(QVariant(data.definitionPoint.y), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyDimensionLinePosZ) {
-        return qMakePair(QVariant(data.definitionPoint.z), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint1X) {
-        return qMakePair(QVariant(data.extensionPoint1.x), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint1Y) {
-        return qMakePair(QVariant(data.extensionPoint1.y), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint1Z) {
-        return qMakePair(QVariant(data.extensionPoint1.z), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint2X) {
-        return qMakePair(QVariant(data.extensionPoint2.x), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint2Y) {
-        return qMakePair(QVariant(data.extensionPoint2.y), RPropertyAttributes());
-    } else if (propertyTypeId == PropertyExtensionPoint2Z) {
-        return qMakePair(QVariant(data.extensionPoint2.z), RPropertyAttributes());
-    }
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
+//    if (propertyTypeId == PropertyDimensionLinePosX) {
+//        return qMakePair(QVariant(data.definitionPoint.x), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyDimensionLinePosY) {
+//        return qMakePair(QVariant(data.definitionPoint.y), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyDimensionLinePosZ) {
+//        return qMakePair(QVariant(data.definitionPoint.z), RPropertyAttributes());
+//    }
+//    } else if (propertyTypeId == PropertyExtensionPoint1X) {
+//        return qMakePair(QVariant(data.extensionPoint1.x), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyExtensionPoint1Y) {
+//        return qMakePair(QVariant(data.extensionPoint1.y), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyExtensionPoint1Z) {
+//        return qMakePair(QVariant(data.extensionPoint1.z), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyExtensionPoint2X) {
+//        return qMakePair(QVariant(data.extensionPoint2.x), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyExtensionPoint2Y) {
+//        return qMakePair(QVariant(data.extensionPoint2.y), RPropertyAttributes());
+//    } else if (propertyTypeId == PropertyExtensionPoint2Z) {
+//        return qMakePair(QVariant(data.extensionPoint2.z), RPropertyAttributes());
+//    }
 
-    return RDimensionEntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return RDimLinearEntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RDimAlignedEntity::print(QDebug dbg) const {
     dbg.nospace() << "RDimAlignedEntity(";
-    RDimensionEntity::print(dbg);
+    RDimLinearEntity::print(dbg);
     dbg.nospace() << ", extensionPoint1: " << getData().extensionPoint1
                   << ", extensionPoint2: " << getData().extensionPoint2
                   << ")";

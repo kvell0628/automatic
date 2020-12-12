@@ -62,6 +62,13 @@ public:
      */
     static void initScriptExtensions(QObject* plugin, QScriptEngine& engine);
 
+    static void initTranslations();
+
+    /**
+     * \nonscriptable
+     */
+    static void initTranslations(QObject* plugin);
+
     static int countPlugins() {
         return pluginsInfo.count();
     }
@@ -71,6 +78,9 @@ public:
 
     static QString getPluginsPath();
     static bool hasPlugin(const QString& id);
+
+    static bool checkPluginLicenses();
+    static bool checkPluginLicense(QObject* plugin);
 
 private:
     static QList<RPluginInfo> pluginsInfo;

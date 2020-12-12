@@ -18,11 +18,13 @@
  */
 #include "RDimensionEntity.h"
 #include "RExporter.h"
+#include "RPluginLoader.h"
 #include "RStorage.h"
 
 RPropertyTypeId RDimensionEntity::PropertyCustom;
 RPropertyTypeId RDimensionEntity::PropertyHandle;
 RPropertyTypeId RDimensionEntity::PropertyProtected;
+RPropertyTypeId RDimensionEntity::PropertyWorkingSet;
 RPropertyTypeId RDimensionEntity::PropertyType;
 RPropertyTypeId RDimensionEntity::PropertyBlock;
 RPropertyTypeId RDimensionEntity::PropertyLayer;
@@ -47,6 +49,13 @@ RPropertyTypeId RDimensionEntity::PropertyDimScale;
 RPropertyTypeId RDimensionEntity::PropertyDimBlockName;
 RPropertyTypeId RDimensionEntity::PropertyAutoTextPos;
 RPropertyTypeId RDimensionEntity::PropertyFontName;
+//RPropertyTypeId RDimensionEntity::PropertyTextColor;
+RPropertyTypeId RDimensionEntity::PropertyArrow1Flipped;
+RPropertyTypeId RDimensionEntity::PropertyArrow2Flipped;
+
+RPropertyTypeId RDimensionEntity::PropertyExtLineFix;
+RPropertyTypeId RDimensionEntity::PropertyExtLineFixLength;
+
 //RPropertyTypeId RDimensionEntity::PropertyHeight;
 //RPropertyTypeId RDimensionEntity::PropertyAngle;
 //RPropertyTypeId RDimensionEntity::PropertyLineSpacingFactor;
@@ -68,6 +77,7 @@ void RDimensionEntity::init() {
     RDimensionEntity::PropertyCustom.generateId(typeid(RDimensionEntity), RObject::PropertyCustom);
     RDimensionEntity::PropertyHandle.generateId(typeid(RDimensionEntity), RObject::PropertyHandle);
     RDimensionEntity::PropertyProtected.generateId(typeid(RDimensionEntity), RObject::PropertyProtected);
+    RDimensionEntity::PropertyWorkingSet.generateId(typeid(RDimensionEntity), RObject::PropertyWorkingSet);
     RDimensionEntity::PropertyType.generateId(typeid(RDimensionEntity), REntity::PropertyType);
     RDimensionEntity::PropertyBlock.generateId(typeid(RDimensionEntity), REntity::PropertyBlock);
     RDimensionEntity::PropertyLayer.generateId(typeid(RDimensionEntity), REntity::PropertyLayer);
@@ -81,13 +91,20 @@ void RDimensionEntity::init() {
     RDimensionEntity::PropertyText.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Label"));
     RDimensionEntity::PropertyUpperTolerance.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Tolerance"), QT_TRANSLATE_NOOP("REntity", "Upper Limit"));
     RDimensionEntity::PropertyLowerTolerance.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Tolerance"), QT_TRANSLATE_NOOP("REntity", "Lower Limit"));
-    RDimensionEntity::PropertyDefinitionPointX.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Definition Point"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimensionEntity::PropertyDefinitionPointY.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Definition Point"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimensionEntity::PropertyDefinitionPointZ.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Definition Point"), QT_TRANSLATE_NOOP("REntity", "Z"));
-    RDimensionEntity::PropertyMiddleOfTextX.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Text Position"), QT_TRANSLATE_NOOP("REntity", "X"));
-    RDimensionEntity::PropertyMiddleOfTextY.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Text Position"), QT_TRANSLATE_NOOP("REntity", "Y"));
-    RDimensionEntity::PropertyMiddleOfTextZ.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Text Position"), QT_TRANSLATE_NOOP("REntity", "Z"));
+    RDimensionEntity::PropertyDefinitionPointX.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Definition Point"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RDimensionEntity::PropertyDefinitionPointY.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Definition Point"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RDimensionEntity::PropertyDefinitionPointZ.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Definition Point"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
+    RDimensionEntity::PropertyMiddleOfTextX.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Text Position"), QT_TRANSLATE_NOOP("REntity", "X"), false, RPropertyAttributes::Geometry);
+    RDimensionEntity::PropertyMiddleOfTextY.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Text Position"), QT_TRANSLATE_NOOP("REntity", "Y"), false, RPropertyAttributes::Geometry);
+    RDimensionEntity::PropertyMiddleOfTextZ.generateId(typeid(RDimensionEntity), QT_TRANSLATE_NOOP("REntity", "Text Position"), QT_TRANSLATE_NOOP("REntity", "Z"), false, RPropertyAttributes::Geometry);
 //    RDimensionEntity::PropertyFontName.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Font"));
+//    RDimensionEntity::PropertyTextColor.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Text Color"));
+    RDimensionEntity::PropertyArrow1Flipped.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Flip First Arrow"));
+    RDimensionEntity::PropertyArrow2Flipped.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Flip Second Arrow"));
+
+    RDimensionEntity::PropertyExtLineFix.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Fixed Extension Line"));
+    RDimensionEntity::PropertyExtLineFixLength.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Extension Line Length"));
+
 //    RDimensionEntity::PropertyHeight.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Height"));
 //    RDimensionEntity::PropertyAngle.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Angle"));
 //    RDimensionEntity::PropertyLineSpacingFactor.generateId(typeid(RDimensionEntity), "", QT_TRANSLATE_NOOP("REntity", "Line Spacing"));
@@ -134,9 +151,15 @@ bool RDimensionEntity::setProperty(RPropertyTypeId propertyTypeId,
     ret = ret || RObject::setMember(getData().dimScaleOverride, value, PropertyDimScale == propertyTypeId);
     ret = ret || RObject::setMember(getData().dimBlockName, value, PropertyDimBlockName == propertyTypeId);
     ret = ret || RObject::setMember(getData().autoTextPos, value, PropertyAutoTextPos == propertyTypeId);
-//    if (RPluginLoader::hasPlugin("DWG")) {
+    if (RPluginLoader::hasPlugin("DWG")) {
 //        ret = ret || RObject::setMember(getData().fontName, value, PropertyFontName == propertyTypeId);
-//    }
+//        ret = ret || RObject::setMember(getData().textColor, value, PropertyTextColor == propertyTypeId);
+        ret = ret || RObject::setMember(getData().arrow1Flipped, value, PropertyArrow1Flipped == propertyTypeId);
+        ret = ret || RObject::setMember(getData().arrow2Flipped, value, PropertyArrow2Flipped == propertyTypeId);
+
+        ret = ret || RObject::setMember(getData().extLineFix, value, PropertyExtLineFix == propertyTypeId);
+        ret = ret || RObject::setMember(getData().extLineFixLength, value, PropertyExtLineFixLength == propertyTypeId);
+    }
 //    ret = ret || RObject::setMember(getData().textHeight, value, PropertyHeight == propertyTypeId);
 //    ret = ret || RObject::setMember(getData().angle, value, PropertyAngle == propertyTypeId);
 //    ret = ret || RObject::setMember(getData().lineSpacingFactor, value, PropertyLineSpacingFactor == propertyTypeId);
@@ -151,7 +174,7 @@ bool RDimensionEntity::setProperty(RPropertyTypeId propertyTypeId,
 }
 
 QPair<QVariant, RPropertyAttributes> RDimensionEntity::getProperty(
-        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes) {
+        RPropertyTypeId& propertyTypeId, bool humanReadable, bool noAttributes, bool showOnRequest) {
     if (propertyTypeId == PropertyDefinitionPointX) {
         return qMakePair(QVariant(getData().definitionPoint.x), RPropertyAttributes());
     } else if (propertyTypeId == PropertyDefinitionPointY) {
@@ -189,7 +212,7 @@ QPair<QVariant, RPropertyAttributes> RDimensionEntity::getProperty(
         return qMakePair(QVariant(getData().lowerTolerance),
                          RPropertyAttributes(RPropertyAttributes::Label));
     } else if (propertyTypeId == PropertyAutoLabel) {
-        if (getType()==RS::EntityDimAngular) {
+        if (getType()==RS::EntityDimAngular2L || getType()==RS::EntityDimAngular3P) {
             return qMakePair(QVariant(getData().getAutoLabel()),
                              RPropertyAttributes(RPropertyAttributes::ReadOnly | RPropertyAttributes::Angle));
         }
@@ -198,7 +221,7 @@ QPair<QVariant, RPropertyAttributes> RDimensionEntity::getProperty(
                              RPropertyAttributes(RPropertyAttributes::ReadOnly));
         }
     } else if (propertyTypeId == PropertyMeasuredValue) {
-        if (getType()==RS::EntityDimAngular) {
+        if (getType()==RS::EntityDimAngular2L || getType()==RS::EntityDimAngular3P) {
             return qMakePair(QVariant(getData().getMeasuredValue()),
                              RPropertyAttributes(RPropertyAttributes::ReadOnly | RPropertyAttributes::Angle));
         }
@@ -220,6 +243,25 @@ QPair<QVariant, RPropertyAttributes> RDimensionEntity::getProperty(
 //        return qMakePair(QVariant(getData().fontName),
 //            RPropertyAttributes(RPropertyAttributes::Style));
 //    }
+
+//    else if (propertyTypeId == PropertyTextColor) {
+//        return qMakePair(QVariant(getData().textColor), RPropertyAttributes());
+//    }
+
+    else if (propertyTypeId == PropertyArrow1Flipped) {
+        return qMakePair(QVariant(getData().arrow1Flipped), RPropertyAttributes());
+    }
+    else if (propertyTypeId == PropertyArrow2Flipped) {
+        return qMakePair(QVariant(getData().arrow2Flipped), RPropertyAttributes());
+    }
+
+    else if (propertyTypeId == PropertyExtLineFix) {
+        return qMakePair(QVariant(getData().extLineFix), RPropertyAttributes());
+    }
+    else if (propertyTypeId == PropertyExtLineFixLength) {
+        return qMakePair(QVariant(getData().extLineFixLength), RPropertyAttributes());
+    }
+
     /*else if (propertyTypeId == PropertyHeight) {
         return qMakePair(QVariant(getData().textHeight), RPropertyAttributes());
     } else if (propertyTypeId == PropertyAngle) {
@@ -233,7 +275,7 @@ QPair<QVariant, RPropertyAttributes> RDimensionEntity::getProperty(
         return qMakePair(QVariant(getData().verticalAlignment), RPropertyAttributes());
     }*/
 
-    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes);
+    return REntity::getProperty(propertyTypeId, humanReadable, noAttributes, showOnRequest);
 }
 
 void RDimensionEntity::exportEntity(RExporter& e, bool preview, bool forceSelected) const {
@@ -282,11 +324,21 @@ void RDimensionEntity::exportEntity(RExporter& e, bool preview, bool forceSelect
     // export text label:
     RTextData& textData = data.getTextData();
     if (textData.isSane()) {
+        //QVariant v = getDocument()->getKnownVariable(RS::DIMCLRT, RColor(RColor::ByBlock));
+        //RColor textColor = v.value<RColor>();
         if (e.isTextRenderedAsText()) {
+            //textData.setColor(textColor);
             QList<RPainterPath> paths = e.exportText(textData, forceSelected);
             e.exportPainterPaths(paths);
         }
         else {
+            // render text as paths:
+            // set brush explicitely:
+            QVariant v = getDocument()->getKnownVariable(RS::DIMCLRT, RColor(RColor::ByBlock));
+            RColor textColor = v.value<RColor>();
+            if (!textColor.isByBlock()) {
+                brush.setColor(textColor);
+            }
             e.setBrush(brush);
             e.exportPainterPathSource(textData);
         }
@@ -328,7 +380,8 @@ QSet<QString> RDimensionEntity::getDimensionBlockNames(RDocument* doc) {
     dimTypes.append(RS::EntityDimRotated);
     dimTypes.append(RS::EntityDimRadial);
     dimTypes.append(RS::EntityDimDiametric);
-    dimTypes.append(RS::EntityDimAngular);
+    dimTypes.append(RS::EntityDimAngular2L);
+    dimTypes.append(RS::EntityDimAngular3P);
     dimTypes.append(RS::EntityDimOrdinate);
 
     QSet<REntity::Id> ids = doc->queryAllEntities(false, true, dimTypes);

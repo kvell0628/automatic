@@ -33,11 +33,20 @@ function Scale(guiAction) {
     this.targetPoint = undefined;
     this.factorX = undefined;
     this.factorY = undefined;
+
+    this.useDialog = RSettings.getBoolValue("Scale/UseDialog", true);
+
+    if (!this.useDialog) {
+        this.setUiOptions("Scale.ui");
+    }
 }
 
 Scale.prototype = new Transform();
-
 Scale.includeBasePath = includeBasePath;
+
+Scale.getPreferencesCategory = function() {
+    return [qsTr("Modify"), qsTr("Scale")];
+};
 
 Scale.State = {
     SettingCenterPoint : 0,
@@ -66,8 +75,8 @@ Scale.prototype.setState = function(state) {
     case Scale.State.SettingCenterPoint:
         this.referencePoint = undefined;
         this.targetPoint = undefined;
-        this.factorX = undefined;
-        this.factorY = undefined;
+        //this.factorX = undefined;
+        //this.factorY = undefined;
         var trCenterPoint = qsTr("Focus point");
         this.setCommandPrompt(trCenterPoint);
         this.setLeftMouseTip(trCenterPoint);
@@ -99,6 +108,12 @@ Scale.prototype.setState = function(state) {
     EAction.showSnapTools();
 };
 
+Scale.prototype.initUiOptions = function(resume, optionsToolBar) {
+    EAction.prototype.initUiOptions.call(this, resume, optionsToolBar);
+
+    this.initWidgets(optionsToolBar, "Sq");
+};
+
 Scale.prototype.escapeEvent = function() {
     switch (this.state) {
     case Scale.State.SettingCenterPoint:
@@ -121,14 +136,19 @@ Scale.prototype.pickCoordinate = function(event, preview) {
 
     switch (this.state) {
     case Scale.State.SettingCenterPoint:
-        if (!preview) {
-            this.focusPoint = event.getModelPosition();
-            this.setState(-1);
+        this.focusPoint = event.getModelPosition();
 
-            if (!this.showDialog()) {
-                // dialog canceled:
-                this.terminate();
-                return;
+        if (preview) {
+            this.updatePreview();
+        }
+        else {
+            if (this.useDialog) {
+                this.setState(-1);
+                if (!this.showDialog()) {
+                    // dialog canceled:
+                    this.terminate();
+                    return;
+                }
             }
 
             // define factor with mouse:
@@ -168,10 +188,12 @@ Scale.prototype.pickCoordinate = function(event, preview) {
         }
         else {
             op = this.getOperation(false);
-            di.applyOperation(op);
-            di.setRelativeZero(this.targetPoint);
-            this.setState(-1);
-            this.terminate();
+            if (!isNull(op)) {
+                di.applyOperation(op);
+                di.setRelativeZero(this.targetPoint);
+                this.setState(-1);
+                this.terminate();
+            }
         }
         break;
     }
@@ -186,26 +208,7 @@ Scale.prototype.showDialog = function() {
     var dialog = WidgetFactory.createDialog(Scale.includeBasePath, "ScaleDialog.ui");
     var widgets = getWidgets(dialog);
 
-    widgets["FactorX"].textChanged.connect(
-                function(text) {
-                    if (widgets["KeepProportions"].checked===true) {
-                        widgets["FactorY"].text = text;
-                    }
-                });
-
-    widgets["KeepProportions"].toggled.connect(
-                function(checked) {
-                    if (checked) {
-                        widgets["FactorY"].text = widgets["FactorX"].text;
-                    }
-
-                    if (checked) {
-                        widgets["KeepProportions"].icon = new QIcon(Scale.includeBasePath + "/KeepProportionsOn.svg");
-                    }
-                    else {
-                        widgets["KeepProportions"].icon = new QIcon(Scale.includeBasePath + "/KeepProportionsOff.svg");
-                    }
-                });
+    this.initWidgets(dialog);
 
     WidgetFactory.restoreState(dialog);
 
@@ -227,7 +230,8 @@ Scale.prototype.showDialog = function() {
 
     if (widgets["FactorByMouse"].checked===true) {
         this.factorByMouse = true;
-        this.factor = undefined;
+        this.factorX = undefined;
+        this.factorY = undefined;
     }
     else {
         this.factorByMouse = false;
@@ -249,6 +253,34 @@ Scale.prototype.showDialog = function() {
     return true;
 };
 
+Scale.prototype.initWidgets = function(widget, postfix) {
+    if (isNull(postfix)) {
+        postfix = "";
+    }
+
+    var widgets = getWidgets(widget);
+    widgets["FactorX"].textChanged.connect(
+                function(text) {
+                    if (widgets["KeepProportions"].checked===true) {
+                        widgets["FactorY"].text = text;
+                    }
+                });
+
+    widgets["KeepProportions"].toggled.connect(
+                function(checked) {
+                    if (checked) {
+                        widgets["FactorY"].text = widgets["FactorX"].text;
+                    }
+
+                    if (checked) {
+                        widgets["KeepProportions"].icon = new QIcon(Scale.includeBasePath + "/KeepProportionsOn" + postfix + ".svg");
+                    }
+                    else {
+                        widgets["KeepProportions"].icon = new QIcon(Scale.includeBasePath + "/KeepProportionsOff" + postfix + ".svg");
+                    }
+                });
+};
+
 Scale.prototype.getOperation = function(preview) {
     if (!isValidVector(this.focusPoint)) {
         return undefined;
@@ -266,6 +298,9 @@ Scale.prototype.getOperation = function(preview) {
         }
 
         s2 = this.focusPoint.getDistanceTo(this.targetPoint);
+        if (s2<RS.PointTolerance) {
+            return undefined;
+        }
 
         this.factorX = s2/s1;
         this.factorY = undefined;
@@ -278,52 +313,98 @@ Scale.prototype.getOperation = function(preview) {
     return Transform.prototype.getOperation.call(this, preview);
 };
 
+Scale.prototype.transformArc = function(shape, sv) {
+    var s = shape;
+    if (isFunction(shape.data)) {
+        s = shape.data();
+    }
+
+    if (isCircleShape(s)) {
+        s = ShapeAlgorithms.circleToArc(s, 0.0);
+    }
+
+    return RShape.scaleArc(s, sv, this.focusPoint);
+};
+
 /**
  * Callback function for Transform.getOperation.
  */
-Scale.prototype.transform = function(entity, k, op, preview, forceNew) {
+Scale.prototype.transform = function(entity, k, op, preview, flags) {
     // uniform scaling (supported by all entities):
-    if (isNull(this.factorY)) {
+    if (isNull(this.factorY) || RMath.fuzzyCompare(this.factorX, this.factorY)) {
         entity.scale(Math.pow(this.factorX, k), this.focusPoint);
-        op.addObject(entity, this.useCurrentAttributes, forceNew);
+        op.addObject(entity, flags);
         return;
     }
 
+    var e;
+
     // non-uniform scaling of arc, circle or ellipse:
     var sv = new RVector(Math.pow(this.factorX, k), Math.pow(this.factorY, k));
+
     if (isArcEntity(entity) || isCircleEntity(entity) || isEllipseEntity(entity)) {
         var arc = entity.castToShape();
-        if (isCircleShape(arc)) {
-            arc = ShapeAlgorithms.circleToArc(arc);
-        }
 
-        var self=this;
-        var shape = ShapeAlgorithms.transformArc(
-            arc,
-            function(p) {
-                return p.scale(sv, self.focusPoint);
-            }
-        );
+        var shape = this.transformArc(arc, sv);
 
-        var e = shapeToEntity(this.getDocument(), shape);
+        e = shapeToEntity(this.getDocument(), shape);
         if (!isNull(e)) {
             e.copyAttributesFrom(entity);
             e.setDrawOrder(entity.getDrawOrder());
             e.setSelected(true);
         }
 
-        if (this.copies===0) {
+        if (this.getCopies()===0) {
             op.deleteObject(entity);
         }
         if (!isNull(e)) {
-            op.addObject(e, this.useCurrentAttributes, forceNew);
+            op.addObject(e, flags);
         }
+        return;
+    }
+
+    // non-uniform scaling of hatches:
+    if (isHatchEntity(entity)) {
+        //debugger;
+        var data = entity.getData();
+        var newHatchData = new RHatchData();
+        newHatchData.setDocument(data.getDocument());
+        newHatchData.copyAttributesFrom(data);
+
+        //newHatchData.clearBoundary();
+
+        for (var i=0; i<entity.getLoopCount(); i++) {
+            newHatchData.newLoop();
+
+            var shapes = entity.getLoopBoundary(i);
+            for (var n=0; n<shapes.length; n++) {
+                shape = shapes[n];
+
+                if (isArcShape(shape) || isCircleShape(shape) || isEllipseShape(shape)) {
+                    var newShape = this.transformArc(shape, sv);
+                    newHatchData.addBoundary(newShape);
+                }
+                else {
+                    // line, spline:
+                    shape.scale(sv, this.focusPoint);
+                    newHatchData.addBoundary(shape);
+                }
+            }
+        }
+        newHatchData.setSolid(entity.isSolid());
+        newHatchData.setPatternName(entity.getPatternName());
+        newHatchData.setScale(entity.getScale());
+        newHatchData.setAngle(entity.getAngle());
+        newHatchData.setOriginPoint(entity.getOriginPoint());
+
+        entity.setData(newHatchData);
+        op.addObject(entity, flags);
         return;
     }
 
     // non-uniform scaling of other entities:
     entity.scale(sv, this.focusPoint);
-    op.addObject(entity, this.useCurrentAttributes, forceNew);
+    op.addObject(entity, flags);
 };
 
 Scale.prototype.getAuxPreview = function() {
@@ -348,5 +429,14 @@ Scale.prototype.getAuxPreview = function() {
     return ret;
 };
 
+Scale.prototype.slotFactorXChanged = function(v) {
+    this.factorX = v;
+};
 
+Scale.prototype.slotFactorYChanged = function(v) {
+    this.factorY = v;
+};
 
+Scale.prototype.slotFactorByMouseChanged = function(v) {
+    this.factorByMouse = v;
+};

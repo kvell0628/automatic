@@ -88,31 +88,43 @@ public:
     virtual void exportArcSegment(const RArc& arc, bool allowForZeroLength = false);
     virtual void exportLineSegment(const RLine& line, double angle = RNANDOUBLE);
     virtual void exportXLine(const RXLine& xLine);
+
     virtual void exportRay(const RRay& ray);
     virtual void exportTriangle(const RTriangle& triangle);
     virtual void exportRectangle(const RVector& p1, const RVector& p2);
 
-    virtual void exportPainterPaths(const QList<RPainterPath>& paths);
+    virtual void exportPainterPaths(const QList<RPainterPath>& paths, double z = 0.0);
     virtual void exportImage(const RImageData& image, bool forceSelected = false);
     virtual QList<RPainterPath> exportText(const RTextBasedData& text, bool forceSelected = false);
     virtual void exportClipRectangle(const RBox& clipRectangles, bool forceSelected = false);
+    virtual void exportTransform(const RTransform& t);
+    virtual void exportEndTransform();
 
     virtual double getLineTypePatternScale(const RLinetypePattern& p) const;
     
     virtual void highlightEntity(REntity& entity);
 
     void deleteDrawables();
-    QList<RGraphicsSceneDrawable> getDrawables(REntity::Id entityId);
+
+    /**
+     * \nonscriptable
+     */
+    QList<RGraphicsSceneDrawable>* getDrawables(REntity::Id entityId);
 
     bool hasPreview() const;
     QList<REntity::Id> getPreviewEntityIds();
-    QList<RGraphicsSceneDrawable> getPreviewDrawables(REntity::Id entityId);
+
+    /**
+     * \nonscriptable
+     */
+    QList<RGraphicsSceneDrawable>* getPreviewDrawables(REntity::Id entityId);
+
     virtual void addToPreview(REntity::Id entityId, QList<RGraphicsSceneDrawable>& drawables);
     virtual void addToPreview(REntity::Id entityId, RGraphicsSceneDrawable& drawable);
     void addTextToPreview(const RTextBasedData& text);
 
-    bool hasClipRectangleFor(REntity::Id entityId, bool preview = false);
-    RBox getClipRectangle(REntity::Id entityId, bool preview = false);
+    bool hasClipRectangleFor(REntity::Id entityId, bool preview = false) const;
+    RBox getClipRectangle(REntity::Id entityId, bool preview = false) const;
 
     void addDrawable(REntity::Id entityId, RGraphicsSceneDrawable& drawable, bool draft = false, bool preview = false);
 
@@ -145,6 +157,8 @@ private:
 
     bool decorating;
     bool screenBasedLinetypesOverride;
+
+    QStack<QTransform> transformStack;
 };
 
 Q_DECLARE_METATYPE(RGraphicsSceneQt*)
